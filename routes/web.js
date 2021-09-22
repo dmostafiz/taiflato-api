@@ -4,16 +4,32 @@ const router = express.Router()
 const Authorization = require('./middlewires/Authorization')
 
 const AuthController = require('../app/http/controllers/AuthController')
+const PropertyController = require('../app/http/controllers/PropertyController')
+const UploadController = require('../app/http/controllers/UploadController')
+
+
 const CategoryController = require('../app/http/controllers/CategoryController')
 const PostController = require('../app/http/controllers/PostController')
 const SliderController = require('../app/http/controllers/SliderController')
-const upload = require('../helpers/cloudinary')
+
+// const upload = require('../helpers/cloudinary')
+
+
 //Auth
 router.post('/login', AuthController.login)
 router.post('/register_developer', AuthController.register_developer)
 router.post('/authorize', AuthController.authorize)
 router.post('/secure_user', AuthController.secure_user)
 router.post('/switch_dashboard', AuthController.switch_dashboard)
+
+
+// const multer = require('multer');
+// const upload = multer();
+
+//Property
+router.post('/save_property', PropertyController.saveProperty)
+router.post('/upload_property_image', UploadController.uploadPropertyImage)
+
 
 //Categories
 router.post('/category/save', Authorization, CategoryController.store)
