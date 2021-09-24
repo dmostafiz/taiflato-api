@@ -27,8 +27,12 @@ router.post('/switch_dashboard', AuthController.switch_dashboard)
 // const upload = multer();
 
 //Property
-router.post('/save_property', PropertyController.saveProperty)
 router.post('/upload_property_image', UploadController.uploadPropertyImage)
+router.post('/save_property', PropertyController.saveProperty)
+router.get('/my_properties', PropertyController.getMyProperty)
+router.get('/get_single_property/:id', PropertyController.getSingleProperty)
+
+
 
 
 //Categories

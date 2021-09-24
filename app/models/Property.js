@@ -124,7 +124,7 @@ const propertySchema = mongoose.Schema({
 
     status: {
         type: String,
-        enum:['pending','publish', 'draft', 'sold'],
+        enum:['pending','publish', 'draft', 'sold','declined'],
         default:'pending'
     },
 

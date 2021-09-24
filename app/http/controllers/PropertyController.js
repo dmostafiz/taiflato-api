@@ -1,103 +1,8 @@
-const AWS = require('aws-sdk');
-const fs = require('fs');
-const fileType = require('file-type');
-const multiparty = require('multiparty');
 const jwt = require('jsonwebtoken');
 const User = require('../../models/User');
 const Property = require('../../models/Property');
-const File = require('../../models/File');
+const mongoose = require('mongoose')
 
-
-// AWS.config.update({
-//     accessKeyId: 'AKIAW7OWVSOQTG45HKDA',
-//     secretAccessKey: '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',
-//   });
-  
-// const s3 = new AWS.S3();
-
-// const uploadFile = async (buffer, name, type) => {
-//     const params = {
-//       ACL: 'public-read',
-//       Body: buffer,
-//       Bucket: 'ipproperties',
-//       ContentType: type.mime,
-//       Key: `${name}.${type.ext}`,
-//     };
-
-//     return s3.upload(params).promise();
-// };
-
-// exports.uploadSingle = async (req, res) => {
-
-      
-      
-
-//       const form = new multiparty.Form();
-
-//       form.parse(req, async (error, fields, files) => {
-  
-//           if (error) {
-//             console.log('Form Error Ocurred')  
-//             return res.json('Form Error Ocurred')
-
-//           }
-
-
-//           try {
-
-//             // const token = fields.tken
-
-//             const token = fields.token[0]
-
-//             const data = jwt.verify(token, process.env.APP_SECRET)
-//             const user = await User.findOne({_id: data.id})
-
-//             if(user){
-//                 const path = files.file[0].path;
-
-//                 const folder = user.username
-      
-//                 const buffer = fs.readFileSync(path);
-      
-//                 const type = await fileType.fromBuffer(buffer);
-
-//                 // console.log('File Type: ', type)
-      
-//                 const fileName = `${folder}/${Date.now().toString()}`;
-      
-//                 const data = await uploadFile(buffer, fileName, type);
-      
-//                 console.log("uploaded file: ", data)
-
-//                 if(data){
-//                   const file = new File()
-//                   file.bucket = data.Bucket
-//                   file.eTag = data.ETag 
-//                   file.key = data.Key
-//                   file.location = data.Location
-//                   file.versionId = data.VersionId
-//                   file.mime = type.mime
-//                   file.fileExt = type.ext
-//                   file.user = user._id
-//                   await file.save()
-//                 }
-          
-//                 return res.status(201).json({data})
-//             }
-
-            
-          
-//           } catch (err) {
-  
-//             return err;
-  
-//           }
-          
-//        })
-
- 
-
-// }
 
 exports.saveProperty = async (req, res) => {
 
@@ -139,9 +44,13 @@ exports.saveProperty = async (req, res) => {
     const user = await User.findOne({_id: data.id})
  
     if(user) {
+
+      const date = Date.now().toString()
+      const pid = date.substr(-6)
       
       // console.log('User: ',user)
       const property = new Property()
+      property.propertyId = pid
       property.title = title
       property.propertyType = propertyType
       property.propertySize = propertySize
@@ -164,6 +73,7 @@ exports.saveProperty = async (req, res) => {
       property.description = description
       property.nearby = nearby
       property.virtualTourLink = virtualTour
+      property.developer = user._id
 
       await property.save()
 
@@ -171,12 +81,122 @@ exports.saveProperty = async (req, res) => {
 
       res.json(property)
     }
-
-
     
   } catch (error) {
     
   }
 
+}
 
+exports.getMyProperty = async (req, res) => {
+
+  console.log("My Query String: ", req.query)
+
+
+  const token = req.headers.authorization
+
+  try {
+    
+    // console.log("Token: ", token)
+
+    const data = jwt.verify(token, process.env.APP_SECRET)
+    const user = await User.findOne({_id: data.id})
+
+    // console.log("I Am: ", user)
+
+    if(user){
+
+      const properties = Property.aggregate()
+
+      .match({developer: user._id})
+
+      .lookup({
+          from: 'files',
+          localField: 'image',
+          foreignField: '_id',
+          as: 'image'
+      })
+
+      .lookup( {
+        from: 'files',
+        localField: 'images',
+        foreignField: '_id',
+        as: 'images'
+      })
+
+      if(req.query.status && req.query.status != 'all'){
+        properties.match({status: req.query.status})
+      }
+
+      if(req.query.q){
+        // properties.match({title: req.query.q})
+        properties.match({
+          $or: [ 
+            { title: {$regex: req.query.q, $options: 'i'} }, 
+            { propertyId: {$regex: req.query.q, $options: 'i'} } 
+          ] 
+        })
+      }
+
+
+      properties.exec().then(result => {
+        // result has your... results
+        console.log("My Properties: ", result)
+  
+        res.json(result)
+      });
+
+    }
+
+  } catch (error) {
+    
+  }
+}
+
+exports.getSingleProperty = async (req, res) => {
+
+  const id = req.params.id
+
+  console.log('Property ID: ', id)
+
+  try {
+
+    const property = Property.aggregate()
+
+                        .match({_id: mongoose.Types.ObjectId(id)})
+
+                        .lookup({
+                          from: 'files',
+                          localField: 'image',
+                          foreignField: '_id',
+                          as:'image'
+                        })
+
+                        .lookup({
+                          from: 'files',
+                          localField: 'floorplanImage',
+                          foreignField: '_id',
+                          as:'floorplanImage'
+                        })
+                        
+                        .lookup({
+                          from:'files',
+                          localField:'images',
+                          foreignField:'_id',
+                          as:'images'
+                        })
+                        // .lookup({
+                        //   fr
+                        // })
+            property.exec().then(result => {
+              // console.log("My Property: ", result.length ? result[0] : {})
+  
+              return res.json(result.length ? result[0] : null)
+            })
+    
+  } catch (error) {
+    return res.json({status: 'error', msg: error})
+  }
+
+  // return res.json({})
 }
