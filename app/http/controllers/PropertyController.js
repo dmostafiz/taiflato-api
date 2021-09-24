@@ -41,13 +41,13 @@ exports.saveProperty = async (req, res) => {
   try {
     const data = jwt.verify(token, process.env.APP_SECRET)
 
-    const user = await User.findOne({_id: data.id})
- 
-    if(user) {
+    const user = await User.findOne({ _id: data.id })
+
+    if (user) {
 
       const date = Date.now().toString()
       const pid = date.substr(-6)
-      
+
       // console.log('User: ',user)
       const property = new Property()
       property.propertyId = pid
@@ -81,11 +81,66 @@ exports.saveProperty = async (req, res) => {
 
       res.json(property)
     }
-    
+
   } catch (error) {
-    
+
   }
 
+}
+
+exports.actionProperty = async (req, res) => {
+
+  const token = req.headers.authorization
+
+  try {
+    const data = jwt.verify(token, process.env.APP_SECRET)
+
+    const user = await User.findOne({ _id: data.id })
+
+    const {id, action_type} = req.body
+
+    if (user) {
+       
+      // console.log("Request body: ", req.body)
+
+      if(action_type == 'approve' && user.user_type == 'admin'){
+
+        const property = await Property.findOne({_id: id})
+
+        if(property){
+
+          property.status = 'published'
+
+          await property.save()
+
+          return res.json({status:'success', property})
+        }
+        else{
+
+          return res.json({status: 'error', msg: 'property not found'})
+       
+        }
+
+        
+      }
+      else{
+        
+        return res.json({status: 'error', msg: 'You are not authourised to do this action'})
+      
+      }  
+      
+    }
+    
+    else{
+
+      return res.json({status: 'error', msg: 'You are not authourised to do this action'})
+    
+    }
+
+  } catch (error) {
+    console.log('Error: ', error)
+    return res.json({status: 'error', msg: error})
+  }
 }
 
 exports.getMyProperty = async (req, res) => {
@@ -96,45 +151,45 @@ exports.getMyProperty = async (req, res) => {
   const token = req.headers.authorization
 
   try {
-    
+
     // console.log("Token: ", token)
 
     const data = jwt.verify(token, process.env.APP_SECRET)
-    const user = await User.findOne({_id: data.id})
+    const user = await User.findOne({ _id: data.id })
 
     // console.log("I Am: ", user)
 
-    if(user){
+    if (user) {
 
       const properties = Property.aggregate()
 
-      .match({developer: user._id})
+        .match({ developer: user._id })
 
-      .lookup({
+        .lookup({
           from: 'files',
           localField: 'image',
           foreignField: '_id',
           as: 'image'
-      })
+        })
 
-      .lookup( {
-        from: 'files',
-        localField: 'images',
-        foreignField: '_id',
-        as: 'images'
-      })
+        .lookup({
+          from: 'files',
+          localField: 'images',
+          foreignField: '_id',
+          as: 'images'
+        })
 
-      if(req.query.status && req.query.status != 'all'){
-        properties.match({status: req.query.status})
+      if (req.query.status && req.query.status != 'all') {
+        properties.match({ status: req.query.status })
       }
 
-      if(req.query.q){
+      if (req.query.q) {
         // properties.match({title: req.query.q})
         properties.match({
-          $or: [ 
-            { title: {$regex: req.query.q, $options: 'i'} }, 
-            { propertyId: {$regex: req.query.q, $options: 'i'} } 
-          ] 
+          $or: [
+            { title: { $regex: req.query.q, $options: 'i' } },
+            { propertyId: { $regex: req.query.q, $options: 'i' } }
+          ]
         })
       }
 
@@ -142,14 +197,14 @@ exports.getMyProperty = async (req, res) => {
       properties.exec().then(result => {
         // result has your... results
         console.log("My Properties: ", result)
-  
+
         res.json(result)
       });
 
     }
 
   } catch (error) {
-    
+    return res.json(error)
   }
 }
 
@@ -163,40 +218,149 @@ exports.getSingleProperty = async (req, res) => {
 
     const property = Property.aggregate()
 
-                        .match({_id: mongoose.Types.ObjectId(id)})
+      .match({ _id: mongoose.Types.ObjectId(id) })
 
-                        .lookup({
-                          from: 'files',
-                          localField: 'image',
-                          foreignField: '_id',
-                          as:'image'
-                        })
+      .lookup({
+        from: 'files',
+        localField: 'image',
+        foreignField: '_id',
+        as: 'image'
+      })
 
-                        .lookup({
-                          from: 'files',
-                          localField: 'floorplanImage',
-                          foreignField: '_id',
-                          as:'floorplanImage'
-                        })
-                        
-                        .lookup({
-                          from:'files',
-                          localField:'images',
-                          foreignField:'_id',
-                          as:'images'
-                        })
-                        // .lookup({
-                        //   fr
-                        // })
-            property.exec().then(result => {
-              // console.log("My Property: ", result.length ? result[0] : {})
-  
-              return res.json(result.length ? result[0] : null)
-            })
-    
+      .lookup({
+        from: 'files',
+        localField: 'floorplanImage',
+        foreignField: '_id',
+        as: 'floorplanImage'
+      })
+
+      .lookup({
+        from: 'files',
+        localField: 'images',
+        foreignField: '_id',
+        as: 'images'
+      })
+    // .lookup({
+    //   fr
+    // })
+    property.exec().then(result => {
+      // console.log("My Property: ", result.length ? result[0] : {})
+
+      return res.json(result.length ? result[0] : null)
+    })
+
   } catch (error) {
-    return res.json({status: 'error', msg: error})
+    return res.json({ status: 'error', msg: error })
   }
 
   // return res.json({})
+}
+
+exports.getAllProperty = async (req, res) => {
+  // console.log("My Query String: ", req.query)
+
+  try {
+
+    const properties = Property.aggregate()
+
+      .lookup({
+        from: 'files',
+        localField: 'image',
+        foreignField: '_id',
+        as: 'image'
+      })
+
+      .lookup({
+        from: 'files',
+        localField: 'images',
+        foreignField: '_id',
+        as: 'images'
+      })
+
+      .lookup({
+        from: 'users',
+        localField: 'developer',
+        foreignField: '_id',
+        as: 'developer'
+      })
+
+    if (req.query.status && req.query.status != 'all') {
+      properties.match({ status: req.query.status })
+    }
+
+    if (req.query.q) {
+      // properties.match({title: req.query.q})
+      properties.match({
+        $or: [
+          { title: { $regex: req.query.q, $options: 'i' } },
+          { propertyId: { $regex: req.query.q, $options: 'i' } }
+        ]
+      })
+    }
+
+
+    properties.exec().then(result => {
+      // result has your... results
+      console.log("All Properties: ", result)
+
+      return res.json(result)
+    });
+
+  } catch (error) {
+
+    return res.json(error)
+
+  }
+}
+
+exports.getPendingProperty = async (req, res) => {
+
+  try {
+
+    const properties = Property.aggregate()
+
+      .lookup({
+        from: 'files',
+        localField: 'image',
+        foreignField: '_id',
+        as: 'image'
+      })
+
+      .lookup({
+        from: 'files',
+        localField: 'images',
+        foreignField: '_id',
+        as: 'images'
+      })
+
+      .lookup({
+        from: 'users',
+        localField: 'developer',
+        foreignField: '_id',
+        as: 'developer'
+      })
+
+      properties.match({ status: 'pending' })
+
+    if (req.query.q) {
+      // properties.match({title: req.query.q})
+      properties.match({
+        $or: [
+          { title: { $regex: req.query.q, $options: 'i' } },
+          { propertyId: { $regex: req.query.q, $options: 'i' } }
+        ]
+      })
+    }
+
+
+    properties.exec().then(result => {
+      // result has your... results
+      console.log("My Properties: ", result)
+
+      res.json(result)
+    });
+
+  } catch (error) {
+    return res.json(error)
+  }
 }

@@ -27,6 +27,10 @@ const propertySchema = mongoose.Schema({
         type: Number,
     },
 
+    floor: {
+        type: Number,
+    },
+
     garageSize: {
         type: Number,
     },
@@ -124,9 +128,41 @@ const propertySchema = mongoose.Schema({
 
     status: {
         type: String,
-        enum:['pending','publish', 'draft', 'sold','declined'],
+        enum:['pending','published', 'drafted', 'sold','declined'],
         default:'pending'
     },
+
+    isHot: {
+        type: Boolean,
+        default: false
+    },
+
+    isTrending: {
+        type: Boolean,
+        default: false
+    },
+
+    rank: {
+        type: Number,
+        default: 0
+    },
+
+    reviews:[
+        {
+           uid: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+           },
+
+           text:{
+               type:String,
+           },
+
+           rating:{
+               type: Number
+           }
+        }
+    ],
 
     developer: {
         type: mongoose.Schema.Types.ObjectId,

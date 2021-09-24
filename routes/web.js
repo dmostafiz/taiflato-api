@@ -29,9 +29,14 @@ router.post('/switch_dashboard', AuthController.switch_dashboard)
 //Property
 router.post('/upload_property_image', UploadController.uploadPropertyImage)
 router.post('/save_property', PropertyController.saveProperty)
+router.post('/action_property', PropertyController.actionProperty)
+
 router.get('/my_properties', PropertyController.getMyProperty)
 router.get('/get_single_property/:id', PropertyController.getSingleProperty)
 
+router.get('/pending_properties', PropertyController.getPendingProperty)
+
+router.get('/all_properties', PropertyController.getAllProperty)
 
 
 
