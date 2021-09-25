@@ -38,6 +38,7 @@ router.get('/pending_properties', PropertyController.getPendingProperty)
 
 router.get('/all_properties', PropertyController.getAllProperty)
 
+router.get('/filter_search', PropertyController.filterSearch)
 
 
 //Categories

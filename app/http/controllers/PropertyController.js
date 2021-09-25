@@ -4,6 +4,39 @@ const Property = require('../../models/Property');
 const mongoose = require('mongoose')
 
 
+exports.filterSearch = (req, res) => {
+  try {
+    const properties = Property.aggregate()
+                      .lookup({
+                        from: 'files',
+                        localField: 'image',
+                        foreignField: '_id',
+                        as: 'image'
+                      })
+                      .lookup({
+                        from: 'files',
+                        localField: 'images',
+                        foreignField: '_id',
+                        as: 'images'
+                      })
+
+                      .lookup({
+                        from: 'users',
+                        localField: 'developer',
+                        foreignField: '_id',
+                        as: 'developer'
+                      })
+
+    properties.exec().then( result => {
+        console.log('Searched Properties: ', result)
+        res.send({status:'success', result})
+    })
+    
+  } catch (error) {
+    res.send({status:'error', messagle:error.msg})
+  }
+}
+
 exports.saveProperty = async (req, res) => {
 
   // console.log("Property Data: ", req.body)
