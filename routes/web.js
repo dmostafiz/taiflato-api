@@ -17,7 +17,7 @@ const SliderController = require('../app/http/controllers/SliderController')
 
 //Auth
 router.post('/login', AuthController.login)
-router.post('/register_developer', AuthController.register_developer)
+router.post('/register_account', AuthController.register_account)
 router.post('/authorize', AuthController.authorize)
 router.post('/secure_user', AuthController.secure_user)
 router.post('/switch_dashboard', AuthController.switch_dashboard)

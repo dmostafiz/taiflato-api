@@ -1,12 +1,12 @@
 const jwt = require('jsonwebtoken');
 const User = require('../../models/User');
-const Property = require('../../models/Property');
+const Project = require('../../models/Project');
 const mongoose = require('mongoose')
 
 
 exports.filterSearch = (req, res) => {
   try {
-    const properties = Property.aggregate()
+    const properties = Project.aggregate()
                       .lookup({
                         from: 'files',
                         localField: 'image',
@@ -37,7 +37,7 @@ exports.filterSearch = (req, res) => {
   }
 }
 
-exports.saveProperty = async (req, res) => {
+exports.saveProject = async (req, res) => {
 
 
   // console.log("Property Data: ", req.body)
@@ -47,27 +47,16 @@ exports.saveProperty = async (req, res) => {
 
   const {
     title,
-    propertyType,
-    propertySize,
-    propertyPrice,
-    bedroomNumber,
-    bathroomNumber,
-    garageSize,
-    additionalDetails,
-    features,
     country,
     district,
     city,
     zip,
     address,
-    saleStatus,
-    willReadyForSale,
-    investPrice,
     latitude,
     longitude,
+    buildTime,
+    readyTime,
     description,
-    nearby,
-    virtualTour
 
   } = req.body
 
@@ -83,16 +72,10 @@ exports.saveProperty = async (req, res) => {
       const pid = date.substr(-6)
 
       // console.log('User: ',user)
-      const property = new Property()
+      const property = new Project()
       property.pid = pid
       property.title = title
-      property.propertyType = propertyType
-      property.propertySize = propertySize
-      property.price = propertyPrice
-      property.bedroom = bedroomNumber
-      property.bathroom = bathroomNumber
       property.garageSize = garageSize
-      property.additionalDetails = additionalDetails
       property.features = features
       property.country = country
       property.district = district
@@ -102,11 +85,9 @@ exports.saveProperty = async (req, res) => {
       property.latitude = latitude
       property.longitude = longitude
       property.saleStatus = saleStatus
-      property.readyTime = willReadyForSale
-      property.investPrice = investPrice
+      property.buildTime = buildTime
+      property.readyTime = readyTime
       property.description = description
-      property.nearby = nearby
-      property.virtualTourLink = virtualTour
       property.developer = user._id
 
       await property.save()

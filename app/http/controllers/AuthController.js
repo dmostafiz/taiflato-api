@@ -27,6 +27,11 @@ exports.login = async (req, res) => {
 
         if(!compare) return res.json({status:'error', msg:'Invalid Credentials'})
 
+        if(user.user_type == 'admin'){
+            user.dashboard = 'admin'
+            await user.save()
+        }
+
         const token = jwt.sign({id: user.id}, process.env.APP_SECRET, {expiresIn:'1d'})
         
         const userData = {
@@ -49,13 +54,13 @@ exports.login = async (req, res) => {
 
 }
 
-exports.register_developer = async (req, res) => {
+exports.register_account = async (req, res) => {
 
     // console.log("from Server",req.body)
 
     // return res.send('ok')
 
-    const {userName, email, country, phone, firstName, lastName, password, passwordConfirmation} = req.body
+    const {userType,userName, email, country, phone, firstName, lastName, password, passwordConfirmation} = req.body
 
     const allErrors = []
 
@@ -109,7 +114,7 @@ exports.register_developer = async (req, res) => {
         user.country = country
         user.phone = phone
         user.user_type = 'user'
-        user.dashboard = 'developer'
+        user.dashboard = userType
         user.first_name = firstName
         user.last_name = lastName
         user.password = encryptedPassword

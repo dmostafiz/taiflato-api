@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const propertySchema = mongoose.Schema({
+const projectSchema = mongoose.Schema({
 
     pid:{
        type: String
@@ -10,38 +10,6 @@ const propertySchema = mongoose.Schema({
         type: String,
         required: true,
     },
-
-    propertyType: {
-        type: String,
-    },
-
-    propertySize: {
-        type: Number,
-    },
-
-    price: {
-        type: Number,
-    },
-
-    bedroom: {
-        type: Number,
-    },
-
-    bathroom: {
-        type: Number,
-    },
-
-    floor: {
-        type: Number,
-    },
-
-    garageSize: {
-        type: Number,
-    },
-
-    additionalDetails: [],
-
-    features: [],
 
     country:{
         type: String
@@ -71,44 +39,62 @@ const propertySchema = mongoose.Schema({
         type: String
     },
 
-    saleStatus : {
-       type: String
+    buildingStartTime:{
+        type: Date 
     },
 
-    readyTime:{
-        type: Number 
-    },
-
-    investPrice:{
-        type: Number
+    buildingReadyTime:{
+        type: Date 
     },
 
     description: {
         type: String,
     },
 
-    nearby: [],
-
-    image: {          
+    buildingImage: {          
         type: mongoose.Schema.Types.ObjectId,
         ref:'File'
     },
 
-    images: [
+    galleryImages: [
         {          
             type: mongoose.Schema.Types.ObjectId,
             ref:'File'
         }
     ],
 
-    floorplanImage: {          
-        type: mongoose.Schema.Types.ObjectId,
-        ref:'File'
-    },
+    floors: [
+        {   
+            floorNo: Number,
 
-    virtualTourLink:{
-        type:String
-    },
+            floorPlanImage : {
+                type: mongoose.Schema.Types.ObjectId,
+                ref:'File'
+            },
+
+            coords:{
+                type: String 
+            },
+            
+            properties: [
+                {
+                    propertyId: {
+                        type: mongoose.Schema.Types.ObjectId,
+                        ref:'Property'
+                    },
+                    coords:{
+                        type: String 
+                    },
+                    status:{
+                        type: Boolean,
+                        enum:[true, false],
+                        default: true
+                    }
+                }
+            ]
+        }
+    ],
+
 
     tags: [
         {
@@ -136,20 +122,6 @@ const propertySchema = mongoose.Schema({
         default:'pending'
     },
 
-    isHot: {
-        type: Boolean,
-        default: false
-    },
-
-    isTrending: {
-        type: Boolean,
-        default: false
-    },
-
-    rank: {
-        type: Number,
-        default: 0
-    },
 
     reviews:[
         {
@@ -175,8 +147,8 @@ const propertySchema = mongoose.Schema({
 
 })
 
-propertySchema.set('timestamps', true)
+projectSchema.set('timestamps', true)
 
-// propertySchema.plugin(random)
+// projectSchema.plugin(random)
 
-module.exports = mongoose.model('Property', propertySchema)
+module.exports = mongoose.model('Project', projectSchema)
