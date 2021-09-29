@@ -65,33 +65,8 @@ const projectSchema = mongoose.Schema({
 
     floors: [
         {   
-            floorNo: Number,
-
-            floorPlanImage : {
-                type: mongoose.Schema.Types.ObjectId,
-                ref:'File'
-            },
-
-            coords:{
-                type: String 
-            },
-            
-            properties: [
-                {
-                    propertyId: {
-                        type: mongoose.Schema.Types.ObjectId,
-                        ref:'Property'
-                    },
-                    coords:{
-                        type: String 
-                    },
-                    status:{
-                        type: Boolean,
-                        enum:[true, false],
-                        default: true
-                    }
-                }
-            ]
+            type: mongoose.Schema.Types.ObjectId,
+            ref:'Floor'
         }
     ],
 

@@ -199,6 +199,12 @@ exports.getMyProperty = async (req, res) => {
 
         .match({ developer: user._id })
 
+        .sort({ "createdAt": -1})
+
+        // .sample({ size: 3 })
+
+        // .limit(20)
+
         .lookup({
           from: 'files',
           localField: 'image',

@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../../models/User');
 const File = require('../../models/File');
 const Property = require('../../models/Property');
+const Project = require('../../models/Project');
 
 
 AWS.config.update({
@@ -121,6 +122,111 @@ exports.uploadPropertyImage = async (req, res) => {
         }
         
      })
+
+
+
+}
+
+
+
+
+exports.uploadProjectImage = async (req, res) => {
+
+  const form = new multiparty.Form();
+
+  form.parse(req, async (error, fields, files) => {
+
+      if (error) {
+        console.log('Form Error Ocurred')  
+        return res.json('Form Error Ocurred')
+
+      }
+
+      try {
+
+        // const token = fields.tken
+
+        const token = fields.token[0]
+
+        const data = jwt.verify(token, process.env.APP_SECRET)
+        const user = await User.findOne({_id: data.id})
+
+        if(user){
+            const path = files.file[0].path;
+
+            const folder = 'users/'+user.username+'/projects/'+fields.ref_id[0]
+  
+            const buffer = fs.readFileSync(path);
+  
+            const type = await fileType.fromBuffer(buffer);
+
+            console.log('File Type: ', type)
+  
+            const fileName = `${folder}/${Date.now().toString()}`;
+  
+            const data = await uploadFile(buffer, fileName, type);
+  
+          //   console.log("uploaded file from upload controller: ", data)
+
+            if(data.Location ){
+
+              console.log("file location: ", data.Location)
+
+              const file = new File()
+              file.bucket = data.Bucket
+              file.eTag = data.ETag 
+              file.key = data.Key
+              file.location = data.Location
+              file.versionId = data.VersionId
+              file.mime = type.mime
+              file.fileExt = type.ext
+              file.fileType = fields.file_type[0]
+              file.folder=folder
+              file.user = user._id
+
+              await file.save() 
+
+              if(file){
+
+                  const project = await Project.findOne({_id: fields.ref_id[0]})
+
+                  if(project){
+
+                      if(file.fileType == 'building_image'){
+                          project.buildingImage = file._id
+                      }else if(file.fileType == 'gallery_images'){
+                          const galleryImages = [...project.galleryImages, file._id]
+                          project.galleryImages = galleryImages
+                      }
+                      
+                      // else if(file.fileType == 'floorplan_image'){
+                      //     property.floorplanImage = file._id
+                      // }
+  
+                      project.save()
+
+                      return res.status(201).json({project})
+                  }
+              }
+
+              // console.log("file from upload controller: ", file)
+
+              // return res.status(201).json({file})
+
+            }
+      
+        }
+
+        
+      
+      } catch (err) {
+
+        console.log('Server Error: ', err)
+        return res.json({status:'error', msg: 'Server error occured'});
+
+      }
+      
+   })
 
 
 

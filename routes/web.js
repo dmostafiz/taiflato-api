@@ -12,6 +12,8 @@ const CategoryController = require('../app/http/controllers/CategoryController')
 const PostController = require('../app/http/controllers/PostController')
 const SliderController = require('../app/http/controllers/SliderController')
 
+const ProjectController = require('../app/http/controllers/ProjectController')
+
 // const upload = require('../helpers/cloudinary')
 
 
@@ -27,8 +29,8 @@ router.post('/switch_dashboard', AuthController.switch_dashboard)
 // const upload = multer();
 
 //Property
-router.post('/upload_property_image', UploadController.uploadPropertyImage)
 router.post('/save_property', PropertyController.saveProperty)
+router.post('/upload_property_image', UploadController.uploadPropertyImage)
 router.post('/action_property', PropertyController.actionProperty)
 
 router.get('/my_properties', PropertyController.getMyProperty)
@@ -39,6 +41,12 @@ router.get('/pending_properties', PropertyController.getPendingProperty)
 router.get('/all_properties', PropertyController.getAllProperty)
 
 router.get('/filter_search', PropertyController.filterSearch)
+
+//project
+router.post('/save_project', ProjectController.saveProject)
+router.post('/upload_project_image', UploadController.uploadProjectImage)
+router.get('/my_projects', ProjectController.getMyProjects)
+
 
 
 //Categories

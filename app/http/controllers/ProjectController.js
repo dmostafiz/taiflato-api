@@ -6,7 +6,7 @@ const mongoose = require('mongoose')
 
 exports.filterSearch = (req, res) => {
   try {
-    const properties = Project.aggregate()
+    const projects = Project.aggregate()
                       .lookup({
                         from: 'files',
                         localField: 'image',
@@ -27,7 +27,7 @@ exports.filterSearch = (req, res) => {
                         as: 'developer'
                       })
 
-    properties.exec().then( result => {
+    projects.exec().then( result => {
         console.log('Searched Properties: ', result)
         res.send({status:'success', result})
     })
@@ -39,10 +39,9 @@ exports.filterSearch = (req, res) => {
 
 exports.saveProject = async (req, res) => {
 
-
-  // console.log("Property Data: ", req.body)
-
+  // console.log("Project Data: ", req.body)
   const token = req.headers.authorization
+
   console.log('Server Token:', token)
 
   const {
@@ -54,10 +53,9 @@ exports.saveProject = async (req, res) => {
     address,
     latitude,
     longitude,
-    buildTime,
-    readyTime,
+    buildingStartTime,
+    buildingReadyTime,
     description,
-
   } = req.body
 
 
@@ -72,29 +70,26 @@ exports.saveProject = async (req, res) => {
       const pid = date.substr(-6)
 
       // console.log('User: ',user)
-      const property = new Project()
-      property.pid = pid
-      property.title = title
-      property.garageSize = garageSize
-      property.features = features
-      property.country = country
-      property.district = district
-      property.city = city
-      property.zip = zip
-      property.address = address
-      property.latitude = latitude
-      property.longitude = longitude
-      property.saleStatus = saleStatus
-      property.buildTime = buildTime
-      property.readyTime = readyTime
-      property.description = description
-      property.developer = user._id
+      const project = new Project()
+      project.pid = pid
+      project.title = title
+      project.country = country
+      project.district = district
+      project.city = city
+      project.zip = zip
+      project.address = address
+      project.latitude = latitude
+      project.longitude = longitude
+      project.buildingStartTime = buildingStartTime
+      project.buildingReadyTime = buildingReadyTime
+      project.description = description
+      project.developer = user._id
 
-      await property.save()
+      await project.save()
 
-      // console.log(property)
+      // console.log(project)
 
-      res.json(property)
+      res.json(project)
     }
 
   } catch (error) {
@@ -103,7 +98,7 @@ exports.saveProject = async (req, res) => {
 
 }
 
-exports.actionProperty = async (req, res) => {
+exports.actionProject = async (req, res) => {
 
   const token = req.headers.authorization
 
@@ -120,7 +115,7 @@ exports.actionProperty = async (req, res) => {
 
       if(action_type == 'approve' && user.user_type == 'admin'){
 
-        const property = await Property.findOne({_id: id})
+        const property = await Project.findOne({_id: id})
 
         if(property){
 
@@ -158,7 +153,7 @@ exports.actionProperty = async (req, res) => {
   }
 }
 
-exports.getMyProperty = async (req, res) => {
+exports.getMyProjects = async (req, res) => {
 
   console.log("My Query String: ", req.query)
 
@@ -176,31 +171,36 @@ exports.getMyProperty = async (req, res) => {
 
     if (user) {
 
-      const properties = Property.aggregate()
+      const projects = Project.aggregate()
 
         .match({ developer: user._id })
 
+        .sort({ "createdAt": -1 })
+
+        // .limit(20)
+
         .lookup({
           from: 'files',
-          localField: 'image',
+          localField: 'buildingImage',
           foreignField: '_id',
-          as: 'image'
+          as: 'buildingImage'
         })
 
         .lookup({
           from: 'files',
-          localField: 'images',
+          localField: 'galleryImages',
           foreignField: '_id',
-          as: 'images'
+          as: 'galleryImages'
         })
+
 
       if (req.query.status && req.query.status != 'all') {
-        properties.match({ status: req.query.status })
+        projects.match({ status: req.query.status })
       }
 
       if (req.query.q) {
-        // properties.match({title: req.query.q})
-        properties.match({
+        // projects.match({title: req.query.q})
+        projects.match({
           $or: [
             { title: { $regex: req.query.q, $options: 'i' } },
             { pid: { $regex: req.query.q, $options: 'i' } }
@@ -209,7 +209,7 @@ exports.getMyProperty = async (req, res) => {
       }
 
 
-      properties.exec().then(result => {
+      projects.exec().then(result => {
         // result has your... results
         console.log("My Properties: ", result)
 
@@ -223,15 +223,15 @@ exports.getMyProperty = async (req, res) => {
   }
 }
 
-exports.getSingleProperty = async (req, res) => {
+exports.getSingleProject = async (req, res) => {
 
   const id = req.params.id
 
-  console.log('Property ID: ', id)
+  console.log('Project ID: ', id)
 
   try {
 
-    const property = Property.aggregate()
+    const property = Project.aggregate()
 
       .match({ _id: mongoose.Types.ObjectId(id) })
 
@@ -259,7 +259,7 @@ exports.getSingleProperty = async (req, res) => {
     //   fr
     // })
     property.exec().then(result => {
-      // console.log("My Property: ", result.length ? result[0] : {})
+      // console.log("My Project: ", result.length ? result[0] : {})
 
       return res.json(result.length ? result[0] : null)
     })
@@ -271,12 +271,12 @@ exports.getSingleProperty = async (req, res) => {
   // return res.json({})
 }
 
-exports.getAllProperty = async (req, res) => {
+exports.getAllProject = async (req, res) => {
   // console.log("My Query String: ", req.query)
 
   try {
 
-    const properties = Property.aggregate()
+    const projects = Project.aggregate()
 
       .lookup({
         from: 'files',
@@ -300,12 +300,12 @@ exports.getAllProperty = async (req, res) => {
       })
 
     if (req.query.status && req.query.status != 'all') {
-      properties.match({ status: req.query.status })
+      projects.match({ status: req.query.status })
     }
 
     if (req.query.q) {
-      // properties.match({title: req.query.q})
-      properties.match({
+      // projects.match({title: req.query.q})
+      projects.match({
         $or: [
           { title: { $regex: req.query.q, $options: 'i' } },
           { pid: { $regex: req.query.q, $options: 'i' } }
@@ -314,7 +314,7 @@ exports.getAllProperty = async (req, res) => {
     }
 
 
-    properties.exec().then(result => {
+    projects.exec().then(result => {
       // result has your... results
       console.log("All Properties: ", result)
 
@@ -328,11 +328,11 @@ exports.getAllProperty = async (req, res) => {
   }
 }
 
-exports.getPendingProperty = async (req, res) => {
+exports.getPendingProject = async (req, res) => {
 
   try {
 
-    const properties = Property.aggregate()
+    const projects = Project.aggregate()
 
       .lookup({
         from: 'files',
@@ -355,11 +355,11 @@ exports.getPendingProperty = async (req, res) => {
         as: 'developer'
       })
 
-      properties.match({ status: 'pending' })
+      projects.match({ status: 'pending' })
 
     if (req.query.q) {
-      // properties.match({title: req.query.q})
-      properties.match({
+      // projects.match({title: req.query.q})
+      projects.match({
         $or: [
           { title: { $regex: req.query.q, $options: 'i' } },
           { pid: { $regex: req.query.q, $options: 'i' } }
@@ -368,7 +368,7 @@ exports.getPendingProperty = async (req, res) => {
     }
 
 
-    properties.exec().then(result => {
+    projects.exec().then(result => {
       // result has your... results
       console.log("My Properties: ", result)
 
