@@ -6,25 +6,19 @@ const FloorSchema = mongoose.Schema({
        type: String
     },
 
+    floorImage:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'File'
+    },
+
+    coordinates: [],
+
     properties: [
         {   
-            property: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref:'Property',
-            },
-            
-            status: {
-                type: String,
-                enum:['available','unavailable'],
-                default:'available'
-            },
-
-            coords: String,
-
-            propertyNo: String
+            type: mongoose.Schema.Types.ObjectId,
+            ref:'Property'
         }
     ],
-
 
     developer: {
         type: mongoose.Schema.Types.ObjectId,

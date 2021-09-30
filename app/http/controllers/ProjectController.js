@@ -223,7 +223,7 @@ exports.getMyProjects = async (req, res) => {
   }
 }
 
-exports.getSingleProject = async (req, res) => {
+exports.getProjectById = async (req, res) => {
 
   const id = req.params.id
 
@@ -237,24 +237,24 @@ exports.getSingleProject = async (req, res) => {
 
       .lookup({
         from: 'files',
-        localField: 'image',
+        localField: 'buildingImage',
         foreignField: '_id',
-        as: 'image'
+        as: 'buildingImage'
       })
 
       .lookup({
-        from: 'files',
-        localField: 'floorplanImage',
+        from: 'floors',
+        localField: 'floors',
         foreignField: '_id',
-        as: 'floorplanImage'
+        as: 'floors'
       })
 
-      .lookup({
-        from: 'files',
-        localField: 'images',
-        foreignField: '_id',
-        as: 'images'
-      })
+      // .lookup({
+      //   from: 'files',
+      //   localField: 'images',
+      //   foreignField: '_id',
+      //   as: 'images'
+      // })
     // .lookup({
     //   fr
     // })

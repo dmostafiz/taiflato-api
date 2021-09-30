@@ -46,6 +46,7 @@ router.get('/filter_search', PropertyController.filterSearch)
 router.post('/save_project', ProjectController.saveProject)
 router.post('/upload_project_image', UploadController.uploadProjectImage)
 router.get('/my_projects', ProjectController.getMyProjects)
+router.get('/get_project_by_id/:id', ProjectController.getProjectById)
 
 
 
