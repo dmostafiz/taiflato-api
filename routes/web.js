@@ -48,6 +48,9 @@ router.post('/upload_project_image', UploadController.uploadProjectImage)
 router.get('/my_projects', ProjectController.getMyProjects)
 router.get('/get_project_by_id/:id', ProjectController.getProjectById)
 
+//Floor
+router.post('/save_floor', ProjectController.saveFloor)
+router.post('/upload_floor_image', UploadController.uploadFloorImage)
 
 
 //Categories

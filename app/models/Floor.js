@@ -6,7 +6,7 @@ const FloorSchema = mongoose.Schema({
        type: String
     },
 
-    floorImage:{
+    image:{
         type: mongoose.Schema.Types.ObjectId,
         ref:'File'
     },
@@ -20,6 +20,11 @@ const FloorSchema = mongoose.Schema({
         }
     ],
 
+    project:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Project'
+    },
+
     developer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
@@ -31,4 +36,4 @@ FloorSchema.set('timestamps', true)
 
 // FloorSchema.plugin(random)
 
-module.exports = mongoose.model('Project', FloorSchema)
+module.exports = mongoose.model('Floor', FloorSchema)

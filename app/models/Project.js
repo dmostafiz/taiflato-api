@@ -56,6 +56,8 @@ const projectSchema = mongoose.Schema({
         ref:'File'
     },
 
+    imgDimensions:{},
+
     galleryImages: [
         {          
             type: mongoose.Schema.Types.ObjectId,

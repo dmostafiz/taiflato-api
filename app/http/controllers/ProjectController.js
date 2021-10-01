@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
 const User = require('../../models/User');
 const Project = require('../../models/Project');
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const Floor = require('../../models/Floor');
 
 
 exports.filterSearch = (req, res) => {
@@ -56,6 +57,7 @@ exports.saveProject = async (req, res) => {
     buildingStartTime,
     buildingReadyTime,
     description,
+    imgDimensions
   } = req.body
 
 
@@ -84,7 +86,7 @@ exports.saveProject = async (req, res) => {
       project.buildingReadyTime = buildingReadyTime
       project.description = description
       project.developer = user._id
-
+      project.imgDimensions = imgDimensions
       await project.save()
 
       // console.log(project)
@@ -378,4 +380,49 @@ exports.getPendingProject = async (req, res) => {
   } catch (error) {
     return res.json(error)
   }
+}
+
+exports.saveFloor = async (req, res) => {
+
+  const {pid, floorNo, coordinates} = req.body
+  // return res.json({pid, floorNo, coordinates})
+
+  console.log('Project ID: ', pid)
+  const token = req.headers.authorization
+
+  try {
+
+    const data = jwt.verify(token, process.env.APP_SECRET)
+    const user = await User.findOne({ _id: data.id })
+
+    console.log('User: ', user)
+
+    // return
+
+    if (user) {
+      
+      const floor = new Floor()
+      floor.floorNo = floorNo
+      floor.coordinates = coordinates
+      floor.project = pid
+      floor.developer = user._id
+      await floor.save()
+      
+      const project = await Project.findById(pid)
+      project.floors = [...project.floors,  floor._id]
+      await project.save()
+
+      res.json({status: 'success', message: 'Floor added successfully.', floorData: floor})
+
+    }
+    else{
+      res.json({status: 'error', message: 'You are not authorised to do this action'})
+    }  
+
+
+  } catch (error) {
+    return res.json({ status: 'error', msg: error })
+  }
+
+  // return res.json({})
 }
