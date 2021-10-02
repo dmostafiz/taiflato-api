@@ -47,11 +47,14 @@ router.post('/save_project', ProjectController.saveProject)
 router.post('/upload_project_image', UploadController.uploadProjectImage)
 router.get('/my_projects', ProjectController.getMyProjects)
 router.get('/get_project_by_id/:id', ProjectController.getProjectById)
+router.get('/get_floor_by_id/:id', ProjectController.getFloorById)
+
 
 //Floor
 router.post('/save_floor', ProjectController.saveFloor)
 router.post('/upload_floor_image', UploadController.uploadFloorImage)
 
+router.post('/save_apartment', ProjectController.saveApartment)
 
 //Categories
 router.post('/category/save', Authorization, CategoryController.store)

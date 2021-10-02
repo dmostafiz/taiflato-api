@@ -13,12 +13,7 @@ const FloorSchema = mongoose.Schema({
 
     coordinates: [],
 
-    properties: [
-        {   
-            type: mongoose.Schema.Types.ObjectId,
-            ref:'Property'
-        }
-    ],
+    properties: [],
 
     project:{
         type: mongoose.Schema.Types.ObjectId,

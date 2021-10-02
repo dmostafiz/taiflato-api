@@ -248,7 +248,8 @@ exports.getProjectById = async (req, res) => {
         from: 'floors',
         localField: 'floors',
         foreignField: '_id',
-        as: 'floors'
+        as: 'floors',
+
       })
 
       // .lookup({
@@ -261,9 +262,11 @@ exports.getProjectById = async (req, res) => {
     //   fr
     // })
     property.exec().then(result => {
+
       // console.log("My Project: ", result.length ? result[0] : {})
 
       return res.json(result.length ? result[0] : null)
+
     })
 
   } catch (error) {
@@ -382,6 +385,58 @@ exports.getPendingProject = async (req, res) => {
   }
 }
 
+
+exports.getFloorById = async (req, res) => {
+
+  const id = req.params.id
+
+  console.log('Floor ID: ', id)
+
+  try {
+
+    const property = Floor.aggregate()
+
+      .match({ _id: mongoose.Types.ObjectId(id) })
+
+      .lookup({
+        from: 'files',
+        localField: 'image',
+        foreignField: '_id',
+        as: 'image'
+      })
+
+      .lookup({
+        from: 'apartments',
+        localField: 'properties',
+        foreignField: '_id',
+        as: 'properties',
+
+      })
+
+      // .lookup({
+      //   from: 'files',
+      //   localField: 'images',
+      //   foreignField: '_id',
+      //   as: 'images'
+      // })
+    // .lookup({
+    //   fr
+    // })
+    property.exec().then(result => {
+
+      // console.log("My Project: ", result.length ? result[0] : {})
+
+      return res.json(result.length ? result[0] : null)
+
+    })
+
+  } catch (error) {
+    return res.json({ status: 'error', msg: error })
+  }
+
+  // return res.json({})
+}
+
 exports.saveFloor = async (req, res) => {
 
   const {pid, floorNo, coordinates} = req.body
@@ -413,6 +468,47 @@ exports.saveFloor = async (req, res) => {
       await project.save()
 
       res.json({status: 'success', message: 'Floor added successfully.', floorData: floor})
+
+    }
+    else{
+      res.json({status: 'error', message: 'You are not authorised to do this action'})
+    }  
+
+
+  } catch (error) {
+    return res.json({ status: 'error', msg: error })
+  }
+
+  // return res.json({})
+}
+
+exports.saveApartment = async (req, res) => {
+
+  const {fid, floorNo, coordinates} = req.body
+  // return res.json({fid, floorNo, coordinates})
+
+  console.log('Project ID: ', fid)
+  const token = req.headers.authorization
+
+  try {
+
+    const data = jwt.verify(token, process.env.APP_SECRET)
+    const user = await User.findOne({ _id: data.id })
+
+    console.log('User: ', user)
+
+    // return
+
+    if (user) {
+      
+      const floor = await Floor.findById(fid)
+
+      floor.properties = [...floor.properties, req.body]
+
+      await floor.save()
+      
+
+      res.json({status: 'success', message: 'Apartment added successfully.', floorData: floor})
 
     }
     else{
