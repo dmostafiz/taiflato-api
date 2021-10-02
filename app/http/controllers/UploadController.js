@@ -6,8 +6,8 @@ const jwt = require('jsonwebtoken');
 const User = require('../../models/User');
 const File = require('../../models/File');
 const Property = require('../../models/Property');
-const Project = require('../../models/Project');
 const Floor = require('../../models/Floor');
+const Building = require('../../models/Building');
 
 
 AWS.config.update({
@@ -131,7 +131,7 @@ exports.uploadPropertyImage = async (req, res) => {
 
 
 
-exports.uploadProjectImage = async (req, res) => {
+exports.uploadBuildingImage = async (req, res) => {
 
   const form = new multiparty.Form();
 
@@ -155,7 +155,7 @@ exports.uploadProjectImage = async (req, res) => {
         if(user){
             const path = files.file[0].path;
 
-            const folder = 'users/'+user.username+'/projects/'+fields.ref_id[0]
+            const folder = 'users/'+user.username+'/building/'+fields.ref_id[0]
   
             const buffer = fs.readFileSync(path);
   
@@ -189,24 +189,24 @@ exports.uploadProjectImage = async (req, res) => {
 
               if(file){
 
-                  const project = await Project.findOne({_id: fields.ref_id[0]})
+                  const building = await Building.findOne({_id: fields.ref_id[0]})
 
-                  if(project){
+                  if(building){
 
                       if(file.fileType == 'building_image'){
-                          project.buildingImage = file._id
+                          building.buildingImage = file._id
                       }else if(file.fileType == 'gallery_images'){
-                          const galleryImages = [...project.galleryImages, file._id]
-                          project.galleryImages = galleryImages
+                          const galleryImages = [...building.galleryImages, file._id]
+                          building.galleryImages = galleryImages
                       }
                       
                       // else if(file.fileType == 'floorplan_image'){
                       //     property.floorplanImage = file._id
                       // }
   
-                      project.save()
+                      building.save()
 
-                      return res.status(201).json({project})
+                      return res.status(201).json({building})
                   }
               }
 

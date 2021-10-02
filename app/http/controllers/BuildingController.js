@@ -1,13 +1,14 @@
 const jwt = require('jsonwebtoken');
 const User = require('../../models/User');
-const Project = require('../../models/Project');
+// const Project = require('../../models/Building');
 const mongoose = require('mongoose');
 const Floor = require('../../models/Floor');
+const Building = require('../../models/Building');
 
 
 exports.filterSearch = (req, res) => {
   try {
-    const projects = Project.aggregate()
+    const projects = Building.aggregate()
                       .lookup({
                         from: 'files',
                         localField: 'image',
@@ -38,7 +39,7 @@ exports.filterSearch = (req, res) => {
   }
 }
 
-exports.saveProject = async (req, res) => {
+exports.saveBuilding = async (req, res) => {
 
   // console.log("Project Data: ", req.body)
   const token = req.headers.authorization
@@ -72,26 +73,26 @@ exports.saveProject = async (req, res) => {
       const pid = date.substr(-6)
 
       // console.log('User: ',user)
-      const project = new Project()
-      project.pid = pid
-      project.title = title
-      project.country = country
-      project.district = district
-      project.city = city
-      project.zip = zip
-      project.address = address
-      project.latitude = latitude
-      project.longitude = longitude
-      project.buildingStartTime = buildingStartTime
-      project.buildingReadyTime = buildingReadyTime
-      project.description = description
-      project.developer = user._id
-      project.imgDimensions = imgDimensions
-      await project.save()
+      const building = new Building()
+      building.pid = pid
+      building.title = title
+      building.country = country
+      building.district = district
+      building.city = city
+      building.zip = zip
+      building.address = address
+      building.latitude = latitude
+      building.longitude = longitude
+      building.buildingStartTime = buildingStartTime
+      building.buildingReadyTime = buildingReadyTime
+      building.description = description
+      building.developer = user._id
+      building.imgDimensions = imgDimensions
+      await building.save()
 
-      // console.log(project)
+      // console.log(building)
 
-      res.json(project)
+      res.json(building)
     }
 
   } catch (error) {
@@ -100,7 +101,7 @@ exports.saveProject = async (req, res) => {
 
 }
 
-exports.actionProject = async (req, res) => {
+exports.actionBuilding = async (req, res) => {
 
   const token = req.headers.authorization
 
@@ -117,15 +118,15 @@ exports.actionProject = async (req, res) => {
 
       if(action_type == 'approve' && user.user_type == 'admin'){
 
-        const property = await Project.findOne({_id: id})
+        const building = await Building.findOne({_id: id})
 
-        if(property){
+        if(building){
 
-          property.status = 'published'
+          building.status = 'published'
 
-          await property.save()
+          await building.save()
 
-          return res.json({status:'success', property})
+          return res.json({status:'success', building})
         }
         else{
 
@@ -155,7 +156,7 @@ exports.actionProject = async (req, res) => {
   }
 }
 
-exports.getMyProjects = async (req, res) => {
+exports.getMyBuildings = async (req, res) => {
 
   console.log("My Query String: ", req.query)
 
@@ -173,7 +174,7 @@ exports.getMyProjects = async (req, res) => {
 
     if (user) {
 
-      const projects = Project.aggregate()
+      const buildings = Building.aggregate()
 
         .match({ developer: user._id })
 
@@ -197,12 +198,12 @@ exports.getMyProjects = async (req, res) => {
 
 
       if (req.query.status && req.query.status != 'all') {
-        projects.match({ status: req.query.status })
+        buildings.match({ status: req.query.status })
       }
 
       if (req.query.q) {
-        // projects.match({title: req.query.q})
-        projects.match({
+        // buildings.match({title: req.query.q})
+        buildings.match({
           $or: [
             { title: { $regex: req.query.q, $options: 'i' } },
             { pid: { $regex: req.query.q, $options: 'i' } }
@@ -211,7 +212,7 @@ exports.getMyProjects = async (req, res) => {
       }
 
 
-      projects.exec().then(result => {
+      buildings.exec().then(result => {
         // result has your... results
         console.log("My Properties: ", result)
 
@@ -225,7 +226,7 @@ exports.getMyProjects = async (req, res) => {
   }
 }
 
-exports.getProjectById = async (req, res) => {
+exports.getBuildingById = async (req, res) => {
 
   const id = req.params.id
 
@@ -233,7 +234,7 @@ exports.getProjectById = async (req, res) => {
 
   try {
 
-    const property = Project.aggregate()
+    const building = Building.aggregate()
 
       .match({ _id: mongoose.Types.ObjectId(id) })
 
@@ -249,7 +250,6 @@ exports.getProjectById = async (req, res) => {
         localField: 'floors',
         foreignField: '_id',
         as: 'floors',
-
       })
 
       // .lookup({
@@ -261,9 +261,9 @@ exports.getProjectById = async (req, res) => {
     // .lookup({
     //   fr
     // })
-    property.exec().then(result => {
+    building.exec().then(result => {
 
-      // console.log("My Project: ", result.length ? result[0] : {})
+      console.log("My Building: ", result.length ? result[0] : {})
 
       return res.json(result.length ? result[0] : null)
 
@@ -276,12 +276,12 @@ exports.getProjectById = async (req, res) => {
   // return res.json({})
 }
 
-exports.getAllProject = async (req, res) => {
+exports.getAllBuilding = async (req, res) => {
   // console.log("My Query String: ", req.query)
 
   try {
 
-    const projects = Project.aggregate()
+    const buildings = Building.aggregate()
 
       .lookup({
         from: 'files',
@@ -305,12 +305,12 @@ exports.getAllProject = async (req, res) => {
       })
 
     if (req.query.status && req.query.status != 'all') {
-      projects.match({ status: req.query.status })
+      buildings.match({ status: req.query.status })
     }
 
     if (req.query.q) {
-      // projects.match({title: req.query.q})
-      projects.match({
+      // buildings.match({title: req.query.q})
+      buildings.match({
         $or: [
           { title: { $regex: req.query.q, $options: 'i' } },
           { pid: { $regex: req.query.q, $options: 'i' } }
@@ -319,7 +319,7 @@ exports.getAllProject = async (req, res) => {
     }
 
 
-    projects.exec().then(result => {
+    buildings.exec().then(result => {
       // result has your... results
       console.log("All Properties: ", result)
 
@@ -333,11 +333,11 @@ exports.getAllProject = async (req, res) => {
   }
 }
 
-exports.getPendingProject = async (req, res) => {
+exports.getPendingBuildings = async (req, res) => {
 
   try {
 
-    const projects = Project.aggregate()
+    const buildings = Building.aggregate()
 
       .lookup({
         from: 'files',
@@ -360,11 +360,11 @@ exports.getPendingProject = async (req, res) => {
         as: 'developer'
       })
 
-      projects.match({ status: 'pending' })
+      buildings.match({ status: 'pending' })
 
     if (req.query.q) {
-      // projects.match({title: req.query.q})
-      projects.match({
+      // buildings.match({title: req.query.q})
+      buildings.match({
         $or: [
           { title: { $regex: req.query.q, $options: 'i' } },
           { pid: { $regex: req.query.q, $options: 'i' } }
@@ -373,7 +373,7 @@ exports.getPendingProject = async (req, res) => {
     }
 
 
-    projects.exec().then(result => {
+    buildings.exec().then(result => {
       // result has your... results
       console.log("My Properties: ", result)
 
@@ -394,7 +394,7 @@ exports.getFloorById = async (req, res) => {
 
   try {
 
-    const property = Floor.aggregate()
+    const floor = Floor.aggregate()
 
       .match({ _id: mongoose.Types.ObjectId(id) })
 
@@ -406,11 +406,10 @@ exports.getFloorById = async (req, res) => {
       })
 
       .lookup({
-        from: 'apartments',
-        localField: 'properties',
+        from: 'buildings',
+        localField: 'building',
         foreignField: '_id',
-        as: 'properties',
-
+        as: 'building',
       })
 
       // .lookup({
@@ -422,9 +421,9 @@ exports.getFloorById = async (req, res) => {
     // .lookup({
     //   fr
     // })
-    property.exec().then(result => {
+    floor.exec().then(result => {
 
-      // console.log("My Project: ", result.length ? result[0] : {})
+      console.log("My Floor: ", result.length ? result[0] : {})
 
       return res.json(result.length ? result[0] : null)
 
@@ -459,13 +458,13 @@ exports.saveFloor = async (req, res) => {
       const floor = new Floor()
       floor.floorNo = floorNo
       floor.coordinates = coordinates
-      floor.project = pid
+      floor.building = pid
       floor.developer = user._id
       await floor.save()
       
-      const project = await Project.findById(pid)
-      project.floors = [...project.floors,  floor._id]
-      await project.save()
+      const building = await Building.findById(pid)
+      building.floors = [...building.floors,  floor._id]
+      await building.save()
 
       res.json({status: 'success', message: 'Floor added successfully.', floorData: floor})
 
@@ -503,10 +502,14 @@ exports.saveApartment = async (req, res) => {
       
       const floor = await Floor.findById(fid)
 
+      
       floor.properties = [...floor.properties, req.body]
-
+      
       await floor.save()
       
+      console.log('Floor Added: ', floor)
+
+      // return
 
       res.json({status: 'success', message: 'Apartment added successfully.', floorData: floor})
 

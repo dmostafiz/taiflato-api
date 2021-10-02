@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const projectSchema = mongoose.Schema({
+const BuildingSchema = mongoose.Schema({
 
     pid:{
        type: String
@@ -124,8 +124,8 @@ const projectSchema = mongoose.Schema({
 
 })
 
-projectSchema.set('timestamps', true)
+BuildingSchema.set('timestamps', true)
 
-// projectSchema.plugin(random)
+// BuildingSchema.plugin(random)
 
-module.exports = mongoose.model('Project', projectSchema)
+module.exports = mongoose.model('Building', BuildingSchema)

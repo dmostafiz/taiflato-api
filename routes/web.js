@@ -12,7 +12,7 @@ const CategoryController = require('../app/http/controllers/CategoryController')
 const PostController = require('../app/http/controllers/PostController')
 const SliderController = require('../app/http/controllers/SliderController')
 
-const ProjectController = require('../app/http/controllers/ProjectController')
+const BuildingController = require('../app/http/controllers/BuildingController')
 
 // const upload = require('../helpers/cloudinary')
 
@@ -42,19 +42,19 @@ router.get('/all_properties', PropertyController.getAllProperty)
 
 router.get('/filter_search', PropertyController.filterSearch)
 
-//project
-router.post('/save_project', ProjectController.saveProject)
-router.post('/upload_project_image', UploadController.uploadProjectImage)
-router.get('/my_projects', ProjectController.getMyProjects)
-router.get('/get_project_by_id/:id', ProjectController.getProjectById)
-router.get('/get_floor_by_id/:id', ProjectController.getFloorById)
+//Building
+router.post('/save_building', BuildingController.saveBuilding)
+router.post('/upload_building_image', UploadController.uploadBuildingImage)
+router.get('/my_building_plans', BuildingController.getMyBuildings)
+router.get('/get_building_by_id/:id', BuildingController.getBuildingById)
 
 
 //Floor
-router.post('/save_floor', ProjectController.saveFloor)
+router.get('/get_floor_by_id/:id', BuildingController.getFloorById)
+router.post('/save_floor', BuildingController.saveFloor)
 router.post('/upload_floor_image', UploadController.uploadFloorImage)
 
-router.post('/save_apartment', ProjectController.saveApartment)
+router.post('/save_apartment', BuildingController.saveApartment)
 
 //Categories
 router.post('/category/save', Authorization, CategoryController.store)
