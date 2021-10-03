@@ -39,7 +39,7 @@ exports.filterSearch = (req, res) => {
   }
 }
 
-exports.saveBuilding = async (req, res) => {
+exports.saveBuildingPlan = async (req, res) => {
 
   // console.log("Project Data: ", req.body)
   const token = req.headers.authorization
@@ -101,7 +101,7 @@ exports.saveBuilding = async (req, res) => {
 
 }
 
-exports.actionBuilding = async (req, res) => {
+exports.actionBuildingPlans = async (req, res) => {
 
   const token = req.headers.authorization
 
@@ -156,7 +156,7 @@ exports.actionBuilding = async (req, res) => {
   }
 }
 
-exports.getMyBuildings = async (req, res) => {
+exports.getMyBuildingsPlans = async (req, res) => {
 
   console.log("My Query String: ", req.query)
 
@@ -226,7 +226,7 @@ exports.getMyBuildings = async (req, res) => {
   }
 }
 
-exports.getBuildingById = async (req, res) => {
+exports.getBuildingPlansById = async (req, res) => {
 
   const id = req.params.id
 
@@ -243,6 +243,13 @@ exports.getBuildingById = async (req, res) => {
         localField: 'buildingImage',
         foreignField: '_id',
         as: 'buildingImage'
+      })
+
+      .lookup({
+        from: 'files',
+        localField: 'galleryImages',
+        foreignField: '_id',
+        as: 'galleryImages'
       })
 
       .lookup({
@@ -263,7 +270,7 @@ exports.getBuildingById = async (req, res) => {
     // })
     building.exec().then(result => {
 
-      console.log("My Building: ", result.length ? result[0] : {})
+      // console.log("My Building: ", result.length ? result[0] : {})
 
       return res.json(result.length ? result[0] : null)
 
@@ -276,33 +283,33 @@ exports.getBuildingById = async (req, res) => {
   // return res.json({})
 }
 
-exports.getAllBuilding = async (req, res) => {
+exports.getAllBuildingPlans = async (req, res) => {
   // console.log("My Query String: ", req.query)
 
   try {
 
     const buildings = Building.aggregate()
 
-      .lookup({
-        from: 'files',
-        localField: 'image',
-        foreignField: '_id',
-        as: 'image'
-      })
+    .lookup({
+      from: 'files',
+      localField: 'buildingImage',
+      foreignField: '_id',
+      as: 'buildingImage'
+    })
 
-      .lookup({
-        from: 'files',
-        localField: 'images',
-        foreignField: '_id',
-        as: 'images'
-      })
+    .lookup({
+      from: 'files',
+      localField: 'galleryImages',
+      foreignField: '_id',
+      as: 'galleryImages'
+    })
 
-      .lookup({
-        from: 'users',
-        localField: 'developer',
-        foreignField: '_id',
-        as: 'developer'
-      })
+    .lookup({
+      from: 'users',
+      localField: 'developer',
+      foreignField: '_id',
+      as: 'developer'
+    })
 
     if (req.query.status && req.query.status != 'all') {
       buildings.match({ status: req.query.status })
@@ -333,7 +340,7 @@ exports.getAllBuilding = async (req, res) => {
   }
 }
 
-exports.getPendingBuildings = async (req, res) => {
+exports.getPendingBuildingPlans = async (req, res) => {
 
   try {
 
@@ -341,16 +348,16 @@ exports.getPendingBuildings = async (req, res) => {
 
       .lookup({
         from: 'files',
-        localField: 'image',
+        localField: 'buildingImage',
         foreignField: '_id',
-        as: 'image'
+        as: 'buildingImage'
       })
 
       .lookup({
         from: 'files',
-        localField: 'images',
+        localField: 'galleryImages',
         foreignField: '_id',
-        as: 'images'
+        as: 'galleryImages'
       })
 
       .lookup({
@@ -385,12 +392,11 @@ exports.getPendingBuildings = async (req, res) => {
   }
 }
 
-
 exports.getFloorById = async (req, res) => {
 
   const id = req.params.id
 
-  console.log('Floor ID: ', id)
+  console.log('Floor ID: ', req.params.id)
 
   try {
 

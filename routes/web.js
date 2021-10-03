@@ -35,19 +35,18 @@ router.post('/action_property', PropertyController.actionProperty)
 
 router.get('/my_properties', PropertyController.getMyProperty)
 router.get('/get_single_property/:id', PropertyController.getSingleProperty)
-
 router.get('/pending_properties', PropertyController.getPendingProperty)
-
 router.get('/all_properties', PropertyController.getAllProperty)
-
 router.get('/filter_search', PropertyController.filterSearch)
 
 //Building
-router.post('/save_building', BuildingController.saveBuilding)
+router.post('/save_building', BuildingController.saveBuildingPlan)
 router.post('/upload_building_image', UploadController.uploadBuildingImage)
-router.get('/my_building_plans', BuildingController.getMyBuildings)
-router.get('/get_building_by_id/:id', BuildingController.getBuildingById)
+router.get('/my_building_plans', BuildingController.getMyBuildingsPlans)
+router.get('/all_building_plans', BuildingController.getAllBuildingPlans)
+router.get('/get_building_by_id/:id', BuildingController.getBuildingPlansById)
 
+router.get('/pending_building_plans', BuildingController.getPendingBuildingPlans)
 
 //Floor
 router.get('/get_floor_by_id/:id', BuildingController.getFloorById)
