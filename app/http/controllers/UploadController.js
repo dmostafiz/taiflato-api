@@ -129,8 +129,6 @@ exports.uploadPropertyImage = async (req, res) => {
 }
 
 
-
-
 exports.uploadBuildingImage = async (req, res) => {
 
   const form = new multiparty.Form();
@@ -330,5 +328,94 @@ exports.uploadFloorImage = async (req, res) => {
    })
 
 
+
+}
+
+
+exports.uploadProfileImage = async (req, res) => {
+  const form = new multiparty.Form();
+
+  form.parse(req, async (error, fields, files) => {
+
+      if (error) {
+        console.log('Form Error Ocurred')  
+        return res.json({status: 'error', msg:'Form Error Ocurred'})
+
+      }
+
+      try {
+
+        // const token = fields.tken
+
+        const token = fields.token[0]
+
+        console.log('Upload Token: ', token)
+
+        const data = jwt.verify(token, process.env.APP_SECRET)
+        const user = await User.findOne({_id: data.id})
+
+        console.log('Upload User: ', user)
+
+        if(user){
+            const path = files.file[0].path;
+
+            const folder = 'users/profile/'+user.username
+  
+            const buffer = fs.readFileSync(path);
+  
+            const type = await fileType.fromBuffer(buffer);
+
+            console.log('File Type: ', type)
+  
+            const fileName = `${folder}/${Date.now().toString()}`;
+  
+            const data = await uploadFile(buffer, fileName, type);
+  
+          //   console.log("uploaded file from upload controller: ", data)
+
+            if(data.Location ){
+
+              console.log("file location: ", data.Location)
+
+              const file = new File()
+              file.bucket = data.Bucket
+              file.eTag = data.ETag 
+              file.key = data.Key
+              file.location = data.Location
+              file.versionId = data.VersionId
+              file.mime = type.mime
+              file.fileExt = type.ext
+              file.fileType = fields.file_type[0]
+              file.folder=folder
+              file.user = user._id
+
+              await file.save() 
+
+              if(file){
+
+                      user.avatar = file.location  
+                      await user.save()
+                      return res.status(201).json({status: 'success', data:user})
+                  }
+              }
+
+              // console.log("file from upload controller: ", file)
+
+              // return res.status(201).json({file})
+
+            }
+      
+        }
+
+        
+      
+       catch (err) {
+
+        console.log('Server Error: ', err)
+        return res.json({status:'error', msg: err.message});
+
+      }
+      
+   })
 
 }

@@ -49,6 +49,8 @@ const userSchema = mongoose.Schema({
         require:true  
     },
 
+    profile:{},
+
     password:{
         type: String,
         require: true

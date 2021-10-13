@@ -14,6 +14,13 @@ const SliderController = require('../app/http/controllers/SliderController')
 
 const BuildingController = require('../app/http/controllers/BuildingController')
 
+const MessangerController = require('../app/http/controllers/MessangerController')
+
+const HomeController = require('../app/http/controllers/HomeController')
+const UserController = require('../app/http/controllers/UserController')
+const BuyingProcessController = require('../app/http/controllers/BuyingProcessController')
+
+
 // const upload = require('../helpers/cloudinary')
 
 
@@ -24,6 +31,8 @@ router.post('/authorize', AuthController.authorize)
 router.post('/secure_user', AuthController.secure_user)
 router.post('/switch_dashboard', AuthController.switch_dashboard)
 
+router.get('/get_user_by_id/:id', UserController.getUserById)
+router.post('/upload_profile_image', UploadController.uploadProfileImage)
 
 // const multer = require('multer');
 // const upload = multer();
@@ -54,6 +63,33 @@ router.post('/save_floor', BuildingController.saveFloor)
 router.post('/upload_floor_image', UploadController.uploadFloorImage)
 
 router.post('/save_apartment', BuildingController.saveApartment)
+
+
+//Messanger
+router.get('/get_my_threads', MessangerController.getMyThreads)
+
+
+
+//Buyers
+router.get('/my_process_properties', BuyingProcessController.getMyProcess)
+
+
+
+
+
+//Home
+router.get('/get_featured_properties', HomeController.getFeaturedProperties)
+router.get('/get_single_property_home/:id', HomeController.getSinglePropertyForHome)
+
+
+
+
+
+
+
+
+
+
 
 //Categories
 router.post('/category/save', Authorization, CategoryController.store)
