@@ -32,7 +32,7 @@ const propertySchema = mongoose.Schema({
     },
 
     floor: {
-        type: Number,
+        type: String,
     },
 
     garageSize: {

@@ -53,6 +53,7 @@ exports.saveProperty = async (req, res) => {
     bedroomNumber,
     bathroomNumber,
     garageSize,
+    floor,
     additionalDetails,
     features,
     country,
@@ -92,6 +93,7 @@ exports.saveProperty = async (req, res) => {
       property.bedroom = bedroomNumber
       property.bathroom = bathroomNumber
       property.garageSize = garageSize
+      property.floor = floor
       property.additionalDetails = additionalDetails
       property.features = features
       property.country = country
