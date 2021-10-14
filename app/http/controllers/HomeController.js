@@ -13,6 +13,7 @@ exports.getFeaturedProperties = async (req, res) => {
         //         }
         //     }
         // ])
+        .sort({createdAt:-1})
         .limit(4)
         .lookup({
             from: 'files',
