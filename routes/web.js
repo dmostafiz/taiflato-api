@@ -19,6 +19,7 @@ const MessangerController = require('../app/http/controllers/MessangerController
 const HomeController = require('../app/http/controllers/HomeController')
 const UserController = require('../app/http/controllers/UserController')
 const BuyingProcessController = require('../app/http/controllers/BuyingProcessController')
+const BuyerController = require('../app/http/controllers/BuyerController')
 
 
 // const upload = require('../helpers/cloudinary')
@@ -71,8 +72,8 @@ router.get('/get_my_threads', MessangerController.getMyThreads)
 
 
 //Buyers
+router.get('/buyer_selected_properties', BuyerController.getMySelectedProperties)
 router.get('/my_process_properties', BuyingProcessController.getMyProcess)
-
 
 
 
