@@ -55,6 +55,117 @@ exports.getFeaturedProperties = async (req, res) => {
     }
 }
 
+
+exports.getHeroSliderProperties = async (req, res) => {
+     
+    try {
+
+        const properties = Property.aggregate()
+        // .pipeline([
+        //     {
+        //         developer: {
+        //             password: -1
+        //         }
+        //     }
+        // ])
+        // .sort({createdAt:-1})
+        .limit(4)
+        .lookup({
+            from: 'files',
+            localField: 'image',
+            foreignField: '_id',
+            as: 'image'
+        })
+
+        .lookup({
+            from: 'files',
+            localField: 'images',
+            foreignField: '_id',
+            as: 'images'
+        })
+
+        .lookup({
+            from: 'users',
+            localField: 'developer',
+            foreignField: '_id',
+            // $unset: ["password"],
+            as: 'developer'
+        })
+
+        .project({
+            'developer.password': 0,
+            'developer.email': 0,
+        })
+        // .unset('developer.password')
+
+        properties.exec().then(result => {
+            console.log('Features properties: ', result)
+            return res.send(result)
+        })
+  
+
+    } catch (error) {
+        console.warn('Error: ', error)
+        res.send({status: 'error', msg: error})
+    }
+}
+
+exports.getBestDealProperties = async (req, res) => {
+     
+    try {
+
+        const properties = Property.aggregate()
+        // .pipeline([
+        //     {
+        //         developer: {
+        //             password: -1
+        //         }
+        //     }
+        // ])
+        // .sort({createdAt:-1})
+        .limit(4)
+        // .sample({ size: 2 })
+
+        .lookup({
+            from: 'files',
+            localField: 'image',
+            foreignField: '_id',
+            as: 'image'
+        })
+
+        .lookup({
+            from: 'files',
+            localField: 'images',
+            foreignField: '_id',
+            as: 'images'
+        })
+
+        .lookup({
+            from: 'users',
+            localField: 'developer',
+            foreignField: '_id',
+            // $unset: ["password"],
+            as: 'developer'
+        })
+
+        .project({
+            'developer.password': 0,
+            'developer.email': 0,
+        })
+        // .unset('developer.password')
+
+        properties.exec().then(result => {
+            console.log('Features properties: ', result)
+            return res.send(result)
+        })
+  
+
+    } catch (error) {
+        console.warn('Error: ', error)
+        res.send({status: 'error', msg: error})
+    }
+}
+
 exports.getSinglePropertyForHome = async (req, res) => {
 
     const id = req.params.id

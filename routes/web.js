@@ -80,6 +80,9 @@ router.get('/my_process_properties', BuyingProcessController.getMyProcess)
 
 //Home
 router.get('/get_featured_properties', HomeController.getFeaturedProperties)
+router.get('/get_hero_slider_properties', HomeController.getHeroSliderProperties)
+router.get('/get_best_deal_properties', HomeController.getBestDealProperties)
+
 router.get('/get_single_property_home/:id', HomeController.getSinglePropertyForHome)
 
 
