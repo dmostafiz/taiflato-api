@@ -282,6 +282,13 @@ exports.getSingleProperty = async (req, res) => {
         foreignField: '_id',
         as: 'images'
       })
+
+      .lookup({
+        from: 'users',
+        localField: 'developer',
+        foreignField: '_id',
+        as: 'developer'
+      })
     // .lookup({
     //   fr
     // })
