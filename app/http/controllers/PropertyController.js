@@ -95,9 +95,21 @@ exports.filterSearch = (req, res) => {
               })
             }
 
-            properties.exec().then( result => {
-                // console.log('Searched Properties: ', result)
-                res.send({status:'success', result})
+            // properties.exec().then( result => {
+            //     // console.log('Searched Properties: ', result)
+            //     res.send({status:'success', result})
+            // })
+
+            const options = {
+              page: req.query.page ? req.query.page : 1,
+              limit: 6,
+            };
+
+            Property.aggregatePaginate(properties, options)
+            .then(function (result) {
+              console.log("Pagination result: ", result);
+              res.send({status:'success', result})
+
             })
     
   } catch (error) {
