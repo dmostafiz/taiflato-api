@@ -31,6 +31,11 @@ exports.filterSearch = (req, res) => {
                         as: 'developer'
                       })
 
+                      .project({
+                        'developer.password': 0,
+                        'developer.email': 0,
+                      })
+
             if (req.query.surface_from && req.query.surface_to) {
               properties.match({ propertySize: {
                   $gte: parseInt(req.query.surface_from),
@@ -103,7 +108,7 @@ exports.filterSearch = (req, res) => {
 exports.saveProperty = async (req, res) => {
 
 
-  // console.log("Property Data: ", req.body)
+  console.log("Property Data: ", req.body)
 
   const token = req.headers.authorization
   console.log('Server Token:', token)
@@ -152,7 +157,6 @@ exports.saveProperty = async (req, res) => {
       property.price = propertyPrice
       property.bedroom = bedroomNumber
       property.bathroom = bathroomNumber
-      property.garageSize = garageSize
       property.floor = floor
       property.additionalDetails = additionalDetails
       property.features = features
@@ -163,9 +167,7 @@ exports.saveProperty = async (req, res) => {
       property.address = address
       property.latitude = latitude
       property.longitude = longitude
-      property.saleStatus = saleStatus
       property.readyTime = willReadyForSale
-      property.investPrice = investPrice
       property.description = description
       property.nearby = nearby
       property.virtualTourLink = virtualTour
@@ -179,7 +181,7 @@ exports.saveProperty = async (req, res) => {
     }
 
   } catch (error) {
-
+      res.json({status:'error', msg:error.message})
   }
 
 }
