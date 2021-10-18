@@ -5,6 +5,10 @@ const mongoose = require('mongoose')
 
 
 exports.filterSearch = (req, res) => {
+
+
+  console.log('Filter Queary: ', req.query)
+
   try {
     const properties = Property.aggregate()
                       .lookup({
@@ -27,10 +31,69 @@ exports.filterSearch = (req, res) => {
                         as: 'developer'
                       })
 
-    properties.exec().then( result => {
-        console.log('Searched Properties: ', result)
-        res.send({status:'success', result})
-    })
+            if (req.query.surface_from && req.query.surface_to) {
+              properties.match({ propertySize: {
+                  $gte: parseInt(req.query.surface_from),
+                  $lte: parseInt(req.query.surface_to)
+              } })
+            }
+
+            if (req.query.price_from && req.query.price_to) {
+              properties.match({ price: {
+                  $gte: parseInt(req.query.price_from),
+                  $lte: parseInt(req.query.price_to)
+              } })
+            }
+
+            if (req.query.delivery_from && req.query.delivery_to) {
+              properties.match({ readyTime: {
+                  $gte: parseInt(req.query.delivery_from),
+                  $lte: parseInt(req.query.delivery_to)
+              } })
+            }
+
+            if (req.query.city && req.query.city != 'Select city') {
+              properties.match({ city: req.query.city })
+            }
+
+            if (req.query.bedroom && req.query.bedroom != 'bedrooms') {
+              properties.match({ bedroom: req.query.bedroom })
+            }
+
+            if (req.query.bathroom && req.query.bathroom != 'bathrooms') {
+              properties.match({ bathroom: req.query.bathroom })
+            }
+
+            if (req.query.floor && req.query.floor != 'Select Floor') {
+              properties.match({ floor: req.query.floor })
+            }
+
+            if (req.query.category && req.query.category != 'category') {
+              properties.match({ propertyType: req.query.category })
+            }
+
+            if (req.query.keywords) {
+              // properties.match({title: req.query.q})
+              properties.match({
+                $or: [
+                  { pid: { $regex: req.query.keywords, $options: 'i' } },
+                  { title: { $regex: req.query.keywords, $options: 'i' } },
+                  { propertyType: { $regex: req.query.keywords, $options: 'i' } },
+                  { price: parseInt(req.query.keywords) },
+                  { country: { $regex: req.query.keywords, $options: 'i' } },
+                  { district: { $regex: req.query.keywords, $options: 'i' } },
+                  { city: { $regex: req.query.keywords, $options: 'i' } },
+                  { zip: { $regex: req.query.keywords, $options: 'i' } },
+                  { address: { $regex: req.query.keywords, $options: 'i' } },
+                  { description: { $regex: req.query.keywords, $options: 'i' } }
+                ]
+              })
+            }
+
+            properties.exec().then( result => {
+                // console.log('Searched Properties: ', result)
+                res.send({status:'success', result})
+            })
     
   } catch (error) {
     res.send({status:'error', messagle:error.msg})
@@ -52,7 +115,6 @@ exports.saveProperty = async (req, res) => {
     propertyPrice,
     bedroomNumber,
     bathroomNumber,
-    garageSize,
     floor,
     additionalDetails,
     features,
@@ -61,9 +123,7 @@ exports.saveProperty = async (req, res) => {
     city,
     zip,
     address,
-    saleStatus,
     willReadyForSale,
-    investPrice,
     latitude,
     longitude,
     description,

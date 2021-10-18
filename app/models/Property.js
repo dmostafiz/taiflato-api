@@ -24,19 +24,15 @@ const propertySchema = mongoose.Schema({
     },
 
     bedroom: {
-        type: Number,
+        type: String,
     },
 
     bathroom: {
-        type: Number,
+        type: String,
     },
 
     floor: {
         type: String,
-    },
-
-    garageSize: {
-        type: Number,
     },
 
     additionalDetails: [],
@@ -71,16 +67,8 @@ const propertySchema = mongoose.Schema({
         type: String
     },
 
-    saleStatus : {
-       type: String
-    },
-
     readyTime:{
         type: Number 
-    },
-
-    investPrice:{
-        type: Number
     },
 
     description: {
