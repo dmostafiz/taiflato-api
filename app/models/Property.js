@@ -25,15 +25,15 @@ const propertySchema = mongoose.Schema({
     },
 
     bedroom: {
-        type: String,
+        type: Number,
     },
 
     bathroom: {
-        type: String,
+        type: Number,
     },
 
     floor: {
-        type: String,
+        type: Number,
     },
 
     additionalDetails: [],

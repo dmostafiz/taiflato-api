@@ -7,7 +7,7 @@ const mongoose = require('mongoose')
 exports.filterSearch = (req, res) => {
 
 
-  console.log('Filter Queary: ', req.query)
+  // console.log('Filter Queary: ', req.query.district.split(','))
 
   try {
     const properties = Property.aggregate()
@@ -61,19 +61,19 @@ exports.filterSearch = (req, res) => {
               properties.match({ city: req.query.city })
             }
 
-            if (req.query.bedroom && req.query.bedroom != 'bedrooms') {
-              properties.match({ bedroom: req.query.bedroom })
+            if (req.query.bedroom && req.query.bedroom != 'Select bedrooms') {
+              properties.match({ bedroom: parseInt(req.query.bedroom) })
             }
 
-            if (req.query.bathroom && req.query.bathroom != 'bathrooms') {
-              properties.match({ bathroom: req.query.bathroom })
+            if (req.query.bathroom && req.query.bathroom != 'Select bathrooms') {
+              properties.match({ bathroom: parseInt(req.query.bathroom) })
             }
 
-            if (req.query.floor && req.query.floor != 'Select Floor') {
-              properties.match({ floor: req.query.floor })
+            if (req.query.floor && req.query.floor != 'Select floor') {
+              properties.match({ floor: parseInt(req.query.floor) })
             }
 
-            if (req.query.category && req.query.category != 'category') {
+            if (req.query.category && req.query.category != 'Select category') {
               properties.match({ propertyType: req.query.category })
             }
 
@@ -95,6 +95,14 @@ exports.filterSearch = (req, res) => {
               })
             }
 
+            if (req.query.district) {
+
+              properties.match({
+                district : { $in: req.query.district.split(',') }
+                  
+              })
+            }
+
             // properties.exec().then( result => {
             //     // console.log('Searched Properties: ', result)
             //     res.send({status:'success', result})
@@ -102,12 +110,12 @@ exports.filterSearch = (req, res) => {
 
             const options = {
               page: req.query.page ? req.query.page : 1,
-              limit: 6,
+              limit: 9,
             };
 
             Property.aggregatePaginate(properties, options)
             .then(function (result) {
-              console.log("Pagination result: ", result);
+              // console.log("Pagination result: ", result);
               res.send({status:'success', result})
 
             })
