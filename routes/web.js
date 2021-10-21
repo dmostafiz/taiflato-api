@@ -20,6 +20,7 @@ const HomeController = require('../app/http/controllers/HomeController')
 const UserController = require('../app/http/controllers/UserController')
 const BuyingProcessController = require('../app/http/controllers/BuyingProcessController')
 const BuyerController = require('../app/http/controllers/BuyerController')
+const PromotionController = require('../app/http/controllers/PromotionController')
 
 
 // const upload = require('../helpers/cloudinary')
@@ -64,6 +65,14 @@ router.post('/save_floor', BuildingController.saveFloor)
 router.post('/upload_floor_image', UploadController.uploadFloorImage)
 
 router.post('/save_apartment', BuildingController.saveApartment)
+
+
+//Promotions
+router.post('/save_promotion', PromotionController.savePromotion)
+router.get('/my_promotions', PromotionController.myPromotions)
+router.get('/get_single_promotion/:id', PromotionController.getSinglePromotion)
+
+router.get('/auctioned_properties', PromotionController.auctionedProperties)
 
 
 //Messanger

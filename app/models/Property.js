@@ -130,6 +130,12 @@ const propertySchema = mongoose.Schema({
         default: false
     },
 
+    isPromoted: {
+        type: Boolean,
+        default: false
+    },
+
+
     isTrending: {
         type: Boolean,
         default: false
