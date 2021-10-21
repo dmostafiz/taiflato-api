@@ -2,6 +2,10 @@ const mongoose = require('mongoose')
 
 const bidSchema = mongoose.Schema({
 
+    bid:{
+       type:String
+    },
+
     developer:{
        type: mongoose.Schema.Types.ObjectId,
        ref: 'User'
@@ -10,6 +14,10 @@ const bidSchema = mongoose.Schema({
     property:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Property'
+    },
+
+    propertyImage:{
+        type: String
     },
 
     action:{

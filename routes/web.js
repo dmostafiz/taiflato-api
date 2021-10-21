@@ -70,9 +70,13 @@ router.post('/save_apartment', BuildingController.saveApartment)
 //Promotions
 router.post('/save_promotion', PromotionController.savePromotion)
 router.get('/my_promotions', PromotionController.myPromotions)
+router.get('/all_promotions', PromotionController.allPromotions)
+
 router.get('/get_single_promotion/:id', PromotionController.getSinglePromotion)
 
 router.get('/auctioned_properties', PromotionController.auctionedProperties)
+
+router.post('/save_bid', PromotionController.saveBid)
 
 
 //Messanger
