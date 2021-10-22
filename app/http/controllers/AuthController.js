@@ -241,7 +241,7 @@ exports.get_social_user_login = async (req, res) => {
         res.status(201).json({isAuth:true, token, user:userData, msg: "Logged in successfully."})
         
     } catch (error) {
-        res.status(400).json({ isAuth:false, msg: "Something went wrong. Please try again later."})
+        res.status(400).json({ status:'error', isAuth:false, msg: "Something went wrong. Please try again later."})
     }
 
 }
