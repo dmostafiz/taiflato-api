@@ -32,6 +32,8 @@ router.post('/register_account', AuthController.register_account)
 router.post('/authorize', AuthController.authorize)
 router.post('/secure_user', AuthController.secure_user)
 router.post('/switch_dashboard', AuthController.switch_dashboard)
+router.post('/get_social_user_login', AuthController.get_social_user_login)
+
 
 router.get('/get_user_by_id/:id', UserController.getUserById)
 router.post('/upload_profile_image', UploadController.uploadProfileImage)

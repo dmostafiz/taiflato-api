@@ -210,3 +210,44 @@ exports.switch_dashboard = async (req, res) => {
     }
 
 }
+
+exports.get_social_user_login = async (req, res) => {
+    const {email} = req.body
+
+    try {
+        var user = null
+
+     
+        
+        user = await User.findOne({ email:email })
+        
+        // return console.log("DB user: ", user)
+
+        if(!user) return res.json({status:'error', msg: "We couldn't found any acccount linked with your social login providor."})
+
+        if(user.user_type == 'admin'){
+            user.dashboard = 'admin'
+            await user.save()
+        }
+
+        const token = jwt.sign({id: user.id}, process.env.APP_SECRET, {expiresIn:'1d'})
+        
+        const userData = {
+            _id:user._id, 
+            uid:user.uid,
+            userName:user.username, 
+            email:user.email, 
+            firstName: user.first_name, 
+            lastName: user.last_name,  
+            avatar: user.avatar, 
+            type: user.user_type,
+            dashboard: user.dashboard
+        }
+     
+        res.status(201).json({isAuth:true, token, user:userData, msg: "Logged in successfully."})
+        
+    } catch (error) {
+        res.status(400).json({ isAuth:false, msg: "Something went wrong. Please try again later."})
+    }
+
+}
