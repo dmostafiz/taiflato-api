@@ -212,13 +212,13 @@ exports.switch_dashboard = async (req, res) => {
 }
 
 exports.get_social_user_login = async (req, res) => {
-    
+
     const {email} = req.body
 
     try {
         var user = await User.findOne({ email:email })
     
-        if(!user) return res.json({status:'error', msg: "We couldn't found any acccount linked with your social login providor."})
+        if(!user) return res.json({status:'error', msg: "No user found."})
 
         if(user.user_type == 'admin'){
             user.dashboard = 'admin'
