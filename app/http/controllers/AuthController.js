@@ -215,14 +215,8 @@ exports.get_social_user_login = async (req, res) => {
     const {email} = req.body
 
     try {
-        var user = null
-
-     
-        
-        user = await User.findOne({ email:email })
-        
-        // return console.log("DB user: ", user)
-
+        var user = await User.findOne({ email:email })
+    
         if(!user) return res.json({status:'error', msg: "We couldn't found any acccount linked with your social login providor."})
 
         if(user.user_type == 'admin'){
