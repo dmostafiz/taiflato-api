@@ -218,7 +218,7 @@ exports.get_social_user_login = async (req, res) => {
     try {
         var user = await User.findOne({ email:email })
     
-        if(!user) return res.json({status:'error', msg: "No user found."})
+        if(!user) return res.json({status:'error', msg: "It seems you are not registered."})
 
         if(user.user_type == 'admin'){
             user.dashboard = 'admin'
