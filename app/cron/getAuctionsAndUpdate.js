@@ -1,9 +1,8 @@
-var cron = require('node-cron');
 const Auction = require('../models/Auction');
 
-function getAuctionsAndUpdate(){
+function getAuctionsAndUpdate(cron){
 
-    cron.schedule('* * * * *', async () => {
+    cron.schedule('* 0 0,2,4,6,8,10,12,14,16,18,20,22 * * *', async () => {
 
         async function getAuctions(){
             const auctions = await Auction.find({status: 'running'})

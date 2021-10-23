@@ -7,7 +7,8 @@ const expressValidator = require('express-validator')
 const cors = require('cors')
 const connectDB = require('./db/connect')
 const getAuctionsAndUpdate = require('./app/cron/getAuctionsAndUpdate');
-const Auction = require('./app/models/Auction');
+// const Auction = require('./app/models/Auction');
+const cron = require('node-cron');
 const socketBidding = require('./app/socket/socketBidding');
 
 const app = express()
@@ -27,7 +28,8 @@ const io = require("socket.io")(server, {
 // sequelize() 
 connectDB()
 
-// getAuctionsAndUpdate()
+getAuctionsAndUpdate(cron)
+
 io.on('connection', socket => {
     socketBidding(io, socket)
 })
