@@ -37,7 +37,26 @@ function socketBidding(io, socket){
                 )
     
             if (auction) {
-                io.emit('bidToAuction', auction)
+
+                  
+
+                io.emit('bidToAuction', {
+                    //private, group, users, public
+                    type: 'private',
+                    notifyTo:[auction.developer._id, '6144f95ca3c65c4fa061005f'],  
+                    data: auction
+                 })
+
+                 io.emit('notify', {
+                    //private, group, users, public
+                    type: 'private',
+                    notifyTo:[auction.developer._id, '6144f95ca3c65c4fa061005f'],  
+                    data: {
+                        msg: `A new bid placed on auction #${auction.aid}.`,
+                        link: '',
+                        button: '',
+                    }
+                 })
             }
     
         })
