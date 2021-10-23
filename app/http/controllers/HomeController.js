@@ -44,7 +44,7 @@ exports.getFeaturedProperties = async (req, res) => {
         // .unset('developer.password')
 
         properties.exec().then(result => {
-            console.log('Features properties: ', result)
+            // console.log('Features properties: ', result)
             return res.send(result)
         })
   
@@ -99,7 +99,7 @@ exports.getHeroSliderProperties = async (req, res) => {
         // .unset('developer.password')
 
         properties.exec().then(result => {
-            console.log('Features properties: ', result)
+            // console.log('Features properties: ', result)
             return res.send(result)
         })
   
@@ -155,7 +155,7 @@ exports.getBestDealProperties = async (req, res) => {
         // .unset('developer.password')
 
         properties.exec().then(result => {
-            console.log('Features properties: ', result)
+            // console.log('Features properties: ', result)
             return res.send(result)
         })
   
@@ -222,7 +222,7 @@ exports.getSinglePropertyForHome = async (req, res) => {
         
         property.exec().then(result => {
             // result.project('-image.bucket')
-            console.log('Single property: ', result)
+            // console.log('Single property: ', result)
             return res.send(result[0])
         })
   

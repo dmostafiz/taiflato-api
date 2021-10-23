@@ -320,7 +320,7 @@ exports.getMyProperty = async (req, res) => {
 
       properties.exec().then(result => {
         // result has your... results
-        console.log("My Properties: ", result)
+        // console.log("My Properties: ", result)
 
         res.json(result)
       });
@@ -336,7 +336,7 @@ exports.getSingleProperty = async (req, res) => {
 
   const id = req.params.id
 
-  console.log('Property ID: ', id)
+  // console.log('Property ID: ', id)
 
   try {
 
@@ -432,7 +432,7 @@ exports.getAllProperty = async (req, res) => {
 
     properties.exec().then(result => {
       // result has your... results
-      console.log("All Properties: ", result)
+      // console.log("All Properties: ", result)
 
       return res.json(result)
     });
@@ -486,7 +486,7 @@ exports.getPendingProperty = async (req, res) => {
 
     properties.exec().then(result => {
       // result has your... results
-      console.log("My Properties: ", result)
+      // console.log("My Properties: ", result)
 
       res.json(result)
     });

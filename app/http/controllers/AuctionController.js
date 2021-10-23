@@ -6,7 +6,7 @@ const Auction = require('../../models/Auction');
 const Property = require('../../models/Property');
 const Bid = require('../../models/Bid');
 
-exports.savePromotion = async (req, res) => {
+exports.saveAuction = async (req, res) => {
   const { propetyId, propertyImage, promotionPrice, expirationDate } = req.body
   // return res.json({fid, floorNo, coordinates})
 
@@ -62,7 +62,7 @@ exports.savePromotion = async (req, res) => {
 
 }
 
-exports.myPromotions = async (req, res) => {
+exports.myAuctions = async (req, res) => {
 
   console.log("My Query String: ", req.query)
 
@@ -107,7 +107,7 @@ exports.myPromotions = async (req, res) => {
 
       promotions.exec().then(result => {
         // result has your... results
-        console.log("My promotions: ", result)
+        // console.log("My promotions: ", result)
 
         res.json(result)
       });
@@ -119,51 +119,48 @@ exports.myPromotions = async (req, res) => {
   }
 }
 
-exports.allPromotions = async (req, res) => {
-
-
+exports.allAuctions = async (req, res) => {
 
   try {
 
- 
+    const promotions = Auction.aggregate()
 
-      const promotions = Auction.aggregate()
+      .sort({ "updatedAt": -1 })
 
-        .sort({ "updatedAt": -1 })
+      // .sample({ size: 3 })
 
-        // .sample({ size: 3 })
+      // .limit(20)
 
-        // .limit(20)
+      .lookup({
+        from: 'properties',
+        localField: 'property',
+        foreignField: '_id',
+        as: 'property'
+      })
 
-        .lookup({
-          from: 'properties',
-          localField: 'property',
-          foreignField: '_id',
-          as: 'property'
-        })
-
-        .lookup({
-          from: 'bids',
-          localField: 'bids',
-          foreignField: '_id',
-          as: 'bids'
-        })
+      .lookup({
+        from: 'bids',
+        localField: 'bids',
+        foreignField: '_id',
+        as: 'bids'
+      })
 
 
-      promotions.exec().then(result => {
-        // result has your... results
-        console.log("All promotions: ", result)
+    promotions.exec().then(result => {
+      // result has your... results
+      // console.log("All promotions: ", result)
 
-        res.json(result)
-      });
+      res.json(result)
+    });
 
-    
+
 
   } catch (error) {
     return res.json(error)
   }
 }
-exports.getSinglePromotion = async (req, res) => {
+
+exports.getSingleAuction = async (req, res) => {
   const id = req.params.id
 
   // console.log('Promotion ID: ', id)
@@ -171,7 +168,7 @@ exports.getSinglePromotion = async (req, res) => {
   try {
 
     const auction = await Auction.findOne({ _id: id })
-      
+
       .populate(
         [
           {
@@ -181,16 +178,16 @@ exports.getSinglePromotion = async (req, res) => {
           {
             path: 'developer',
             model: 'User',
-            select: { 'password': 0},
+            select: { 'password': 0 },
           },
           {
             path: 'bids',
             model: 'Bid',
             options: { sort: { 'price': -1 } },
-            populate:{
-                path: 'buyer',
-                model:'User',
-                select: { 'password': 0},
+            populate: {
+              path: 'buyer',
+              model: 'User',
+              select: { 'password': 0 },
             }
 
           },
@@ -199,7 +196,7 @@ exports.getSinglePromotion = async (req, res) => {
       )
 
 
-    console.log("My auction: ", auction)
+    // console.log("My auction: ", auction)
 
     return res.json(auction)
 
@@ -243,7 +240,7 @@ exports.auctionedProperties = async (req, res) => {
 
     promotions.exec().then(result => {
       // result has your... results
-      console.log("Auctioned properties: ", result)
+      // console.log("Auctioned properties: ", result)
 
       res.json(result)
     });
@@ -259,7 +256,7 @@ exports.saveBid = async (req, res) => {
   const { auctionId, propertyId, propertyImage, developerId, price, text } = req.body
   // return res.json({fid, floorNo, coordinates})
 
-  console.log('Promotion Data: ', req.body)
+  // console.log('Promotion Data: ', req.body)
 
   const token = req.headers.authorization
 
@@ -281,13 +278,13 @@ exports.saveBid = async (req, res) => {
       bid.bid = bidId
       bid.developer = developerId
       bid.buyer = user._id
-      bid.property = propertyId,
-        bid.propertyImage = propertyImage,
-        bid.auction = auctionId,
-        bid.price = price,
-        bid.text = text,
+      bid.property = propertyId
+      bid.propertyImage = propertyImage
+      bid.auction = auctionId
+      bid.price = price
+      bid.text = text
 
-        await bid.save()
+      await bid.save()
 
       const auction = await Auction.findById(auctionId)
       if (auction) {
@@ -295,9 +292,7 @@ exports.saveBid = async (req, res) => {
         await auction.save()
       }
 
-      console.log('Bid: ', bid)
-
-      // return
+      // console.log('Bid: ', bid)
 
       res.json({ status: 'success', msg: 'Bid placed successfully.', bid: bid })
 

@@ -20,7 +20,7 @@ const HomeController = require('../app/http/controllers/HomeController')
 const UserController = require('../app/http/controllers/UserController')
 const BuyingProcessController = require('../app/http/controllers/BuyingProcessController')
 const BuyerController = require('../app/http/controllers/BuyerController')
-const PromotionController = require('../app/http/controllers/PromotionController')
+const AuctionController = require('../app/http/controllers/AuctionController')
 
 
 // const upload = require('../helpers/cloudinary')
@@ -69,16 +69,16 @@ router.post('/upload_floor_image', UploadController.uploadFloorImage)
 router.post('/save_apartment', BuildingController.saveApartment)
 
 
-//Promotions
-router.post('/save_promotion', PromotionController.savePromotion)
-router.get('/my_promotions', PromotionController.myPromotions)
-router.get('/all_promotions', PromotionController.allPromotions)
+//Auctions
+router.post('/save_promotion', AuctionController.saveAuction)
+router.get('/my_promotions', AuctionController.myAuctions)
+router.get('/all_promotions', AuctionController.allAuctions)
 
-router.get('/get_single_promotion/:id', PromotionController.getSinglePromotion)
+router.get('/get_single_promotion/:id', AuctionController.getSingleAuction)
 
-router.get('/auctioned_properties', PromotionController.auctionedProperties)
+router.get('/auctioned_properties', AuctionController.auctionedProperties)
 
-router.post('/save_bid', PromotionController.saveBid)
+router.post('/save_bid', AuctionController.saveBid)
 
 
 //Messanger
