@@ -5,7 +5,7 @@ function socketBidding(io, socket){
 
         console.log('Socket Connection Established: ')
     
-        socket.on('bidToAuction', async ({ auctionId }) => {
+        socket.on('bidToAuction', async ({ auctionId, bidPrice }) => {
     
             console.log("My Bidding: ", auctionId)
     
@@ -38,6 +38,8 @@ function socketBidding(io, socket){
     
             if (auction) {
 
+                
+
                   
 
                 io.emit('bidToAuction', {
@@ -52,7 +54,7 @@ function socketBidding(io, socket){
                     type: 'private',
                     notifyTo:[auction.developer._id, '6144f95ca3c65c4fa061005f'],  
                     data: {
-                        msg: `A new bid placed on auction #${auction.aid}.`,
+                        msg: `New bid of $${bidPrice} on #${auction.aid}`,
                         link: '',
                         button: '',
                     }
