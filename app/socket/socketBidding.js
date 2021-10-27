@@ -1,6 +1,6 @@
 const Auction = require("../models/Auction")
 
-function socketBidding(io, socket){
+function socketBidding(io, socket, users){
   
 
         console.log('Socket Connection Established: ')
@@ -38,9 +38,6 @@ function socketBidding(io, socket){
     
             if (auction) {
 
-                
-
-                  
 
                 io.emit('bidToAuction', {
                     //private, group, users, public

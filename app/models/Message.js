@@ -2,6 +2,10 @@ const mongoose = require('mongoose')
 
 const MessageSchema = mongoose.Schema({
 
+    cid:{
+        type: Number
+    },
+
     thread: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Thread'
@@ -12,16 +16,50 @@ const MessageSchema = mongoose.Schema({
         ref: 'User'
     },
 
-    receiver: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    },
+    // receiver: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'User'
+    // },
 
     text:{
         type: String
     },
 
-    files:[{}],
+    property: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Property'
+    },
+
+    buyRequest: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'BuyRequest'
+    },
+
+    offerRequest: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'OfferRequest'
+    },
+
+    meetRequest: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'MeetRequest'
+    },
+
+
+    price:{
+        type: Number
+    },
+
+    files:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'File'
+    }],
+
+    type:{
+        type:String,
+        enum:['text', 'file', 'image', 'buy', 'offer', 'meet'],
+        default: 'text'
+    },
 
     status: {
         type: String,

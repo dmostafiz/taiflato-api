@@ -2,17 +2,29 @@ const mongoose = require('mongoose')
 
 const ThreadSchema = mongoose.Schema({
 
-    sender: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+    cid:{
+        type: Number
     },
-
-    receiver: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+    
+    members: {
+       type: Array
     },
+  
+    messages:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Message'  
+    }],
 
-    messages:[]
+    newMessages:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Message'  
+    }],
+
+    status: {
+        type: String,
+        enum:['seen','unseen'],
+        default:'unseen'
+    },
 
 })
 

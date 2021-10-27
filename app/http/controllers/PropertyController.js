@@ -10,6 +10,7 @@ exports.filterSearch = (req, res) => {
   // console.log('Filter Queary: ', req.query.district.split(','))
 
   try {
+    
     const properties = Property.aggregate()
                       .lookup({
                         from: 'files',
@@ -340,45 +341,73 @@ exports.getSingleProperty = async (req, res) => {
 
   try {
 
-    const property = Property.aggregate()
+    const property = await Property.findOne({ _id: id })
+    .populate(
+      [
+        {
+          path: 'image',
+          model: 'File',
+        },
+        {
+          path:'images',
+          model: 'File',
+        },
+        {
+          path:'floorplanImage',
+          model: 'File',
+        },
+        {
+          path: 'developer',
+          model: 'User',
+          select: { 'password': 0 },
+        },
 
-      .match({ _id: mongoose.Types.ObjectId(id) })
+      ]
+    )
+    // .aggregate()
 
-      .lookup({
-        from: 'files',
-        localField: 'image',
-        foreignField: '_id',
-        as: 'image'
-      })
+      // .match({ _id: mongoose.Types.ObjectId(id) })
 
-      .lookup({
-        from: 'files',
-        localField: 'floorplanImage',
-        foreignField: '_id',
-        as: 'floorplanImage'
-      })
+      // .lookup({
+      //   from: 'files',
+      //   localField: 'image',
+      //   foreignField: '_id',
+      //   as: 'image'
+      // })
 
-      .lookup({
-        from: 'files',
-        localField: 'images',
-        foreignField: '_id',
-        as: 'images'
-      })
+      // .lookup({
+      //   from: 'files',
+      //   localField: 'floorplanImage',
+      //   foreignField: '_id',
+      //   as: 'floorplanImage'
+      // })
 
-      .lookup({
-        from: 'users',
-        localField: 'developer',
-        foreignField: '_id',
-        as: 'developer'
-      })
+      // .lookup({
+      //   from: 'files',
+      //   localField: 'images',
+      //   foreignField: '_id',
+      //   as: 'images'
+      // })
+
+      // .lookup({
+      //   from: 'users',
+      //   localField: 'developer',
+      //   foreignField: '_id',
+      //   as: 'developer'
+      // })
+      
     // .lookup({
     //   fr
     // })
-    property.exec().then(result => {
-      // console.log("My Property: ", result.length ? result[0] : {})
 
-      return res.json(result.length ? result[0] : null)
-    })
+    // console.log("My Property: ", property)
+    return res.json(property)
+
+    // property.exec().then(result => {
+    //   // console.log("My Property: ", result.length ? result[0] : {})
+
+    //   return res.json(result.length ? result[0] : null)
+    // })
 
   } catch (error) {
     return res.json({ status: 'error', msg: error })

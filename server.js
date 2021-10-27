@@ -9,7 +9,8 @@ const connectDB = require('./db/connect')
 const getAuctionsAndUpdate = require('./app/cron/getAuctionsAndUpdate');
 // const Auction = require('./app/models/Auction');
 const cron = require('node-cron');
-const socketBidding = require('./app/socket/socketBidding');
+// const socketBidding = require('./app/socket/socketBidding');
+const appSocket = require('./app/socket/appSocket');
 
 const app = express()
 const server = require('http').createServer(app)
@@ -30,8 +31,55 @@ connectDB()
 
 getAuctionsAndUpdate(cron)
 
+let users = []
+
+const addUser = (userId, socketId) => {
+    !users.some(user=>user.userId == userId) && users.push({userId, socketId})
+}
+
+const removeUser = (socketId) => {
+   users = users.filter(user=> user.socketId != socketId)
+}
+
 io.on('connection', socket => {
-    socketBidding(io, socket)
+    //Take user ID and Socket ID
+
+    // When a user connect
+    socket.on('addUser', (userId) => {
+        addUser(userId, socket.id)
+        io.emit('getUsers', users)
+    })
+
+
+    const getUser = (userId) => {
+        return users.find(user=>user.userId == userId)
+     }
+ 
+     socket.on('messageSent', async ({ senderId, receiverId, message }) => {
+ 
+         const user = getUser(receiverId)
+        
+         io.to(user.socketId).emit('messageReceived', {senderId,message} )
+ 
+     })
+
+     socket.on('userTyping', async ({ senderId, receiverId }) => {
+ 
+        const user = getUser(receiverId)
+       
+        io.to(user.socketId).emit('userTypingReceived',  senderId )
+
+    })
+
+    // appSocket(io, socket, users)
+
+    // When a user disconnect
+    socket.on('disconnect', () => {
+        removeUser(socket.id)
+        io.emit('getUsers', users)
+    })
+
+
 })
 // io.on('connection', socket => {
 

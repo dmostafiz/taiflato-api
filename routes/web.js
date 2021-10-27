@@ -21,6 +21,8 @@ const UserController = require('../app/http/controllers/UserController')
 const BuyingProcessController = require('../app/http/controllers/BuyingProcessController')
 const BuyerController = require('../app/http/controllers/BuyerController')
 const AuctionController = require('../app/http/controllers/AuctionController')
+const RequestController = require('../app/http/controllers/RequestController')
+const DashboardController = require('../app/http/controllers/DashboardController')
 
 
 // const upload = require('../helpers/cloudinary')
@@ -81,16 +83,22 @@ router.get('/auctioned_properties', AuctionController.auctionedProperties)
 router.post('/save_bid', AuctionController.saveBid)
 
 
-//Messanger
-router.get('/get_my_threads', MessangerController.getMyThreads)
+//Activities
+router.get('/my_activities', DashboardController.getMyActivities)
 
+
+//Messanger
+router.post('/get_my_thread_by_id', MessangerController.getMyThreadById)
+router.get('/get_my_threads', MessangerController.getMyThreads)
+router.get('/get_thread_messages/:id', MessangerController.getThreadMessages)
+router.post('/send_message', MessangerController.sendMessage)
 
 
 //Buyers
 router.get('/buyer_selected_properties', BuyerController.getMySelectedProperties)
 router.get('/my_process_properties', BuyingProcessController.getMyProcess)
 
-
+router.post('/send_buying_request', RequestController.sendBuyingRequest)
 
 
 //Home

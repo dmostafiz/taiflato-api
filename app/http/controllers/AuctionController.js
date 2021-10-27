@@ -31,15 +31,19 @@ exports.saveAuction = async (req, res) => {
       auction.aid = aid
       auction.developer = user._id
       auction.property = propetyId,
-        auction.propertyImage = propertyImage,
-        auction.auctionPrice = promotionPrice,
-        auction.expireAt = expirationDate,
+      auction.propertyImage = propertyImage,
+      auction.auctionPrice = promotionPrice,
+      auction.expireAt = expirationDate,
 
-        await auction.save()
+      await auction.save()
 
       const property = await Property.findById(propetyId)
+
       if (property) {
+
         property.isPromoted = true
+        property.auction = auction._id
+
         await property.save()
       }
 

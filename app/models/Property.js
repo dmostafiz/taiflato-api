@@ -24,6 +24,10 @@ const propertySchema = mongoose.Schema({
         type: Number,
     },
 
+    finalPrice: {
+        type: Number,
+    },
+
     bedroom: {
         type: Number,
     },
@@ -130,12 +134,6 @@ const propertySchema = mongoose.Schema({
         default: false
     },
 
-    isPromoted: {
-        type: Boolean,
-        default: false
-    },
-
-
     isTrending: {
         type: Boolean,
         default: false
@@ -146,6 +144,7 @@ const propertySchema = mongoose.Schema({
         default: 0
     },
 
+    
     reviews:[
         {
            uid: {
@@ -162,6 +161,42 @@ const propertySchema = mongoose.Schema({
            }
         }
     ],
+
+    isPromoted: {
+        type: Boolean,
+        default: false
+    },
+
+
+    auction: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Auction'
+    },
+
+    promotion: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Promotion'
+    },
+
+    buyRequests:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'BuyRequest'
+    }],
+
+    offerRequests:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'OfferRequest'
+    }],
+
+    meetRequests:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'MeetRequest'
+    }],
+
+    soldTo:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
 
     developer: {
         type: mongoose.Schema.Types.ObjectId,
