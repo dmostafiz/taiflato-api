@@ -60,8 +60,9 @@ io.on('connection', socket => {
          const user = getUser(receiverId)
         
          io.to(user.socketId).emit('messageReceived', {senderId,message} )
- 
+         io.emit('updateMessanger', senderId )
      })
+
 
      socket.on('userTyping', async ({ senderId, receiverId }) => {
  
@@ -71,7 +72,7 @@ io.on('connection', socket => {
 
     })
 
-    // appSocket(io, socket, users)
+    appSocket(io, socket)
 
     // When a user disconnect
     socket.on('disconnect', () => {
