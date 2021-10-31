@@ -2,6 +2,10 @@ const User = require('../../models/User')
 const Profile = require('../../models/Profile')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const mailTransporter = require('../../../helpers/mailTransporter');
+
+const { customAlphabet } =  require('nanoid')
+
 // const {check, validationResult } = require('express-validator');
 var validator = require('validator');
 
@@ -107,6 +111,9 @@ exports.register_account = async (req, res) => {
 
         console.log("User ID: ",uid)
 
+        const email_code = customAlphabet('1234567890', 6)()
+        const secure_url_token = customAlphabet('1234567890abcdefghizklmnopqrst', 90)()
+
         const user = new User()
         user.uid = uid
         user.username = userName
@@ -119,11 +126,28 @@ exports.register_account = async (req, res) => {
         user.last_name = lastName
         user.password = encryptedPassword
         user.avatar = 'https://i1.wp.com/worldvisionit.com/wp-content/uploads/2019/02/kisspng-computer-icons-avatar-male-super-b-5ac405d55a6662.3429953115227959893703.png?fit=512%2C512&ssl=1'
+        user.secure_url_token = secure_url_token
+        user.email_verify_code = email_code
+        // user.phone_veryfy_code = null
+
         await user.save()
+
+
+        const mail = await mailTransporter.sendMail({
+            from: 'no-reply@israpoly.com',
+            to: user.email,
+            subject: 'Verify your email',
+            // text: 'That was easy! we sending you mail for testing our application',
+            template: 'verify_email',
+            context: {
+                name:user.username,
+                code: email_code 
+            }
+        })
 
         // const token = jwt.sign({id: user.id}, process.env.APP_SECRET, {expiresIn:'1d'})
         
-        res.status(201).json({status: 'success', userData:{_id:user._id}, msg: "Account created successfully."})
+        res.status(201).json({status: 'success', userData:{_id:user._id, email:user.email, token:user.secure_url_token}, msg: "Account created successfully."})
 
 
     } catch (error) {
@@ -245,4 +269,52 @@ exports.get_social_user_login = async (req, res) => {
         res.status(400).json({ status:'error', isAuth:false, msg: "Something went wrong. Please try again later."})
     }
 
+}
+
+exports.get_user_for_email_verification = async (req, res) => {
+    const {secureToken, userId, email} = req.body 
+
+    try {
+
+        const user = await User.findOne({
+            'secure_url_token':secureToken, 
+            '_id': userId, 
+            'email': email,
+            'email_verified': false,
+        })
+        
+        if(!user) return res.json({status: 'error', msg: 'Invalid token not accepted'})
+
+        res.json({status:'success',user})
+        
+    } catch (error) {
+        res.status(400).json({ status:'error', isAuth:false, msg: "Something went wrong. Please try again later."})
+    }
+}
+
+exports.verify_user_email = async (req, res) => {
+    const {secureToken, userId, email, verifyCode} = req.body 
+
+    try {
+
+        const user = await User.findOne({
+            'secure_url_token':secureToken, 
+            '_id': userId, 
+            'email': email, 
+            'email_verified': false,
+            'email_verify_code': verifyCode
+        })
+        
+        if(!user) return res.json({status: 'error', msg: 'Invalid code submitted'})
+ 
+        user.email_verified = true
+        user.email_verify_code = null 
+        await user.save() 
+
+
+        res.json({status:'success', msg: 'Email verification success'})
+        
+    } catch (error) {
+        res.status(400).json({ status:'error', msg:'Invalid code submitted'})
+    }
 }

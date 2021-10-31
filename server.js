@@ -6,6 +6,7 @@ const router = require('./routes/web')
 const expressValidator = require('express-validator')
 const cors = require('cors')
 const connectDB = require('./db/connect')
+var exphbs  = require('express-handlebars');
 const getAuctionsAndUpdate = require('./app/cron/getAuctionsAndUpdate');
 // const Auction = require('./app/models/Auction');
 const cron = require('node-cron');
@@ -18,6 +19,9 @@ const server = require('http').createServer(app)
 app.use(cors())
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.static('public'))
+// app.engine('.hbs', exphbs({extname: '.hbs'}));
+// app.set('view engine', '.hbs');
 
 
 const io = require("socket.io")(server, {

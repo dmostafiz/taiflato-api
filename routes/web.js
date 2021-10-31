@@ -23,10 +23,12 @@ const BuyerController = require('../app/http/controllers/BuyerController')
 const AuctionController = require('../app/http/controllers/AuctionController')
 const RequestController = require('../app/http/controllers/RequestController')
 const DashboardController = require('../app/http/controllers/DashboardController')
+const TestController = require('../app/http/controllers/TestController')
 
 
 // const upload = require('../helpers/cloudinary')
 
+router.get('/send_mail', TestController.sendMail)
 
 //Auth
 router.post('/login', AuthController.login)
@@ -35,6 +37,9 @@ router.post('/authorize', AuthController.authorize)
 router.post('/secure_user', AuthController.secure_user)
 router.post('/switch_dashboard', AuthController.switch_dashboard)
 router.post('/get_social_user_login', AuthController.get_social_user_login)
+
+router.post('/get_user_for_email_verification', AuthController.get_user_for_email_verification)
+router.post('/verify_user_email', AuthController.verify_user_email)
 
 
 router.get('/get_user_by_id/:id', UserController.getUserById)
@@ -73,7 +78,7 @@ router.post('/save_apartment', BuildingController.saveApartment)
 
 //Auctions
 router.post('/save_promotion', AuctionController.saveAuction)
-router.get('/my_promotions', AuctionController.myAuctions)
+router.get('/my_auctions', AuctionController.myAuctions)
 router.get('/all_promotions', AuctionController.allAuctions)
 
 router.get('/get_single_promotion/:id', AuctionController.getSingleAuction)

@@ -23,7 +23,11 @@ const auctionSchema = mongoose.Schema({
     auctionPrice:{
         type: Number
     },
-  
+
+    startAt:{
+        type: Date
+    },
+
     expireAt:{
         type: Date
     },
@@ -32,6 +36,11 @@ const auctionSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Bid'
     }],
+
+    isStarted:{
+        type: Boolean,
+        default: false
+    },
 
     status: {
         type: String,

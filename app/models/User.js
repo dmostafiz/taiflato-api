@@ -58,11 +58,27 @@ const userSchema = mongoose.Schema({
     avatar:{
         type: String
     },
+    account_verified:{
+        type: Boolean,
+        default: false
+    },
 
-    email_verify_token:{
+    secure_url_token:{
         type: String
     },
 
+    email_verified:{
+        type: Boolean,
+        default: false
+    },
+    email_verify_code:{
+        type: String
+    },
+
+    phone_verified:{
+        type: Boolean,
+        default: false
+    },
     phone_veryfy_code:{
         type: String
     },
