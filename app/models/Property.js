@@ -198,6 +198,16 @@ const propertySchema = mongoose.Schema({
         ref: 'User'
     },
 
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+
+    company: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    
     developer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

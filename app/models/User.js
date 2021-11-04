@@ -51,13 +51,20 @@ const userSchema = mongoose.Schema({
 
     profile:{},
 
+    company:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Company'  
+    },
+
     password:{
         type: String,
         require: true
     },
+
     avatar:{
         type: String
     },
+
     account_verified:{
         type: Boolean,
         default: false
@@ -79,9 +86,12 @@ const userSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
+
     phone_veryfy_code:{
         type: String
     },
+
+
 })
 
 userSchema.set('timestamps', true)
