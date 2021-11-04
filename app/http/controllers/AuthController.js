@@ -152,6 +152,7 @@ exports.register_account = async (req, res) => {
 
     } catch (error) {
 
+        console.log('Registration Error: ', error.message)
         return res.json({status:'error', msg: error.message})
 
     }
