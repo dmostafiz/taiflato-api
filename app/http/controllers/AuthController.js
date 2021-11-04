@@ -147,7 +147,7 @@ exports.register_account = async (req, res) => {
 
         // const token = jwt.sign({id: user.id}, process.env.APP_SECRET, {expiresIn:'1d'})
         
-        res.status(201).json({status: 'success', userData:{_id:user._id, email:user.email, token:user.secure_url_token}, msg: "Account created successfully."})
+        res.json({status: 'success', userData:{_id:user._id, email:user.email, token:user.secure_url_token}, msg: "Account created successfully."})
 
 
     } catch (error) {
