@@ -134,7 +134,7 @@ exports.register_account = async (req, res) => {
 
 
         const mail = await mailTransporter.sendMail({
-            from: 'no-reply@israpoly.com',
+            from: 'dev.mostafiz@gmail.com',
             to: user.email,
             subject: 'Verify your email',
             // text: 'That was easy! we sending you mail for testing our application',
@@ -173,7 +173,7 @@ exports.authorize = async (req, res) => {
 
         const {_id, username, email, user_type, dashboard,} = user;
 
-        return res.json({isAuth:true, _id, username, email, type: user_type, dashboard})
+        return res.json({isAuth:true, _id, username, email, type: user_type, dashboard, token})
 
     } catch (error) {
         return res.json({isAuth:false, msg: 'You are not authorized'})

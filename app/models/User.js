@@ -44,6 +44,11 @@ const userSchema = mongoose.Schema({
         require:true  
     },
 
+    is_realestate_admin:{
+        type: Boolean,
+        default:false  
+    },
+
     dashboard:{
         type: String,
         require:true  

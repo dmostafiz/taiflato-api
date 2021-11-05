@@ -24,6 +24,7 @@ const AuctionController = require('../app/http/controllers/AuctionController')
 const RequestController = require('../app/http/controllers/RequestController')
 const DashboardController = require('../app/http/controllers/DashboardController')
 const TestController = require('../app/http/controllers/TestController')
+const InvitationController = require('../app/http/controllers/InvitationController')
 
 
 // const upload = require('../helpers/cloudinary')
@@ -104,6 +105,12 @@ router.get('/buyer_selected_properties', BuyerController.getMySelectedProperties
 router.get('/my_process_properties', BuyingProcessController.getMyProcess)
 
 router.post('/send_buying_request', RequestController.sendBuyingRequest)
+
+
+//Developer
+router.post('/send_invitation', InvitationController.sendInvitation)
+router.get('/get_my_invitation', InvitationController.getMyInvitation)
+
 
 
 //Home
