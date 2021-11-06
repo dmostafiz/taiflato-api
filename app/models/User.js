@@ -25,8 +25,7 @@ const userSchema = mongoose.Schema({
     },
 
     phone:{
-        type: String,
-        require:true  
+        type: String 
     },
 
     first_name:{
@@ -92,7 +91,7 @@ const userSchema = mongoose.Schema({
         default: false
     },
 
-    phone_veryfy_code:{
+    phone_verify_code:{
         type: String
     },
 

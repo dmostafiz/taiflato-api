@@ -12,15 +12,26 @@ const path = require('path')
 //     }
 //   });
 
+// var mailTransporter = nodemailer.createTransport({
+//     service: 'gmail',
+//     // port: 465,
+//     // secure: true,
+//     auth: {
+//         user: 'dev.mr7@gmail.com',
+//         pass: '106@Cyberzz02'
+//     }
+// })
+
 var mailTransporter = nodemailer.createTransport({
-    service: 'gmail',
-    // port: 465,
+    host: "smtp.mailtrap.io",
+    port: 2525,
     // secure: true,
     auth: {
-        user: 'dev.mr7@gmail.com',
-        pass: '106@Cyberzz02'
+        user: "9655aa95e42b19",
+        pass: "b41828e708cded"
     }
 })
+
 
 mailTransporter.use('compile', hbs({
     viewEngine: {

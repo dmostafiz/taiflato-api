@@ -33,13 +33,21 @@ router.get('/send_mail', TestController.sendMail)
 
 //Auth
 router.post('/login', AuthController.login)
+
 router.post('/register_account', AuthController.register_account)
+router.post('/register_account_manager', AuthController.register_account_manager)
+
+
 router.post('/authorize', AuthController.authorize)
 router.post('/secure_user', AuthController.secure_user)
 router.post('/switch_dashboard', AuthController.switch_dashboard)
 router.post('/get_social_user_login', AuthController.get_social_user_login)
 
 router.post('/get_user_for_email_verification', AuthController.get_user_for_email_verification)
+router.post('/get_user_for_phone_verification', AuthController.get_user_for_phone_verification)
+router.post('/submit_phone_for_verify', AuthController.submit_phone_for_verify)
+
+
 router.post('/verify_user_email', AuthController.verify_user_email)
 
 
@@ -82,6 +90,8 @@ router.post('/save_promotion', AuctionController.saveAuction)
 router.get('/my_auctions', AuctionController.myAuctions)
 router.get('/all_promotions', AuctionController.allAuctions)
 
+
+
 router.get('/get_single_promotion/:id', AuctionController.getSingleAuction)
 
 router.get('/auctioned_properties', AuctionController.auctionedProperties)
@@ -107,9 +117,11 @@ router.get('/my_process_properties', BuyingProcessController.getMyProcess)
 router.post('/send_buying_request', RequestController.sendBuyingRequest)
 
 
-//Developer
+//Invitation of account manager
 router.post('/send_invitation', InvitationController.sendInvitation)
 router.get('/get_my_invitation', InvitationController.getMyInvitation)
+router.post('/get_invited_user', InvitationController.getInvite)
+
 
 
 

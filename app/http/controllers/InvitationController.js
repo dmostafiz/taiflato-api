@@ -57,6 +57,7 @@ exports.sendInvitation = async (req, res) => {
         invite.cid = getCid()
         invite.sender = user._id
         invite.user = cUser._id
+        invite.email = cUser.email
         invite.company = user.company
         invite.inviteType = 'account_manager'
         invite.secure_token = secure_url_token
@@ -111,5 +112,29 @@ exports.getMyInvitation = async (req, res) => {
     } catch (error) {
         console.log('Error: ', error)
         return res.json({ status: 'error', msg: 'Your are not authorised' })
+    }
+}
+
+exports.getInvite = async (req, res) => {
+    const {email, token} = req.body
+
+    try {
+       
+        const invite = await Invite.findOne({'email': email, 'secure_token': token})
+        .populate([{
+            path: 'user',
+            Model: 'User',
+            options:{
+                select:{'password' : 0}
+            }
+        }])
+
+        console.log("Invite found: ", invite)
+
+        res.json({status: 'success', invite})
+
+    } catch (error) {
+        console.log('Error: ', error.message)
+        res.json({status: 'error', msg: error.message})
     }
 }

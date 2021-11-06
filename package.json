@@ -44,6 +44,7 @@
     "s3-node": "0.0.1",
     "sequelize": "^6.6.5",
     "socket.io": "^4.3.1",
+    "twilio": "^3.71.1",
     "validator": "^13.5.2",
     "video-react": "^0.14.1",
     "video.js": "^7.14.3",

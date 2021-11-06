@@ -15,6 +15,10 @@ const InviteSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'  
     },
+
+    email: {
+        type: String
+    },
   
     company: {
         type: mongoose.Schema.Types.ObjectId,

@@ -159,6 +159,101 @@ exports.register_account = async (req, res) => {
 
 }
 
+
+exports.register_account_manager = async (req, res) => {
+
+    // console.log("from Server",req.body)
+
+    // return res.send('ok')
+
+    const {userName, email, firstName, lastName, password, passwordConfirmation} = req.body
+
+    const allErrors = []
+
+    if(validator.isEmpty(userName)) allErrors.push({ userName: "Username should not be empty." })
+  
+    if(!validator.isLength(userName,{min:5})) allErrors.push({ userName: "Username should must 5 char or long." })
+
+    if(validator.isEmpty(email) )  allErrors.push({ email: "Email should not be empty" })
+  
+    if(!validator.isEmail(email) )  allErrors.push({ email: "Email should be a valid email address." })
+
+    if(validator.isEmpty(firstName)) allErrors.push({ firstName: "First Name should not be empty." })
+
+    if(validator.isEmpty(lastName)) allErrors.push({ lastName: "Last Name should not be empty." })
+
+    // if(password != password_confirmation) allErrors.push({ password: "Password not matched." })
+    if(!validator.equals(password, passwordConfirmation) ) allErrors.push({ password: "Password does not matched." })
+    
+    // res.status(422).json({errors:{password:"Password not matched."}})
+
+    try {
+
+        const user = await User.findOne({email: email})
+
+        if(!user) allErrors.push({ userName: "No invitation found with this email." })
+ 
+        if(allErrors.length) return res.json({errors: allErrors})
+
+        const salt = await bcrypt.genSalt(12)
+
+        const encryptedPassword = await bcrypt.hash(password, salt)
+
+        const date = Date.now().toString()
+        const uid = date.substr(-6)
+
+        console.log("User ID: ",uid)
+
+        const email_code = customAlphabet('1234567890', 6)()
+        const secure_url_token = customAlphabet('1234567890abcdefghizklmnopqrst', 90)()
+
+        user.uid = uid
+        user.username = userName
+        user.email = email
+        // user.country = country
+        // user.phone = phone
+        // user.user_type = 'user'
+        // user.dashboard = userType
+        user.first_name = firstName
+        user.last_name = lastName
+        user.password = encryptedPassword
+        user.secure_url_token = secure_url_token
+        user.email_verify_code = email_code
+        // user.phone_veryfy_code = null
+
+        await user.save()
+
+
+        const mail = await mailTransporter.sendMail({
+            from: 'dev.mostafiz@gmail.com',
+            to: user.email,
+            subject: 'Verify your email',
+            // text: 'That was easy! we sending you mail for testing our application',
+            template: 'verify_email',
+            context: {
+                name:user.username,
+                code: email_code 
+            }
+        })
+
+        // const token = jwt.sign({id: user.id}, process.env.APP_SECRET, {expiresIn:'1d'})
+        
+        res.json({status: 'success', userData:{_id:user._id, email:user.email, token:user.secure_url_token}, msg: "Account created successfully."})
+
+
+    } catch (error) {
+
+        console.log('Registration Error: ', error.message)
+        return res.json({status:'error', msg: error.message})
+
+    }
+
+}
+
+
+
+
+
 exports.authorize = async (req, res) => {
 
     const token = req.headers.authorization
@@ -293,6 +388,29 @@ exports.get_user_for_email_verification = async (req, res) => {
     }
 }
 
+
+exports.get_user_for_phone_verification = async (req, res) => {
+    const {secureToken, userId, email} = req.body 
+
+    try {
+
+        const user = await User.findOne({
+            'secure_url_token':secureToken, 
+            '_id': userId, 
+            'email': email,
+            'phone_verified': false,
+        })
+        
+        if(!user) return res.json({status: 'error', msg: 'Invalid token not accepted'})
+
+        res.json({status:'success',user})
+        
+    } catch (error) {
+        res.status(400).json({ status:'error', isAuth:false, msg: "Something went wrong. Please try again later."})
+    }
+}
+
+
 exports.verify_user_email = async (req, res) => {
     const {secureToken, userId, email, verifyCode} = req.body 
 
@@ -317,5 +435,69 @@ exports.verify_user_email = async (req, res) => {
         
     } catch (error) {
         res.status(400).json({ status:'error', msg:'Invalid code submitted'})
+    }
+}
+
+
+exports.submit_phone_for_verify = async (req, res) => {
+    const {secureToken, userId, email, phone} = req.body 
+
+    try {
+
+        const user = await User.findOne({
+            'secure_url_token':secureToken, 
+            '_id': userId, 
+            'email': email, 
+            'phone_verified': false
+        })
+        
+        if(!user) return res.json({status: 'error', msg: 'Invalid code submitted'})
+ 
+
+        const phone_code = customAlphabet('1234567890', 6)()
+
+
+        user.phone = phone
+        user.phone_verify_code = phone_code
+        await user.save() 
+
+        const message = `Hello ${user.username}, \n Your Israpoly account verification code is ${phone_code}`
+
+        const twilio = require('twilio')
+        const client = new twilio(
+            'AC40426886092f8bf411327d5f461684b7', 
+            '84cf61bce3031ef25c872f6d8c618f1d'
+        );
+        try {
+
+            const msg = await client.messages.create({
+               body: message,
+               from: '+12314004248',
+               to: phone
+             })
+
+             if(msg) {
+                console.log('Message Sent: ', msg.sid)
+             }
+
+            console.log('Verification message: ', message)
+
+          
+        } catch (error) {
+            console.log('Message Error: ', error.message)
+            console.log('Verification message: ', message)
+            return res.json({ status:'error', msg:error.message})
+            
+        }
+
+
+        console.log('Verification message: ', message)
+
+       
+        res.json({status:'success', user})
+        
+    } catch (error) {
+        console.log('Error: ', error.message)
+        res.json({ status:'error', msg:'Invalid code submitted'})
     }
 }
