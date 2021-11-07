@@ -6,7 +6,64 @@ const CompanySchema = mongoose.Schema({
         type: Number
     },
 
+    logo: {
+        type: String
+    },
+
     name: {
+        type: String
+    },
+
+    contact: {
+        type: String
+    },
+
+    address: {
+        type: String
+    },
+
+    city: {
+        type: String
+    },
+
+
+    zipCode: {
+        type: String
+    },
+
+    projectCompleted:{
+        type: Number
+    },
+
+    companyCreatedAt:{
+        type: Date
+    },
+
+    regNumber: {
+        type: String
+    },
+
+    companyType:{
+        type: String
+    },
+
+    numberOfEmployees:{
+        type: Number
+    },
+
+    turnoverLastyear:{
+        type: Number
+    },
+
+    constructionsNumber:{
+        type: Number
+    },
+
+    founderName:{
+        type: String
+    },
+
+    ceoName:{
         type: String
     },
 
@@ -15,7 +72,7 @@ const CompanySchema = mongoose.Schema({
         ref: 'User' 
     },
 
-    members: [{
+    managers: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
@@ -28,6 +85,17 @@ const CompanySchema = mongoose.Schema({
     buildings: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Building'  
+    }],
+
+    negotiations: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Property'  
+    }],
+
+
+    sales: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Property'  
     }],
 
     status: {

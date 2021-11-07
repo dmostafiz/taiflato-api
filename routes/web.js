@@ -25,6 +25,7 @@ const RequestController = require('../app/http/controllers/RequestController')
 const DashboardController = require('../app/http/controllers/DashboardController')
 const TestController = require('../app/http/controllers/TestController')
 const InvitationController = require('../app/http/controllers/InvitationController')
+const CompanyController = require('../app/http/controllers/CompanyController')
 
 
 // const upload = require('../helpers/cloudinary')
@@ -44,15 +45,28 @@ router.post('/switch_dashboard', AuthController.switch_dashboard)
 router.post('/get_social_user_login', AuthController.get_social_user_login)
 
 router.post('/get_user_for_email_verification', AuthController.get_user_for_email_verification)
-router.post('/get_user_for_phone_verification', AuthController.get_user_for_phone_verification)
-router.post('/submit_phone_for_verify', AuthController.submit_phone_for_verify)
+router.post('/get_user_for_update_info', AuthController.get_user_for_update_info)
 
+router.post('/verify_user_email', AuthController.verify_user_email)
 
 router.post('/verify_user_email', AuthController.verify_user_email)
 
 
+router.post('/get_user_for_phone_verification', AuthController.get_user_for_phone_verification)
+router.post('/submit_phone_for_verify', AuthController.submit_phone_for_verify)
+router.post('/submit_phone_verify_code', AuthController.submit_phone_verify_code)
+
+
+
+
 router.get('/get_user_by_id/:id', UserController.getUserById)
 router.post('/upload_profile_image', UploadController.uploadProfileImage)
+
+//Compnay
+router.post('/get_company_by_user', CompanyController.getCompanyByUserId)
+router.post('/upload_company_logo', UploadController.uploadCompanyLogo)
+router.post('/update_user_company_data', CompanyController.update_user_company_data)
+
 
 // const multer = require('multer');
 // const upload = multer();

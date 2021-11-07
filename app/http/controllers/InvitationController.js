@@ -23,14 +23,17 @@ exports.sendInvitation = async (req, res) => {
         if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
 
         const invitingUser = await User.findOne({ email: email })
-
         if (invitingUser) return res.json({ status: 'error', msg: 'The emaile address are already exists in our record. please try a different one.' })
+      
+        const invitingEmail = await Invite.findOne({ email: email })
+        if (invitingEmail) return res.json({ status: 'error', msg: 'The emaile address are already exists in our record. please try a different one.' })
 
         const cUser = new User()
         cUser.uid = customAlphabet('1234567890', 6)()
         cUser.username = customAlphabet('1234567890abcdefghizklmnopqrst', 6)()
         cUser.email = email
         cUser.user_type = 'user'
+        cUser.realestate_admin = user._id
         cUser.is_realestate_admin = false
         cUser.dashboard = 'developer'
         cUser.company = user.company

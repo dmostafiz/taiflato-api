@@ -42,10 +42,13 @@ const userSchema = mongoose.Schema({
         type: String,
         require:true  
     },
-
+    realestate_admin:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'  
+    },
     is_realestate_admin:{
         type: Boolean,
-        default:false  
+        default:true  
     },
 
     dashboard:{

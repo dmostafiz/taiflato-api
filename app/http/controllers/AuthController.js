@@ -8,6 +8,9 @@ const { customAlphabet } =  require('nanoid')
 
 // const {check, validationResult } = require('express-validator');
 var validator = require('validator');
+const Invite = require('../../models/Invite');
+const Company = require('../../models/Company');
+const getCid = require('../../../helpers/getCid');
 
 exports.login = async (req, res) => {
 
@@ -47,7 +50,8 @@ exports.login = async (req, res) => {
             lastName: user.last_name,  
             avatar: user.avatar, 
             type: user.user_type,
-            dashboard: user.dashboard
+            dashboard: user.dashboard,
+            isAdmin: user.is_realestate_admin
         }
      
         res.status(201).json({isAuth:true, token, user:userData, msg: "Logged in successfully."})
@@ -129,21 +133,40 @@ exports.register_account = async (req, res) => {
         user.secure_url_token = secure_url_token
         user.email_verify_code = email_code
         // user.phone_veryfy_code = null
-
         await user.save()
 
+        if(userType == 'developer'){
+            const company = new Company()
+            company.cid = getCid()
+            company.admin = user._id
+            company.managers = [...company.managers, user._id]
+            // company.
+            
+            await company.save()
 
-        const mail = await mailTransporter.sendMail({
-            from: 'dev.mostafiz@gmail.com',
-            to: user.email,
-            subject: 'Verify your email',
-            // text: 'That was easy! we sending you mail for testing our application',
-            template: 'verify_email',
-            context: {
-                name:user.username,
-                code: email_code 
-            }
-        })
+            user.company = company._id
+            await user.save()
+        }
+
+
+
+        try {
+            
+            const mail = await mailTransporter.sendMail({
+                from: 'No Reply <no-reply@israpoly.com>',
+                to: user.email,
+                subject: 'Verify your email',
+                // text: 'That was easy! we sending you mail for testing our application',
+                template: 'verify_email',
+                context: {
+                    name:user.username,
+                    code: email_code 
+                }
+            })
+        } catch (error) {
+             console.log('Mail Error: ', error.message)
+        }
+
 
         // const token = jwt.sign({id: user.id}, process.env.APP_SECRET, {expiresIn:'1d'})
         
@@ -214,6 +237,7 @@ exports.register_account_manager = async (req, res) => {
         // user.phone = phone
         // user.user_type = 'user'
         // user.dashboard = userType
+        user.is_realestate_admin = false
         user.first_name = firstName
         user.last_name = lastName
         user.password = encryptedPassword
@@ -223,19 +247,23 @@ exports.register_account_manager = async (req, res) => {
 
         await user.save()
 
-
-        const mail = await mailTransporter.sendMail({
-            from: 'dev.mostafiz@gmail.com',
-            to: user.email,
-            subject: 'Verify your email',
-            // text: 'That was easy! we sending you mail for testing our application',
-            template: 'verify_email',
-            context: {
-                name:user.username,
-                code: email_code 
-            }
-        })
-
+        await Invite.findOneAndRemove({user: user._id})
+        
+        try {
+            const mail = await mailTransporter.sendMail({
+                from: 'No Reply <no-reply@israpoly.com>',
+                to: user.email,
+                subject: 'Verify your email',
+                // text: 'That was easy! we sending you mail for testing our application',
+                template: 'verify_email',
+                context: {
+                    name:user.username,
+                    code: email_code 
+                }
+            })
+        } catch (error) {
+             console.log('Mail Error: ', error.message)
+        }
         // const token = jwt.sign({id: user.id}, process.env.APP_SECRET, {expiresIn:'1d'})
         
         res.json({status: 'success', userData:{_id:user._id, email:user.email, token:user.secure_url_token}, msg: "Account created successfully."})
@@ -249,9 +277,6 @@ exports.register_account_manager = async (req, res) => {
     }
 
 }
-
-
-
 
 
 exports.authorize = async (req, res) => {
@@ -388,6 +413,34 @@ exports.get_user_for_email_verification = async (req, res) => {
     }
 }
 
+exports.get_user_for_update_info = async (req, res) => {
+    const {token, userId, email} = req.body 
+
+    try {
+
+        const user = await User.findOne({
+            'secure_url_token':token, 
+            '_id': userId, 
+            'email': email,
+            'email_verified': true,
+            'phone_verified': true,
+        })
+        // .populate([
+        //     {
+        //         path:'company',
+        //         model: 'Company'
+        //     }
+        // ])
+        
+        if(!user) return res.json({status: 'error', msg: 'Invalid token not accepted'})
+
+        res.json({status:'success',user})
+        
+    } catch (error) {
+        res.status(400).json({ status:'error', isAuth:false, msg: "Something went wrong. Please try again later."})
+    }
+}
+
 
 exports.get_user_for_phone_verification = async (req, res) => {
     const {secureToken, userId, email} = req.body 
@@ -427,7 +480,7 @@ exports.verify_user_email = async (req, res) => {
         if(!user) return res.json({status: 'error', msg: 'Invalid code submitted'})
  
         user.email_verified = true
-        user.email_verify_code = null 
+        user.email_verify_code = "" 
         await user.save() 
 
 
@@ -461,7 +514,7 @@ exports.submit_phone_for_verify = async (req, res) => {
         user.phone_verify_code = phone_code
         await user.save() 
 
-        const message = `Hello ${user.username}, \n Your Israpoly account verification code is ${phone_code}`
+        const message = `Hello ${user.username}, \nYour phone verification code is ${phone_code}`
 
         const twilio = require('twilio')
         const client = new twilio(
@@ -472,7 +525,9 @@ exports.submit_phone_for_verify = async (req, res) => {
 
             const msg = await client.messages.create({
                body: message,
-               from: '+12314004248',
+            //    from: '+13373586639',
+               from: 'Israpoly',
+
                to: phone
              })
 
@@ -495,6 +550,90 @@ exports.submit_phone_for_verify = async (req, res) => {
 
        
         res.json({status:'success', user})
+        
+    } catch (error) {
+        console.log('Error: ', error.message)
+        res.json({ status:'error', msg:'Invalid code submitted'})
+    }
+}
+
+exports.submit_phone_verify_code = async (req, res) => {
+    const {secureToken, userId, email, code} = req.body 
+
+    try {
+
+        const user = await User.findOne({
+            'secure_url_token':secureToken, 
+            '_id': userId, 
+            'email': email, 
+            'phone_verify_code': code,
+            'phone_verified': false
+        })
+        
+        if(!user) return res.json({status: 'error', msg: 'Invalid code submitted'})
+ 
+
+        // const phone_code = customAlphabet('1234567890', 6)()
+
+
+        // user.phone = phone
+        user.phone_verify_code = ""
+        user.phone_verified = true
+        await user.save() 
+
+
+        // const message = `Hello ${user.username}, \nYour phone verification code is ${phone_code}`
+
+        // const twilio = require('twilio')
+        // const client = new twilio(
+        //     'AC40426886092f8bf411327d5f461684b7', 
+        //     '84cf61bce3031ef25c872f6d8c618f1d'
+        // );
+        // try {
+
+        //     const msg = await client.messages.create({
+        //        body: message,
+        //     //    from: '+13373586639',
+        //        from: 'Israpoly',
+
+        //        to: phone
+        //      })
+
+        //      if(msg) {
+        //         console.log('Message Sent: ', msg.sid)
+        //      }
+
+        //     console.log('Verification message: ', message)
+
+          
+        // } catch (error) {
+        //     console.log('Message Error: ', error.message)
+        //     console.log('Verification message: ', message)
+        //     return res.json({ status:'error', msg:error.message})
+            
+        // }
+
+        const token = jwt.sign({id: user.id}, process.env.APP_SECRET, {expiresIn:'1d'})
+        
+        const userData = {
+            _id:user._id, 
+            uid:user.uid,
+            userName:user.username, 
+            email:user.email, 
+            firstName: user.first_name, 
+            lastName: user.last_name,  
+            avatar: user.avatar, 
+            type: user.user_type,
+            dashboard: user.dashboard,
+            isAdmin: user.is_realestate_admin
+        }
+
+
+        console.log('Verification user: ', user)
+
+        // res.status(201).json({isAuth:true, token, user:userData, msg: "Logged in successfully."})
+       
+        res.json({status:'success',isAuth:true, token, user, userData})
         
     } catch (error) {
         console.log('Error: ', error.message)
