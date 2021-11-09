@@ -1,9 +1,14 @@
 const mongoose = require('mongoose')
 
-const buyRequestSchema = mongoose.Schema({
+const RequestSchema = mongoose.Schema({
 
     cid:{
         type: String,
+    },
+
+    admin:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
 
     buyer:{
@@ -30,18 +35,24 @@ const buyRequestSchema = mongoose.Schema({
         ref: 'Message'
     }],
 
+    request_type: {
+        type:String,
+        enum:['buy', 'offer', 'meet'],
+        default: 'buy'
+    },
+
     price:{
         type: Number
     },
 
     status:{
         type:String,
-        enum:['pending', 'accepted', 'declined'],
+        enum:['pending', 'accepted', 'cancelled'],
         default: 'pending'
     },
 
 })
 
-buyRequestSchema.set('timestamps', true)
+RequestSchema.set('timestamps', true)
 
-module.exports = mongoose.model('BuyRequest', buyRequestSchema)
+module.exports = mongoose.model('Request', RequestSchema)

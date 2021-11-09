@@ -25,7 +25,7 @@
     "express-validator": "^6.10.0",
     "file-type": "^16.5.3",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.11.19",
+    "mongoose": "^5.13.13",
     "mongoose-aggregate-paginate-v2": "^1.0.5",
     "mongoose-random": "^0.1.1",
     "mongoose-simple-random": "^0.4.1",

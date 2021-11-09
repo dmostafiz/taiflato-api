@@ -30,21 +30,10 @@ const MessageSchema = mongoose.Schema({
         ref: 'Property'
     },
 
-    buyRequest: {
+    request: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'BuyRequest'
+        ref: 'Request'
     },
-
-    offerRequest: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'OfferRequest'
-    },
-
-    meetRequest: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'MeetRequest'
-    },
-
 
     price:{
         type: Number

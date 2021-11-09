@@ -177,6 +177,10 @@ exports.getThreadMessages = async (req, res) => {
             }
           },
           {
+            path: 'request',
+            model: 'Request',
+          },
+          {
             path: 'files',
             model: 'File',
             // options: {

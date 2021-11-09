@@ -8,9 +8,9 @@ const PropertyController = require('../app/http/controllers/PropertyController')
 const UploadController = require('../app/http/controllers/UploadController')
 
 
-const CategoryController = require('../app/http/controllers/CategoryController')
-const PostController = require('../app/http/controllers/PostController')
-const SliderController = require('../app/http/controllers/SliderController')
+// const CategoryController = require('../app/http/controllers/CategoryController')
+// const PostController = require('../app/http/controllers/PostController')
+// const SliderController = require('../app/http/controllers/SliderController')
 
 const BuildingController = require('../app/http/controllers/BuildingController')
 
@@ -135,6 +135,12 @@ router.get('/buyer_selected_properties', BuyerController.getMySelectedProperties
 router.get('/my_process_properties', BuyingProcessController.getMyProcess)
 
 router.post('/send_buying_request', RequestController.sendBuyingRequest)
+router.post('/send_offer_request', RequestController.sendOfferRequest)
+
+
+//Requests
+router.post('/response_request', RequestController.response_request)
+
 
 
 //Invitation of account manager
@@ -164,31 +170,31 @@ router.get('/get_single_property_home/:id', HomeController.getSinglePropertyForH
 
 
 //Categories
-router.post('/category/save', Authorization, CategoryController.store)
-router.get('/category/delete/:cid', Authorization, CategoryController.delete)
-router.get('/category/get', CategoryController.get)
-router.get('/posts-cat/get', CategoryController.postCatsget)
+// router.post('/category/save', Authorization, CategoryController.store)
+// router.get('/category/delete/:cid', Authorization, CategoryController.delete)
+// router.get('/category/get', CategoryController.get)
+// router.get('/posts-cat/get', CategoryController.postCatsget)
 
 // Posts
-router.post('/post/save', Authorization, PostController.save)
-router.post('/post/save/:id', Authorization, PostController.saveByID)
-router.get('/post/get/', PostController.get)
-router.get('/post/get/:slug', PostController.getSingle)
-router.get('/posts/get/:filter?/:limit?', PostController.get)
-router.get('/post/getid/:id', PostController.getById)
-router.get('/post/get/top/:limit', PostController.getTopByLimit)
-router.get('/post/get/random/:limit', PostController.getTopByLimit)
-router.get('/category/:slug/posts', PostController.getPostsByCategory)
+// router.post('/post/save', Authorization, PostController.save)
+// router.post('/post/save/:id', Authorization, PostController.saveByID)
+// router.get('/post/get/', PostController.get)
+// router.get('/post/get/:slug', PostController.getSingle)
+// router.get('/posts/get/:filter?/:limit?', PostController.get)
+// router.get('/post/getid/:id', PostController.getById)
+// router.get('/post/get/top/:limit', PostController.getTopByLimit)
+// router.get('/post/get/random/:limit', PostController.getTopByLimit)
+// router.get('/category/:slug/posts', PostController.getPostsByCategory)
 
-//Sliders
-router.post('/slider/save', Authorization, SliderController.save)
-router.post('/slider/save/:id', Authorization, SliderController.saveByID)
-router.post('/slider/delete/:id', Authorization, SliderController.deleteByID)
+// //Sliders
+// router.post('/slider/save', Authorization, SliderController.save)
+// router.post('/slider/save/:id', Authorization, SliderController.saveByID)
+// router.post('/slider/delete/:id', Authorization, SliderController.deleteByID)
 
-router.get('/slider/get/:id', SliderController.getByID)
-router.get('/slider/getall', SliderController.getAll)
-router.get('/slider/getactive', SliderController.getActive)
-router.get('/slider/get-random-one', SliderController.getRandomOne)
+// router.get('/slider/get/:id', SliderController.getByID)
+// router.get('/slider/getall', SliderController.getAll)
+// router.get('/slider/getactive', SliderController.getActive)
+// router.get('/slider/get-random-one', SliderController.getRandomOne)
 
 module.exports = router
 

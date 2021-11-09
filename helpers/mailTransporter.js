@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 const hbs = require('nodemailer-express-handlebars')
 const path = require('path')
-const mailgun = require('nodemailer-mailgun-transport');
+// const mailgun = require('nodemailer-mailgun-transport');
 
 // var mailTransporter = nodemailer.createTransport({
 //     host: 'email-smtp.us-east-1.amazonaws.com',
