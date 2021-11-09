@@ -56,7 +56,10 @@ const userSchema = mongoose.Schema({
         require:true  
     },
 
-    profile:{},
+    profile:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Profile'  
+    },
 
     company:{
         type: mongoose.Schema.Types.ObjectId,

@@ -148,10 +148,19 @@ exports.register_account = async (req, res) => {
             await user.save()
         }
 
+        if(userType == 'buyer'){
+            const profile = new Profile()
+            profile.user = user._id
+            // profile.
+            
+            await profile.save()
 
+            user.profile = profile._id
+            await user.save()
+        }
 
         try {
-            
+
             const mail = await mailTransporter.sendMail({
                 from: 'No Reply <no-reply@israpoly.com>',
                 to: user.email,
@@ -167,9 +176,6 @@ exports.register_account = async (req, res) => {
              console.log('Mail Error: ', error.message)
         }
 
-
-        // const token = jwt.sign({id: user.id}, process.env.APP_SECRET, {expiresIn:'1d'})
-        
         res.json({status: 'success', userData:{_id:user._id, email:user.email, token:user.secure_url_token}, msg: "Account created successfully."})
 
 

@@ -26,6 +26,7 @@ const DashboardController = require('../app/http/controllers/DashboardController
 const TestController = require('../app/http/controllers/TestController')
 const InvitationController = require('../app/http/controllers/InvitationController')
 const CompanyController = require('../app/http/controllers/CompanyController')
+const ProfileController = require('../app/http/controllers/ProfileController')
 
 
 // const upload = require('../helpers/cloudinary')
@@ -67,6 +68,10 @@ router.post('/upload_profile_image', UploadController.uploadProfileImage)
 router.post('/get_company_by_user', CompanyController.getCompanyByUserId)
 router.post('/upload_company_logo', UploadController.uploadCompanyLogo)
 router.post('/update_user_company_data', CompanyController.update_user_company_data)
+
+
+//Profile
+router.post('/update_user_profile_data', ProfileController.update_user_profile_data)
 
 
 // const multer = require('multer');
