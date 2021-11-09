@@ -579,6 +579,8 @@ exports.submit_phone_verify_code = async (req, res) => {
         // user.phone = phone
         user.phone_verify_code = ""
         user.phone_verified = true
+        user.account_verified = true
+
         await user.save() 
 
 

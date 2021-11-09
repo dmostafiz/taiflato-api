@@ -39,7 +39,10 @@ exports.update_user_company_data = async (req, res) => {
         numberOfEmployees, 
         turnoverLastyear, 
         founderName, 
-        ceoName
+        ceoName,
+        businessEmail, 
+        businessPhone, 
+        country
     } = req.body
 
   
@@ -54,6 +57,7 @@ exports.update_user_company_data = async (req, res) => {
         const company = await Company.findOne({_id: companyId, admin: user._id})
   
         if(company){
+            
             company.name = name
             company.contact = contact
             company.address = address
@@ -67,6 +71,10 @@ exports.update_user_company_data = async (req, res) => {
             company.turnoverLastyear = turnoverLastyear
             company.founderName = founderName
             company.ceoName = ceoName
+            company.businessEmail = businessEmail
+            company.businessPhone = businessPhone 
+            company.country = country
+
             await company.save()
 
             console.log('Company: ', company)
@@ -78,5 +86,32 @@ exports.update_user_company_data = async (req, res) => {
   
     } catch (error) {
         res.json({status:'error', msg:error.message})
+    }
+}
+
+exports.get_managers_by_company_admin = async (req, res) => {
+    const id = req.params.adminId
+
+    // console.log('Params: ', req.params)
+
+    try {
+
+        const user = await User.findOne({_id: id, is_realestate_admin: true})
+
+        console.log('Manager Admin: ', user)
+
+        if(user){
+            
+            const managers = await User.find({company: user.company, is_realestate_admin: false, account_verified: true})
+
+            return res.json({status: 'success', managers})
+        }
+
+        return res.json({status: 'error', msg:'Eror occured'})
+
+        
+    } catch (error) {
+        console.log('Error: ', error.message)
+        res.json({status: 'error', msg: error.message})
     }
 }

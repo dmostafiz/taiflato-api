@@ -26,11 +26,23 @@ const CompanySchema = mongoose.Schema({
         type: String
     },
 
+    country: {
+        type: String
+    },
 
     zipCode: {
         type: String
     },
 
+
+    businessEmail: {
+        type: String
+    },
+
+    businessPhone: {
+        type: String
+    },
+    
     projectCompleted:{
         type: Number
     },

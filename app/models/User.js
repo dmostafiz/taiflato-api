@@ -63,6 +63,16 @@ const userSchema = mongoose.Schema({
         ref: 'Company'  
     },
 
+    properties:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Property' 
+    }],
+
+    projects:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Building' 
+    }],
+
     password:{
         type: String,
         require: true

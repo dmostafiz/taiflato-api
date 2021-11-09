@@ -60,6 +60,7 @@ router.post('/submit_phone_verify_code', AuthController.submit_phone_verify_code
 
 
 router.get('/get_user_by_id/:id', UserController.getUserById)
+
 router.post('/upload_profile_image', UploadController.uploadProfileImage)
 
 //Compnay
@@ -136,6 +137,7 @@ router.post('/send_invitation', InvitationController.sendInvitation)
 router.get('/get_my_invitation', InvitationController.getMyInvitation)
 router.post('/get_invited_user', InvitationController.getInvite)
 
+router.get('/get_managers_by_company_admin/:adminId', CompanyController.get_managers_by_company_admin)
 
 
 
