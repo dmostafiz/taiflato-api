@@ -11,6 +11,18 @@ const BuildingSchema = mongoose.Schema({
         required: true,
     },
 
+    propertyType: {
+        type: String,
+    },
+
+    propertySize: {
+        type: Number,
+    },
+
+    price: {
+        type: Number,
+    },
+
     country:{
         type: String
     },

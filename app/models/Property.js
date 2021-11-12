@@ -3,7 +3,7 @@ const aggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
 const propertySchema = mongoose.Schema({
 
-    pid:{
+    pid:{ 
        type: String
     },
 
@@ -178,20 +178,11 @@ const propertySchema = mongoose.Schema({
         ref: 'Promotion'
     },
 
-    buyRequests:[{
+    requests:[{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'BuyRequest'
+        ref: 'Request'
     }],
 
-    offerRequests:[{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'OfferRequest'
-    }],
-
-    meetRequests:[{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'MeetRequest'
-    }],
 
     soldTo:{
         type: mongoose.Schema.Types.ObjectId,

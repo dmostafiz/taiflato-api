@@ -136,6 +136,7 @@ router.get('/my_process_properties', BuyingProcessController.getMyProcess)
 
 router.post('/send_buying_request', RequestController.sendBuyingRequest)
 router.post('/send_offer_request', RequestController.sendOfferRequest)
+router.post('/send_meeting_request', RequestController.sendMeetingRequest)
 
 
 //Requests

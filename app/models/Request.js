@@ -45,6 +45,10 @@ const RequestSchema = mongoose.Schema({
         type: Number
     },
 
+    meetingDate:{
+        type: Date
+    },
+
     status:{
         type:String,
         enum:['pending', 'accepted', 'cancelled'],

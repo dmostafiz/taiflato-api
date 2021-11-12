@@ -44,6 +44,10 @@ const MessageSchema = mongoose.Schema({
         ref: 'File'
     }],
 
+    meetingDate:{
+        type: Date
+    },
+
     type:{
         type:String,
         enum:['text', 'file', 'image', 'buy', 'offer', 'meet'],
