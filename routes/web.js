@@ -64,6 +64,11 @@ router.get('/get_user_by_id/:id', UserController.getUserById)
 
 router.post('/upload_profile_image', UploadController.uploadProfileImage)
 
+
+//Project
+router.post('/upload_project_image', UploadController.upload_project_image)
+
+
 //Compnay
 router.post('/get_company_by_user', CompanyController.getCompanyByUserId)
 router.post('/upload_company_logo', UploadController.uploadCompanyLogo)
