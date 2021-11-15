@@ -27,6 +27,7 @@ const TestController = require('../app/http/controllers/TestController')
 const InvitationController = require('../app/http/controllers/InvitationController')
 const CompanyController = require('../app/http/controllers/CompanyController')
 const ProfileController = require('../app/http/controllers/ProfileController')
+const ProjectController = require('../app/http/controllers/ProjectController')
 
 
 // const upload = require('../helpers/cloudinary')
@@ -67,6 +68,9 @@ router.post('/upload_profile_image', UploadController.uploadProfileImage)
 
 //Project
 router.post('/upload_project_image', UploadController.upload_project_image)
+router.post('/get_my_managers', ProjectController.get_my_managers)
+router.post('/save_project', ProjectController.save_project)
+
 
 
 //Compnay

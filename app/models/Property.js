@@ -32,6 +32,10 @@ const propertySchema = mongoose.Schema({
         type: Number,
     },
 
+    rooms: {
+        type: Number,
+    },
+
     bathroom: {
         type: Number,
     },
@@ -196,12 +200,22 @@ const propertySchema = mongoose.Schema({
 
     company: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'Company'
     },
     
     developer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
+    },
+
+    manager: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+
+    project: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Project'
     }
 
 })

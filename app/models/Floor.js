@@ -20,6 +20,11 @@ const FloorSchema = mongoose.Schema({
         ref: 'Project'
     },
 
+    project:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Project'
+    },
+
     developer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
