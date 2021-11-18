@@ -9,6 +9,7 @@ const Property = require('../../models/Property');
 const Floor = require('../../models/Floor');
 const Building = require('../../models/Building');
 const Company = require('../../models/Company');
+const Project = require('../../models/Project');
 
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY,
@@ -514,15 +515,16 @@ exports.uploadCompanyLogo = async (req, res) => {
 }
 
 
-
 exports.upload_project_image = async (req, res) => {
+
+
   const form = new multiparty.Form();
 
   form.parse(req, async (error, fields, files) => {
 
     if (error) {
       console.log('Form Error Ocurred')
-      return res.json({ status: 'error', msg: 'Form Error Ocurred' })
+      return res.json('Form Error Ocurred')
 
     }
 
@@ -531,21 +533,20 @@ exports.upload_project_image = async (req, res) => {
       // const token = fields.tken
 
       const token = fields.token[0]
-      const fldr = fields.folder[0]
+      const file_type = fields.file_type[0]
+      const project_id = fields.ref_id[0]
 
-      console.log('Upload Token: ', fields)
+      // console.log('Upload token: ', project_id)
+
+      // return res.json({ status: 'success' })
 
       const data = jwt.verify(token, process.env.APP_SECRET)
       const user = await User.findOne({ _id: data.id })
 
-
-      console.log('Upload User: ', user)
-
       if (user) {
-
         const path = files.file[0].path;
 
-        const folder = `${fldr}/` + user.username
+        const folder = 'users/' + user.username + '/projects/' + fields.ref_id[0]
 
         const buffer = fs.readFileSync(path);
 
@@ -571,38 +572,316 @@ exports.upload_project_image = async (req, res) => {
           file.versionId = data.VersionId
           file.mime = type.mime
           file.fileExt = type.ext
-          file.fileType = fields.file_type[0]
+          file.fileType = file_type
           file.folder = folder
           file.user = user._id
 
           await file.save()
 
+          if (file) {
+
+            const project = await Project.findById(project_id)
+
+            if (project) {
+
+              if (file_type == 'expert_contract_copies') {
+                project.expert.copies = [...project.expert.copies, file._id]
+              }
+
+              else if (file_type == 'lawyer_contract_copies') {
+                project.lawyer.copies = [...project.lawyer.copies, file._id]
+              }
+
+              else if (file_type == 'project_legal_copies') {
+                project.legal.copies = [...project.legal.copies, file._id]
+              }
+
+              // Building  
+              else if (file_type == 'project_featured_image') {
+                project.projectImage = file._id
+                project.projectMedia.image = file._id
+              }
+
+              else if (file_type == 'project_additional_images') {
+                project.projectImages = [...project.projectImages, file._id]
+                project.projectMedia.images = [...project.projectMedia.images, file._id]
+              }
+
+              // Two room   
+              else if (file_type == 'tworoom_featured_image') {
+                project.twoRoomApartment.image = file._id
+
+                const properties = await Property.find({
+                   project: project._id, 
+                   propertyType: 'Apartment', 
+                   rooms: 2 
+                })
+
+                console.log('Properties Length: ', properties.length)
+
+                if (properties.length) {
+                  properties.forEach(async pty => {
+                    pty.image = file._id
+                    pty.featuredImage = file._id
+                    await pty.save()
+                  })
+                }
+
+              }
+
+              else if (file_type == 'tworoom_additional_images') {
+                project.twoRoomApartment.images = [...project.twoRoomApartment.images, file._id]
+
+                const properties = await Property.find({
+                  project: project._id,
+                  propertyType: 'Apartment',
+                  rooms: 2
+                })
+
+                console.log('Properties Length: ', properties.length)
+
+                if (properties.length) {
+                  properties.forEach(async pty => {
+                    pty.images = [...pty.images, file._id]
+                    pty.additionalImages = [...pty.additionalImages, file._id]
+                    await pty.save()
+                  })
+
+                }
+
+              }
+
+              // Three room   
+              else if (file_type == 'threeroom_featured_image') {
+                project.threeRoomApartment.image = file._id
+
+                const properties = await Property.find({
+                  project: project._id,
+                  propertyType: 'Apartment',
+                  rooms: 3
+                })
+                
+                console.log('Properties Length: ', properties.length)
+
+                if (properties.length) {
+                  properties.forEach(async pty => {
+                    pty.image = file._id
+                    pty.featuredImage = file._id
+                    await pty.save()
+                  })
+                }
+              }
+
+              else if (file_type == 'threeroom_additional_images') {
+
+                project.threeRoomApartment.images = [...project.threeRoomApartment.images, file._id]
+
+                const properties = await Property.find({
+                  project: project._id,
+                  propertyType: 'Apartment',
+                  rooms: 3
+                })
+
+                if (properties.length) {
+                  properties.forEach(async pty => {
+
+                    pty.images = [...pty.images, file._id]
+                    pty.additionalImages = [...pty.additionalImages, file._id]
+
+                    await pty.save()
+                  })
+                }
+
+              }
+
+              // Four room   
+              else if (file_type == 'fourroom_featured_image') {
+                project.fourRoomApartment.image = file._id
+
+                const properties = await Property.find({
+                  project: project._id,
+                  propertyType: 'Apartment',
+                  rooms: 4
+                })
+
+                if (properties.length) {
+                  properties.forEach(async pty => {
+
+                    pty.image = file._id
+                    pty.featuredImage = file._id
+
+                    await pty.save()
+                  })
+                }
+
+              }
+
+              else if (file_type == 'fourroom_additional_images') {
+                project.fourRoomApartment.images = [...project.fourRoomApartment.images, file._id]
+
+                const properties = await Property.find({
+                  project: project._id,
+                  propertyType: 'Apartment',
+                  rooms: 4
+                })
+
+                if (properties.length) {
+                  properties.forEach(async pty => {
+
+                    pty.images = [...pty.images, file._id]
+                    pty.additionalImages = [...pty.additionalImages, file._id]
+
+                    await pty.save()
+                  })
+                }
+
+              }
+
+              // Five room   
+              else if (file_type == 'fiveroom_featured_image') {
+                project.fiveRoomApartment.image = file._id
+
+                const properties = await Property.find({
+                  project: project._id,
+                  propertyType: 'Apartment',
+                  rooms: 5
+                })
+
+                if (properties.length) {
+                  properties.forEach(async pty => {
+
+                    pty.image = file._id
+                    pty.featuredImage = file._id
+
+                    await pty.save()
+                  })
+                }
+
+              }
+
+              else if (file_type == 'fiveroom_additional_images') {
+                project.fiveRoomApartment.images = [...project.fiveRoomApartment.images, file._id]
+
+                const properties = await Property.find({
+                  project: project._id,
+                  propertyType: 'Apartment',
+                  rooms: 5
+                })
+
+                if (properties.length) {
+                  properties.forEach(async pty => {
+
+                    pty.images = [...pty.images, file._id]
+                    pty.additionalImages = [...pty.additionalImages, file._id]
+
+                    await pty.save()
+                  })
+                }
+
+              }
+
+              // office 
+              else if (file_type == 'office_featured_image') {
+                project.office.image = file._id
+
+                const properties = await Property.find({
+                  project: project._id,
+                  propertyType: 'Office'
+                })
+
+                if (properties.length) {
+                  properties.forEach(async pty => {
+
+                    pty.image = file._id
+                    pty.featuredImage = file._id
+
+                    await pty.save()
+                  })
+                }
+              }
+
+              else if (file_type == 'office_additional_images') {
+                project.office.images = [...project.office.images, file._id]
+
+                const properties = await Property.find({
+                  project: project._id,
+                  propertyType: 'Office'
+                })
+
+                if (properties.length) {
+                  properties.forEach(async pty => {
+
+                    pty.images = [...pty.images, file._id]
+                    pty.additionalImages = [...pty.additionalImages, file._id]
+
+                    await pty.save()
+                  })
+                }
+
+              }
+
+              // store 
+              else if (file_type == 'store_featured_image') {
+                project.store.image = file._id
+
+                const properties = await Property.find({
+                  project: project._id,
+                  propertyType: 'Store'
+                })
+
+                if (properties.length) {
+                  properties.forEach(async pty => {
+
+                    pty.image = file._id
+                    pty.featuredImage = file._id
+
+                    await pty.save()
+                  })
+                }
+              }
+
+              else if (file_type == 'store_additional_images') {
+                project.store.images = [...project.store.images, file._id]
+
+                const properties = await Property.find({
+                  project: project._id,
+                  propertyType: 'Store'
+                })
+
+                if (properties.length) {
+                  properties.forEach(async pty => {
+
+                    pty.images = [...pty.images, file._id]
+                    pty.additionalImages = [...pty.additionalImages, file._id]
+
+                    await pty.save()
+                  })
+                }
+              }
+
+              await project.save()
+
+            }
+          }
+
           console.log("file from upload controller: ", file)
-          // return res.status(201).json({file})
-          return res.status(201).json({status: 'success', file })
 
-
-        } else {
-          console.log('Error: File not uploaded')
+          return res.json({ status: 'success', file })
 
         }
 
-
-        // return res.status(201).json({file})
-
       }
 
-    }
 
 
+    } catch (err) {
 
-    catch (err) {
-
-      console.log('Server Error: ', err)
-      return res.json({ status: 'error', msg: err.message });
+      return err;
 
     }
 
   })
+
+
 
 }

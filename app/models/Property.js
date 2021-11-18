@@ -3,13 +3,12 @@ const aggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
 const propertySchema = mongoose.Schema({
 
-    pid:{ 
-       type: String
+    pid: {
+        type: String
     },
 
     title: {
-        type: String,
-        required: true,
+        type: String
     },
 
     propertyType: {
@@ -48,36 +47,36 @@ const propertySchema = mongoose.Schema({
 
     features: [],
 
-    country:{
+    country: {
         type: String
     },
 
-    district:{
+    district: {
         type: String
     },
 
-    city:{
+    city: {
         type: String
     },
 
-    zip:{
+    zip: {
         type: String
     },
 
-    address:{
+    address: {
         type: String
     },
 
-    latitude:{
+    latitude: {
         type: String
     },
 
-    longitude:{
+    longitude: {
         type: String
     },
 
-    readyTime:{
-        type: Number 
+    readyTime: {
+        type: Number
     },
 
     description: {
@@ -86,30 +85,44 @@ const propertySchema = mongoose.Schema({
 
     nearby: [],
 
-    image: {          
+    image: {
         type: mongoose.Schema.Types.ObjectId,
-        ref:'File'
+        ref: 'File'
     },
 
+    featuredImage: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'File'
+    },
+
+
     images: [
-        {          
+        {
             type: mongoose.Schema.Types.ObjectId,
-            ref:'File'
+            ref: 'File'
         }
     ],
 
-    floorplanImage: {          
+
+    additionalImages: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'File'
+        }
+    ],
+
+    floorplanImage: {
         type: mongoose.Schema.Types.ObjectId,
-        ref:'File'
+        ref: 'File'
     },
 
-    virtualTourLink:{
-        type:String
+    virtualTourLink: {
+        type: String
     },
 
     tags: [
         {
-            type:String
+            type: String
         }
     ],
 
@@ -129,8 +142,8 @@ const propertySchema = mongoose.Schema({
 
     status: {
         type: String,
-        enum:['pending','published', 'drafted', 'sold','declined'],
-        default:'pending'
+        enum: ['pending', 'published', 'drafted', 'sold', 'declined'],
+        default: 'pending'
     },
 
     isHot: {
@@ -148,21 +161,21 @@ const propertySchema = mongoose.Schema({
         default: 0
     },
 
-    
-    reviews:[
+
+    reviews: [
         {
-           uid: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
-           },
+            uid: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User'
+            },
 
-           text:{
-               type:String,
-           },
+            text: {
+                type: String,
+            },
 
-           rating:{
-               type: Number
-           }
+            rating: {
+                type: Number
+            }
         }
     ],
 
@@ -182,13 +195,13 @@ const propertySchema = mongoose.Schema({
         ref: 'Promotion'
     },
 
-    requests:[{
+    requests: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Request'
     }],
 
 
-    soldTo:{
+    soldTo: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
@@ -202,7 +215,7 @@ const propertySchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Company'
     },
-    
+
     developer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

@@ -90,7 +90,7 @@ exports.getMyThreads = async (req, res) => {
       ])
       .sort({ 'updatedAt': -1 })
 
-    console.log('My Threads: ', threads)
+    // console.log('My Threads: ', threads)
 
     return res.json({ threads })
 
@@ -104,7 +104,9 @@ exports.getMyThreads = async (req, res) => {
 }
 
 exports.getThreadMessages = async (req, res) => {
+
   const id = req.params.id
+
   const token = req.headers.authorization
 
   if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
@@ -189,10 +191,11 @@ exports.getThreadMessages = async (req, res) => {
           }
         ])
 
-      console.log('Thread Messages: ', thread)
+      // console.log('Thread Messages: ', messages)
 
 
       return res.json({ messages: messages, thread: thread })
+
     }
     else {
       return res.json({ status: 'error', msg: 'Invalid thread returned' })

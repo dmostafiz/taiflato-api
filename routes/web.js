@@ -70,6 +70,8 @@ router.post('/upload_profile_image', UploadController.uploadProfileImage)
 router.post('/upload_project_image', UploadController.upload_project_image)
 router.post('/get_my_managers', ProjectController.get_my_managers)
 router.post('/save_project', ProjectController.save_project)
+// router.post('/generate_properties', ProjectController.generate_properties)
+router.get('/get_project_by_id/:id', ProjectController.get_project_by_id)
 
 
 

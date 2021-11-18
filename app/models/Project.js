@@ -7,9 +7,36 @@ const ProjectSchema = mongoose.Schema({
         type: String
     },
 
-    expert: {},
-    lawyer: {},
-    legals: {},
+    expert:{
+        first_name:{ type: String},
+        last_name:{ type: String},
+        address:{ type: String},
+        email:{ type: String},
+        phone:{ type: String},
+        copies:[{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'File'
+        }]
+    },
+
+    lawyer: {
+        first_name:{ type: String},
+        last_name:{ type: String},
+        address:{ type: String},
+        email:{ type: String},
+        phone:{ type: String},
+        copies:[{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'File'
+        }]
+    },
+
+    legal: {
+        copies:[{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'File'
+        }]
+    },
 
     projectCode: {
         type: String,
@@ -84,20 +111,142 @@ const ProjectSchema = mongoose.Schema({
 
     nearby: [],
 
-    buildingMedia:{},
+    projectImage:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'File'
+    },
 
-    twoRoomApartment:{},
-    threeRoomApartment:{},
-    fourRoomApartment:{},
-    fiveRoomApartment:{},
-    office:{},
-    store:{},
+    projectImages:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'File'
+    }],
+
+    videoLink:{
+        type: String
+    },
+
+    virtualTour:{
+        type: String
+    },
+
+    projectMedia:{
+        virtualTour:{type: String},
+        videoLink:{type: String},
+        image:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'File'
+        },
+        images:[{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'File'
+        }]
+    },
+
+    twoRoomApartment:{
+        total:{type: Number},
+        price:{type: Number},
+        surface:{type: Number},
+        bathrooms:{type: Number},
+        virtualTour:{type: String},
+        videoLink:{type: String},
+        image:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'File'
+        },
+        images:[{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'File'
+        }]
+    },
+
+    threeRoomApartment:{
+        total:{type: Number},
+        price:{type: Number},
+        surface:{type: Number},
+        bathrooms:{type: Number},
+        virtualTour:{type: String},
+        videoLink:{type: String},
+        image:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'File'
+        },
+        images:[{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'File'
+        }]
+    },
+
+    fourRoomApartment:{
+        total:{type: Number},
+        price:{type: Number},
+        surface:{type: Number},
+        bathrooms:{type: Number},
+        virtualTour:{type: String},
+        videoLink:{type: String},
+        image:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'File'
+        },
+        images:[{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'File'
+        }]
+    },
+
+    fiveRoomApartment:{
+        total:{type: Number},
+        price:{type: Number},
+        surface:{type: Number},
+        bathrooms:{type: Number},
+        virtualTour:{type: String},
+        videoLink:{type: String},
+        image:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'File'
+        },
+        images:[{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'File'
+        }]
+    },
+
+    office:{
+        total:{type: Number},
+        price:{type: Number},
+        surface:{type: Number},
+        bathrooms:{type: Number},
+        virtualTour:{type: String},
+        videoLink:{type: String},
+        image:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'File'
+        },
+        images:[{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'File'
+        }]
+    },
+
+    store:{
+        total:{type: Number},
+        price:{type: Number},
+        surface:{type: Number},
+        bathrooms:{type: Number},
+        virtualTour:{type: String},
+        videoLink:{type: String},
+        image:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'File'
+        },
+        images:[{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'File'
+        }]
+    },
 
     description: {
         type: String,
     },
-
-
 
     reviews: [
         {
@@ -135,9 +284,19 @@ const ProjectSchema = mongoose.Schema({
     properties: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
+            ref: 'Property'
         }
     ],
+
+    note: {
+        type: String,
+    },
+
+    status: {
+        type: String,
+        enum:['pending','published', 'drafted', 'declined'],
+        default:'pending'
+    },
 })
 
 ProjectSchema.set('timestamps', true)

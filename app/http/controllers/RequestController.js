@@ -13,6 +13,8 @@ exports.sendBuyingRequest = async (req, res) => {
 
   const { price, text, propertyId, developerId } = req.body
 
+  // return console.log('propertyId: ', propertyId)
+
   const token = req.headers.authorization
   try {
     const data = jwt.verify(token, process.env.APP_SECRET)
