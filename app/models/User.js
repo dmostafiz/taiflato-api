@@ -73,7 +73,7 @@ const userSchema = mongoose.Schema({
 
     projects:[{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Building' 
+        ref: 'Project' 
     }],
 
     password:{

@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 const { customAlphabet } = require('nanoid')
 const getCid = require('../../../helpers/getCid')
 const mailTransporter = require('../../../helpers/mailTransporter')
+const Company = require('../../models/Company')
 const File = require('../../models/File')
 const Floor = require('../../models/Floor')
 const Invite = require('../../models/Invite')
@@ -82,7 +83,7 @@ exports.save_project = async (req, res) => {
 
     } = req.body
 
-    console.log('twoRoomApartment : ', twoRoomApartment )
+    console.log('twoRoomApartment : ', twoRoomApartment)
     // return res.json({ status: 'success' })
 
     if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
@@ -121,6 +122,7 @@ exports.save_project = async (req, res) => {
                 manager = cUser
 
                 const invitingEmail = await Invite.findOne({ email: managerEmail })
+
                 if (!invitingEmail) {
 
                     const secure_url_token = customAlphabet('1234567890abcdefghizklmnopqrst', 90)()
@@ -160,6 +162,7 @@ exports.save_project = async (req, res) => {
 
         const project = new Project()
 
+        project.cid = getCid()
         project.expert = expert
         project.lawyer = lawyer
         // project.legals = projectLegalCopies
@@ -205,62 +208,75 @@ exports.save_project = async (req, res) => {
 
         await project.save()
 
-        if(project.numberOfFloors){
+        const company = await Company.findById(user.company)
 
-            for(let i = 0; i < project.numberOfFloors; i++){
+        if (company) {
+            company.projects = [...company.projects, project._id]
+            await company.save()
+        }
+
+        manager.projects = [...manager.projects, project._id]
+        await manager.save()
+
+        if (project.numberOfFloors) {
+
+            for (let i = 0; i < project.numberOfFloors; i++) {
                 const floor = new Floor()
                 floor.floorNo = i
-                floor.project = project._id  
-                floor.developer = user._id  
+                floor.project = project._id
+                floor.developer = user._id
                 await floor.save()
+
+                project.floors = [...project.floors, floor._id]
+                await project.save()
             }
         }
 
         const twoRoomTotal = twoRoomApartment?.total || 0
-        if(parseInt(twoRoomTotal)){
+        if (parseInt(twoRoomTotal)) {
 
-            for(let i = 0; i < parseInt(twoRoomTotal); i++){
-                await generatePropertiesForProject(project, rooms = 2, twoRoomApartment, 'Apartment')
+            for (let i = 0; i < parseInt(twoRoomTotal); i++) {
+                await generatePropertiesForProject(project, rooms = 2, twoRoomApartment, 'Apartment', manager, company)
             }
         }
 
         const threeRoomTotal = threeRoomApartment?.total || 0
-        if(parseInt(threeRoomTotal)){
+        if (parseInt(threeRoomTotal)) {
 
-            for(let i = 0; i < parseInt(threeRoomTotal); i++){
-                await generatePropertiesForProject(project, rooms = 3, threeRoomApartment, 'Apartment')
+            for (let i = 0; i < parseInt(threeRoomTotal); i++) {
+                await generatePropertiesForProject(project, rooms = 3, threeRoomApartment, 'Apartment', manager, company)
             }
         }
 
         const fourRoomTotal = fourRoomApartment?.total || 0
-        if(parseInt(fourRoomTotal)){
+        if (parseInt(fourRoomTotal)) {
 
-            for(let i = 0; i < parseInt(fourRoomTotal); i++){
-                await generatePropertiesForProject(project, rooms = 4, fourRoomApartment, 'Apartment')
+            for (let i = 0; i < parseInt(fourRoomTotal); i++) {
+                await generatePropertiesForProject(project, rooms = 4, fourRoomApartment, 'Apartment', manager, company)
             }
         }
 
         const fiveRoomTotal = fiveRoomApartment?.total || 0
-        if(parseInt(fiveRoomTotal)){
+        if (parseInt(fiveRoomTotal)) {
 
-            for(let i = 0; i < parseInt(fiveRoomTotal); i++){
-                await generatePropertiesForProject(project, rooms = 5, fiveRoomApartment, 'Apartment')
+            for (let i = 0; i < parseInt(fiveRoomTotal); i++) {
+                await generatePropertiesForProject(project, rooms = 5, fiveRoomApartment, 'Apartment', manager, company)
             }
         }
 
         const officeTotal = office?.total || 0
-        if(parseInt(officeTotal)){
+        if (parseInt(officeTotal)) {
 
-            for(let i = 0; i < parseInt(officeTotal); i++){
-                await generatePropertiesForProject(project, rooms = 0, office, 'Office')
+            for (let i = 0; i < parseInt(officeTotal); i++) {
+                await generatePropertiesForProject(project, rooms = 0, office, 'Office', manager, company)
             }
         }
 
         const storeTotal = store?.total || 0
-        if(parseInt(storeTotal)){
+        if (parseInt(storeTotal)) {
 
-            for(let i = 0; i < parseInt(storeTotal); i++){
-                await generatePropertiesForProject(project, rooms = 0, store, 'Store')
+            for (let i = 0; i < parseInt(storeTotal); i++) {
+                await generatePropertiesForProject(project, rooms = 0, store, 'Store', manager, company)
             }
         }
 
@@ -280,11 +296,78 @@ exports.save_project = async (req, res) => {
 
 }
 
+exports.get_projects = async (req, res) => {
+    const token = req.headers.authorization
+
+    console.log('My Token: ', token)
+
+    if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
+    try {
+        const data = jwt.verify(token, process.env.APP_SECRET)
+
+        const user = await User.findOne({ _id: data.id })
+
+        if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
+        var query = {
+            company: user.company
+        }
+
+        if (user.is_realestate_admin == false) {
+            query['manager'] = user._id
+        }
+
+        const projects = await Project.find(query)
+            .populate([
+                {
+                    path: 'projectImage',
+                    model: 'File'
+                }
+            ])
+
+        // console.log('projects: ',projects)
+
+        res.json({ status: 'success', projects })
+
+    }
+    catch (error) {
+        console.log('Error: ', error.message)
+        res.json({ status: 'error', msg: error.message, projects: [] })
+    }
+}
+
 exports.get_project_by_id = async (req, res) => {
     const id = req.params.id
 
     try {
         const project = await Project.findById(id)
+            .populate([
+                {
+                    path: 'projectImage',
+                    model: 'File'
+                },
+                {
+                    path: 'expert.copies',
+                    model: 'File'
+                },
+                {
+                    path: 'lawyer.copies',
+                    model: 'File'
+                },
+                {
+                    path: 'legal.copies',
+                    model: 'File'
+                },
+                {
+                    path: 'properties',
+                    model: 'Property'
+                },
+                {
+                    path: 'floors',
+                    model: 'Floor'
+                },
+            ])
 
 
         return res.json({ status: 'success', project })
@@ -313,7 +396,7 @@ exports.get_project_by_id = async (req, res) => {
 
 //         if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
 
-        
+
 
 //         const project = await Project.findById(projectId)
 
@@ -345,11 +428,11 @@ exports.get_project_by_id = async (req, res) => {
 //     }
 // }
 
-async function generatePropertiesForProject(project, rooms = null, propertyDetails, type) {
+async function generatePropertiesForProject(project, rooms = null, propertyDetails, type, manager, company) {
 
     const property = new Property()
     property.pid = getCid()
-    property.title = project.projectTitle
+    property.title = type + ' in ' + project.projectTitle
     property.propertyType = type
     property.propertySize = parseInt(propertyDetails.surface) || 0
     property.price = parseInt(propertyDetails.price) || 0
@@ -393,8 +476,14 @@ async function generatePropertiesForProject(project, rooms = null, propertyDetai
     //     await property.save()
     // }
 
-    // project.properties = [...project.properties, property._id]
-    // await project.save() 
+    project.properties = [...project.properties, property._id]
+    await project.save()
+
+    manager.properties = [...manager.properties, property._id]
+    await manager.save()
+
+    company.projects = [...company.projects, property._id]
+    await company.save()
 
     return property
 }

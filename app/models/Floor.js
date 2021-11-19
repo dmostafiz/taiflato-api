@@ -13,12 +13,15 @@ const FloorSchema = mongoose.Schema({
 
     coordinates: [],
 
-    properties: [],
-
-    building:{
+    properties: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Project'
-    },
+        ref: 'Property'
+    }],
+
+    // building:{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Project'
+    // },
 
     project:{
         type: mongoose.Schema.Types.ObjectId,

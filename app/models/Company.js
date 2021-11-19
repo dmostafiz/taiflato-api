@@ -94,9 +94,9 @@ const CompanySchema = mongoose.Schema({
         ref: 'Property'  
     }],
    
-    buildings: [{
+    projects: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Building'  
+        ref: 'Project'  
     }],
 
     negotiations: [{

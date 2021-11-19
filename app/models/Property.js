@@ -7,6 +7,10 @@ const propertySchema = mongoose.Schema({
         type: String
     },
 
+    serialNo: {
+        type: String
+    },
+
     title: {
         type: String
     },
@@ -229,8 +233,17 @@ const propertySchema = mongoose.Schema({
     project: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Project'
-    }
+    },
 
+    hasBalcony: {
+        type: Boolean,
+        default: false
+    },
+
+    isUpdated: {
+        type: Boolean,
+        default: false
+    }
 })
 
 propertySchema.set('timestamps', true)

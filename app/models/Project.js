@@ -3,7 +3,7 @@ const aggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
 const ProjectSchema = mongoose.Schema({
 
-    pid: {
+    cid: {
         type: String
     },
 
@@ -52,6 +52,11 @@ const ProjectSchema = mongoose.Schema({
 
     numberOfFloors: {
         type: Number,
+    },
+
+    floors:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Floor'
     },
 
     heightOfBuilding: {
