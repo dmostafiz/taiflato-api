@@ -54,10 +54,10 @@ const ProjectSchema = mongoose.Schema({
         type: Number,
     },
 
-    floors:{
+    floors:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Floor'
-    },
+    }],
 
     heightOfBuilding: {
         type: Number,

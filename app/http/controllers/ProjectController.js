@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const { property } = require('lodash')
 const { customAlphabet } = require('nanoid')
 const getCid = require('../../../helpers/getCid')
 const mailTransporter = require('../../../helpers/mailTransporter')
@@ -378,6 +379,73 @@ exports.get_project_by_id = async (req, res) => {
     }
 }
 
+exports.update_property = async (req, res) => {
+    const token = req.headers.authorization
+
+    const { propertyId, title, serialNo, floor, price, hasBalcony } = req.body
+
+    console.log('My Token: ', token)
+
+    if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
+    try {
+        const data = jwt.verify(token, process.env.APP_SECRET)
+
+        const user = await User.findOne({ _id: data.id })
+
+        if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
+        const property = await Property.findById(propertyId)
+
+        property.title = title
+        property.serialNo = serialNo
+        property.floor = floor
+        property.price = price
+        property.isUpdated = true
+        property.hasBalcony = hasBalcony
+          
+        await property.save()
+
+
+        const project = await Project.findById(property.project)
+                                        .populate([
+                                            {
+                                                path: 'projectImage',
+                                                model: 'File'
+                                            },
+                                            {
+                                                path: 'expert.copies',
+                                                model: 'File'
+                                            },
+                                            {
+                                                path: 'lawyer.copies',
+                                                model: 'File'
+                                            },
+                                            {
+                                                path: 'legal.copies',
+                                                model: 'File'
+                                            },
+                                            {
+                                                path: 'properties',
+                                                model: 'Property'
+                                            },
+                                            {
+                                                path: 'floors',
+                                                model: 'Floor'
+                                            },
+                                        ])
+
+        const gfloor = await Floor.findOne({ project: project._id, floorNo: floor })
+        gfloor.properties = [...gfloor.properties, property._id]
+        await gfloor.save()
+
+        console.log('Update floor: ', gfloor)
+        return res.json({ status: 'success', project })
+    }
+    catch (error) {
+        res.json({ status: 'success', msg: error.message })
+    }
+}
 // exports.generate_properties = async (req, res) => {
 
 //     const token = req.headers.authorization

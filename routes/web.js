@@ -73,6 +73,7 @@ router.post('/save_project', ProjectController.save_project)
 // router.post('/generate_properties', ProjectController.generate_properties)
 router.get('/get_projects/', ProjectController.get_projects)
 router.get('/get_project_by_id/:id', ProjectController.get_project_by_id)
+router.post('/update_property', ProjectController.update_property)
 
 
 

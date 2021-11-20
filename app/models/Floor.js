@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const FloorSchema = mongoose.Schema({
 
     floorNo:{
-       type: String
+       type: Number
     },
 
     image:{
