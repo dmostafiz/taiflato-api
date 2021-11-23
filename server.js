@@ -7,11 +7,12 @@ const expressValidator = require('express-validator')
 const cors = require('cors')
 const connectDB = require('./db/connect')
 var exphbs  = require('express-handlebars');
-const getAuctionsAndUpdate = require('./app/cron/getAuctionsAndUpdate');
 // const Auction = require('./app/models/Auction');
 const cron = require('node-cron');
 // const socketBidding = require('./app/socket/socketBidding');
 const appSocket = require('./app/socket/appSocket');
+const getAuctionsAndUpdate = require('./app/cron/getAuctionsAndUpdate');
+const getProjectsAndUpdate = require('./app/cron/getProjectsAndUpdate');
 
 const app = express()
 const server = require('http').createServer(app)
@@ -34,6 +35,7 @@ const io = require("socket.io")(server, {
 connectDB()
 
 getAuctionsAndUpdate(cron)
+// getProjectsAndUpdate(cron)
 
 let users = []
 

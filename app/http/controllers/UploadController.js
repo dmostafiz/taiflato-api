@@ -525,7 +525,6 @@ exports.upload_project_image = async (req, res) => {
     if (error) {
       console.log('Form Error Ocurred')
       return res.json('Form Error Ocurred')
-
     }
 
     try {
@@ -536,7 +535,7 @@ exports.upload_project_image = async (req, res) => {
       const file_type = fields.file_type[0]
       const project_id = fields.ref_id[0]
 
-      // console.log('Upload token: ', project_id)
+      // return console.log('project_id: ', project_id)
 
       // return res.json({ status: 'success' })
 
@@ -578,9 +577,13 @@ exports.upload_project_image = async (req, res) => {
 
           await file.save()
 
+          console.log("project_id: ", project_id)
+
           if (file) {
 
-            const project = await Project.findById(project_id)
+            const project = await Project.findOne({_id:project_id, developer: user._id})
+            
+            // return console.log('Upload for project: ', project)
 
             if (project) {
 

@@ -11,6 +11,48 @@ const Project = require('../../models/Project')
 const Property = require('../../models/Property')
 const User = require("../../models/User")
 
+
+exports.create_drafted_project = async (req, res) => {
+
+    const token = req.headers.authorization
+
+    console.log('Token: ', token)
+
+    if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
+    try {
+        const data = jwt.verify(token, process.env.APP_SECRET)
+
+        const user = await User.findOne({ _id: data.id })
+
+        if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
+        let manager = user
+
+
+        const project = new Project()
+
+        project.cid = getCid()
+        project.manager = manager._id
+        project.company = user.company
+        project.developer = user._id
+        project.status = 'drafted'
+        await project.save()
+
+
+        console.log('Created draft Project: ', project)
+
+        return res.json({ status: 'success', project: project })
+
+    } catch (error) {
+        console.log('Error: ', error)
+        return res.json({ status: 'error', msg: 'Your are not authorised' })
+    }
+
+}
+
+
+
 exports.get_my_managers = async (req, res) => {
     const token = req.headers.authorization
 
@@ -28,7 +70,7 @@ exports.get_my_managers = async (req, res) => {
 
         const managers = await User.find({ realestate_admin: user._id, account_verified: true })
 
-        console.log('Managers: ', managers)
+        // console.log('Managers: ', managers)
         return res.json({ managers: managers })
 
 
@@ -41,10 +83,11 @@ exports.get_my_managers = async (req, res) => {
 }
 
 
-exports.save_project = async (req, res) => {
+exports.save_drafted_project = async (req, res) => {
     const token = req.headers.authorization
 
     const {
+        project_id,
         selectManager,
         inviteManager,
 
@@ -161,7 +204,13 @@ exports.save_project = async (req, res) => {
         }
 
 
-        const project = new Project()
+        const project = await Project.findOne({ _id: project_id, developer: user._id })
+
+        // console.log('My Project: ', project)
+        // return res.json({ status: 'success', project: project })
+
+
+        if (!project) return res.json({ status: 'error', msg: 'Something went wrong' })
 
         project.cid = getCid()
         project.expert = expert
@@ -195,17 +244,18 @@ exports.save_project = async (req, res) => {
         project.virtualTour = projectMedia?.virtualTour || null
         project.projectMedia = projectMedia
 
-        project.twoRoomApartment = twoRoomApartment
-        project.threeRoomApartment = threeRoomApartment
-        project.fourRoomApartment = fourRoomApartment
-        project.fiveRoomApartment = fiveRoomApartment
-        project.office = office
-        project.store = store
+        project.twoRoomApartment = {... project.twoRoomApartment, twoRoomApartment}
+        project.threeRoomApartment = {... project.threeRoomApartment, threeRoomApartment}
+        project.fourRoomApartment = {... project.fourRoomApartment, fourRoomApartment}
+        project.fiveRoomApartment = {... project.fiveRoomApartment, fiveRoomApartment}
+        project.office = {...project.office, project}
+        project.store = {...project.store, store}
 
         project.description = description
 
         project.company = user.company
         project.developer = user._id
+        project.status = 'pending'
 
         await project.save()
 
@@ -403,37 +453,37 @@ exports.update_property = async (req, res) => {
         property.price = price
         property.isUpdated = true
         property.hasBalcony = hasBalcony
-          
+
         await property.save()
 
 
         const project = await Project.findById(property.project)
-                                        .populate([
-                                            {
-                                                path: 'projectImage',
-                                                model: 'File'
-                                            },
-                                            {
-                                                path: 'expert.copies',
-                                                model: 'File'
-                                            },
-                                            {
-                                                path: 'lawyer.copies',
-                                                model: 'File'
-                                            },
-                                            {
-                                                path: 'legal.copies',
-                                                model: 'File'
-                                            },
-                                            {
-                                                path: 'properties',
-                                                model: 'Property'
-                                            },
-                                            {
-                                                path: 'floors',
-                                                model: 'Floor'
-                                            },
-                                        ])
+            .populate([
+                {
+                    path: 'projectImage',
+                    model: 'File'
+                },
+                {
+                    path: 'expert.copies',
+                    model: 'File'
+                },
+                {
+                    path: 'lawyer.copies',
+                    model: 'File'
+                },
+                {
+                    path: 'legal.copies',
+                    model: 'File'
+                },
+                {
+                    path: 'properties',
+                    model: 'Property'
+                },
+                {
+                    path: 'floors',
+                    model: 'Floor'
+                },
+            ])
 
         const gfloor = await Floor.findOne({ project: project._id, floorNo: floor })
         gfloor.properties = [...gfloor.properties, property._id]
@@ -498,6 +548,39 @@ exports.update_property = async (req, res) => {
 
 async function generatePropertiesForProject(project, rooms = null, propertyDetails, type, manager, company) {
 
+    var featuredImage = null 
+    var additionalImages = null 
+
+    if(type == 'Apartment' && rooms == 2){
+        featuredImage = project.twoRoomApartment?.image
+        additionalImages = project.twoRoomApartment?.images
+    }
+    else if(type == 'Apartment' && rooms == 3){
+        featuredImage = project.threeRoomApartment?.image
+        additionalImages = project.threeRoomApartment?.images
+    }
+    else if(type == 'Apartment' && rooms == 4){
+        featuredImage = project.fourRoomApartment?.image
+        additionalImages = project.fourRoomApartment?.images
+    }
+    else if(type == 'Apartment' && rooms == 5){
+        featuredImage = project.fiveRoomApartment?.image
+        additionalImages = project.fiveRoomApartment?.images
+    }
+    else if(type == 'office'){
+        featuredImage = project.office?.image
+        additionalImages = project.office?.images
+    }
+    else if(type == 'store'){
+        featuredImage = project.store?.image
+        additionalImages = project.store?.images
+    }
+
+    console.log('Featured Image: ', featuredImage)
+    console.log('AdditionalImages Images: ', additionalImages)
+
+    // return
+
     const property = new Property()
     property.pid = getCid()
     property.title = type + ' in ' + project.projectTitle
@@ -508,7 +591,12 @@ async function generatePropertiesForProject(project, rooms = null, propertyDetai
     property.rooms = parseInt(rooms) || 0
     property.bathroom = parseInt(propertyDetails.bathrooms) || 0
     property.floor = null
-    // property.additionalDetails = additionalDetails
+    property.featuredImage = featuredImage
+    property.image = featuredImage
+
+    property.additionalImages = additionalImages
+    property.images = additionalImages
+
     property.features = project.features
     property.country = project.country
     property.district = project.district

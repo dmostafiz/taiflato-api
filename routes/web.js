@@ -15,6 +15,7 @@ const UploadController = require('../app/http/controllers/UploadController')
 const BuildingController = require('../app/http/controllers/BuildingController')
 
 const MessangerController = require('../app/http/controllers/MessangerController')
+const QueueAbleController = require('../app/http/controllers/QueueAbleController')
 
 const HomeController = require('../app/http/controllers/HomeController')
 const UserController = require('../app/http/controllers/UserController')
@@ -64,12 +65,16 @@ router.post('/submit_phone_verify_code', AuthController.submit_phone_verify_code
 router.get('/get_user_by_id/:id', UserController.getUserById)
 
 router.post('/upload_profile_image', UploadController.uploadProfileImage)
+// router.post('/upload_profile_image', QueueAbleController.uploadProfileImage)
 
 
 //Project
+
 router.post('/upload_project_image', UploadController.upload_project_image)
+router.post('/create_drafted_project', ProjectController.create_drafted_project)
+
 router.post('/get_my_managers', ProjectController.get_my_managers)
-router.post('/save_project', ProjectController.save_project)
+router.post('/save_drafted_project', ProjectController.save_drafted_project)
 // router.post('/generate_properties', ProjectController.generate_properties)
 router.get('/get_projects/', ProjectController.get_projects)
 router.get('/get_project_by_id/:id', ProjectController.get_project_by_id)

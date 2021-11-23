@@ -32,7 +32,7 @@ function getAuctionsAndUpdate(cron){
         await getAuctions()
 
     });
-    
+
 }
 
 module.exports = getAuctionsAndUpdate
