@@ -10,6 +10,7 @@ const Floor = require('../../models/Floor');
 const Building = require('../../models/Building');
 const Company = require('../../models/Company');
 const Project = require('../../models/Project');
+const getCid = require('../../../helpers/getCid');
 
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY,
@@ -515,7 +516,7 @@ exports.uploadCompanyLogo = async (req, res) => {
 }
 
 
-exports.upload_project_image = async (req, res) => {
+exports.test_example = async (req, res) => {
 
 
   const form = new multiparty.Form();
@@ -581,8 +582,8 @@ exports.upload_project_image = async (req, res) => {
 
           if (file) {
 
-            const project = await Project.findOne({_id:project_id, developer: user._id})
-            
+            const project = await Project.findOne({ _id: project_id, developer: user._id })
+
             // return console.log('Upload for project: ', project)
 
             if (project) {
@@ -615,9 +616,9 @@ exports.upload_project_image = async (req, res) => {
                 project.twoRoomApartment.image = file._id
 
                 const properties = await Property.find({
-                   project: project._id, 
-                   propertyType: 'Apartment', 
-                   rooms: 2 
+                  project: project._id,
+                  propertyType: 'Apartment',
+                  rooms: 2
                 })
 
                 console.log('Properties Length: ', properties.length)
@@ -663,7 +664,7 @@ exports.upload_project_image = async (req, res) => {
                   propertyType: 'Apartment',
                   rooms: 3
                 })
-                
+
                 console.log('Properties Length: ', properties.length)
 
                 if (properties.length) {
@@ -878,6 +879,107 @@ exports.upload_project_image = async (req, res) => {
 
 
     } catch (err) {
+
+      return err;
+
+    }
+
+  })
+
+
+
+}
+
+
+exports.upload_project_image = async (req, res) => {
+
+
+  // console.log('Ok: ', req.body)
+  const form = new multiparty.Form();
+
+  form.parse(req, async (error, fields, files) => {
+
+    // console.log('files: ', files)
+
+    if (error) {
+      console.log('Error: ', error)
+      return res.json({ status: 'error', error })
+    }
+
+    try {
+
+      // const token = fields.tken
+
+      const token = fields.token[0]
+      const project_id = fields.project_id[0]
+
+      console.log('project_id: ', project_id)
+      console.log('token: ', token)
+
+      const data = jwt.verify(token, process.env.APP_SECRET)
+      const user = await User.findOne({ _id: data.id })
+
+      // console.log('File Paths: ', files.file)
+      
+      if (user && files.file.length) {
+
+        const uploadedIds = []
+
+         await files.file.forEach(async (file, index) => {
+          // console.log(index, 'Single File: ', file)
+          const path = file.path 
+          const folder =  user.username + '/projects/' + project_id
+          const buffer = fs.readFileSync(path);
+          const type = await fileType.fromBuffer(buffer);
+          const fileName = `${folder}/${getCid()}`;
+
+          const data = await uploadFile(buffer, fileName, type)
+
+
+          if(data){
+            const file = new File()
+            file.bucket = data.Bucket
+            file.eTag = data.ETag
+            file.key = data.Key
+            file.location = data.Location
+            file.versionId = data.VersionId
+            file.mime = type.mime
+            file.fileExt = type.ext
+            file.folder = folder
+            file.user = user._id
+  
+            await file.save()
+
+            uploadedIds.push(file._id)
+
+            if(uploadedIds.length == files.file.length){
+              console.log(uploadedIds.length, 'All files has been uploaded')
+              return res.json({ status: 'success', files:uploadedIds })
+          }
+
+          }
+
+
+        })
+
+        
+          // console.log('All uploaded: ', uploaded)
+    
+        
+      }
+
+      // return res.json({ status: 'success', files })
+      // return console.log('project_id: ', project_id)
+
+      // return res.json({ status: 'success' })
+
+
+
+  
+
+
+    } catch (err) {
+      console.log("Uplaod Error: ", err.message)
 
       return err;
 

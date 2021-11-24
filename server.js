@@ -35,7 +35,7 @@ const io = require("socket.io")(server, {
 connectDB()
 
 getAuctionsAndUpdate(cron)
-// getProjectsAndUpdate(cron)
+getProjectsAndUpdate(cron)
 
 let users = []
 

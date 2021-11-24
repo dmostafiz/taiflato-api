@@ -9,6 +9,7 @@ const Floor = require('../../models/Floor')
 const Invite = require('../../models/Invite')
 const Project = require('../../models/Project')
 const Property = require('../../models/Property')
+const QueueProperty = require('../../models/QueueProperty')
 const User = require("../../models/User")
 
 
@@ -51,8 +52,6 @@ exports.create_drafted_project = async (req, res) => {
 
 }
 
-
-
 exports.get_my_managers = async (req, res) => {
     const token = req.headers.authorization
 
@@ -82,7 +81,6 @@ exports.get_my_managers = async (req, res) => {
 
 }
 
-
 exports.save_drafted_project = async (req, res) => {
     const token = req.headers.authorization
 
@@ -93,19 +91,11 @@ exports.save_drafted_project = async (req, res) => {
 
         expert,
         lawyer,
-        // projectLegalCopies,
+        projectLegalCopies,
         managerEmail,
         projectCode,
         title,
-        numberOfBuilding,
-        numberOfFloor,
-        heightOfBuilding,
-        surfaceOfBuilding,
-        parkingOfBuilding,
         features,
-        projectStartedDate,
-        projectCompleteDate,
-        deliveryIn,
         country,
         district,
         city,
@@ -113,21 +103,9 @@ exports.save_drafted_project = async (req, res) => {
         address,
         latitude,
         longitude,
-        nearby,
-        projectMedia,
-
-        twoRoomApartment,
-        threeRoomApartment,
-        fourRoomApartment,
-        fiveRoomApartment,
-        office,
-        store,
-
-        description
+        nearby
 
     } = req.body
-
-    console.log('twoRoomApartment : ', twoRoomApartment)
     // return res.json({ status: 'success' })
 
     if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
@@ -215,21 +193,15 @@ exports.save_drafted_project = async (req, res) => {
         project.cid = getCid()
         project.expert = expert
         project.lawyer = lawyer
-        // project.legals = projectLegalCopies
+        project.legal = { copies: projectLegalCopies }
 
         project.manager = manager._id
 
         project.projectCode = projectCode
         project.projectTitle = title
-        project.numberOfBuildings = numberOfBuilding
-        project.numberOfFloors = numberOfFloor
-        project.heightOfBuilding = heightOfBuilding
-        project.surfaceOfBuilding = surfaceOfBuilding
-        project.parkingOfBuilding = parkingOfBuilding
+
         project.features = features
-        project.projectStartedDate = projectStartedDate
-        project.projectCompleteDate = projectCompleteDate
-        project.deliveryIn = deliveryIn
+
         project.country = country
         project.district = district
         project.city = city
@@ -238,24 +210,8 @@ exports.save_drafted_project = async (req, res) => {
         project.latitude = latitude
         project.longitude = longitude
         project.nearby = nearby
-        // project.buildingImage = building?.image[0] || null
-        // project.buildingImages = building?.images || null
-        project.videoLink = projectMedia?.videoLink || null
-        project.virtualTour = projectMedia?.virtualTour || null
-        project.projectMedia = projectMedia
-
-        project.twoRoomApartment = {... project.twoRoomApartment, twoRoomApartment}
-        project.threeRoomApartment = {... project.threeRoomApartment, threeRoomApartment}
-        project.fourRoomApartment = {... project.fourRoomApartment, fourRoomApartment}
-        project.fiveRoomApartment = {... project.fiveRoomApartment, fiveRoomApartment}
-        project.office = {...project.office, project}
-        project.store = {...project.store, store}
-
-        project.description = description
-
         project.company = user.company
         project.developer = user._id
-        project.status = 'pending'
 
         await project.save()
 
@@ -269,74 +225,6 @@ exports.save_drafted_project = async (req, res) => {
         manager.projects = [...manager.projects, project._id]
         await manager.save()
 
-        if (project.numberOfFloors) {
-
-            for (let i = 0; i < project.numberOfFloors; i++) {
-                const floor = new Floor()
-                floor.floorNo = i
-                floor.project = project._id
-                floor.developer = user._id
-                await floor.save()
-
-                project.floors = [...project.floors, floor._id]
-                await project.save()
-            }
-        }
-
-        const twoRoomTotal = twoRoomApartment?.total || 0
-        if (parseInt(twoRoomTotal)) {
-
-            for (let i = 0; i < parseInt(twoRoomTotal); i++) {
-                await generatePropertiesForProject(project, rooms = 2, twoRoomApartment, 'Apartment', manager, company)
-            }
-        }
-
-        const threeRoomTotal = threeRoomApartment?.total || 0
-        if (parseInt(threeRoomTotal)) {
-
-            for (let i = 0; i < parseInt(threeRoomTotal); i++) {
-                await generatePropertiesForProject(project, rooms = 3, threeRoomApartment, 'Apartment', manager, company)
-            }
-        }
-
-        const fourRoomTotal = fourRoomApartment?.total || 0
-        if (parseInt(fourRoomTotal)) {
-
-            for (let i = 0; i < parseInt(fourRoomTotal); i++) {
-                await generatePropertiesForProject(project, rooms = 4, fourRoomApartment, 'Apartment', manager, company)
-            }
-        }
-
-        const fiveRoomTotal = fiveRoomApartment?.total || 0
-        if (parseInt(fiveRoomTotal)) {
-
-            for (let i = 0; i < parseInt(fiveRoomTotal); i++) {
-                await generatePropertiesForProject(project, rooms = 5, fiveRoomApartment, 'Apartment', manager, company)
-            }
-        }
-
-        const officeTotal = office?.total || 0
-        if (parseInt(officeTotal)) {
-
-            for (let i = 0; i < parseInt(officeTotal); i++) {
-                await generatePropertiesForProject(project, rooms = 0, office, 'Office', manager, company)
-            }
-        }
-
-        const storeTotal = store?.total || 0
-        if (parseInt(storeTotal)) {
-
-            for (let i = 0; i < parseInt(storeTotal); i++) {
-                await generatePropertiesForProject(project, rooms = 0, store, 'Store', manager, company)
-            }
-        }
-
-        //  const manager = selectManager ? await User.findOne({email: managerEmail, account_verified: true}) :  
-
-        //  console.log('Managers: ', managers)
-        //  return res.json({managers:managers})
-
-        console.log('Saved Project: ', project)
 
         return res.json({ status: 'success', project: project })
 
@@ -496,150 +384,142 @@ exports.update_property = async (req, res) => {
         res.json({ status: 'success', msg: error.message })
     }
 }
-// exports.generate_properties = async (req, res) => {
 
-//     const token = req.headers.authorization
+exports.save_project_properties = async (req, res) => {
+    const token = req.headers.authorization
 
-//     const { projectId } = req.body
+    const { properties, projectId } = req.body
 
-//     console.log('projectId: ', projectId)
+    // console.log('properties : ', properties)
+    // return res.json({ status: 'success' })
 
-//     if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
+    if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
 
-//     try {
+    try {
+        const data = jwt.verify(token, process.env.APP_SECRET)
 
-//         const data = jwt.verify(token, process.env.APP_SECRET)
+        const user = await User.findOne({ _id: data.id })
 
-//         const user = await User.findOne({ _id: data.id })
+        if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
 
-//         if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
+        const project = await Project.findOne({ _id: projectId, developer: user._id })
 
-
-
-//         const project = await Project.findById(projectId)
-
-//         console.log('Generrating property for: ', project)
-
-//         if (project) {
-
-//             if (project.twoRoomApartment.total) {
-//                 for (let i = 0; i < project.twoRoomApartment.total; i++) {
-//                     await generatePropertiesForProject(project, rooms = 2, project.twoRoomApartment, 'Apartment')
-//                 }
-//             }
-
-//             if (project.threeRoomApartment.total) {
-//                 for (let i = 0; i < project.threeRoomApartment.total; i++) {
-//                     await generatePropertiesForProject(project, rooms = 3, project.threeRoomApartment, 'Apartment')
-//                 }
-//             }
+        // console.log('project : ', project)
 
 
-//         }
+        if (project) {
 
-//         return res.json({ status: 'success', project})
+            if (properties.length) {
+                properties.forEach(async (pty) => {
+
+                    const qpty = new QueueProperty()
+
+                    qpty.propertyType = pty.type
+                    qpty.numberOfRooms = pty.numberOfRooms
+                    qpty.numberOfBathrooms = pty.numberOfBathrooms
+                    qpty.propertySize = pty.surfaceArea
+                    qpty.price = pty.price
+                    qpty.total = pty.total
+                    qpty.virtualTour = pty.virtualTour
+                    qpty.videoLink = pty.videoLink
+                    qpty.image = pty.image
+                    qpty.images = pty.images
+                    qpty.project = project._id
+                    qpty.company = project.company
+                    qpty.developer = project.developer
+                    qpty.manager = project.manager
+
+                    await qpty.save()
+                })
+            }
+
+        }
+
+        return res.json({ status: 'success', project })
 
 
-//     } catch (error) {
-//         console.log('Error: ', error)
-//         return res.json({ status: 'error', msg: 'Your are not authorised' })
-//     }
-// }
-
-async function generatePropertiesForProject(project, rooms = null, propertyDetails, type, manager, company) {
-
-    var featuredImage = null 
-    var additionalImages = null 
-
-    if(type == 'Apartment' && rooms == 2){
-        featuredImage = project.twoRoomApartment?.image
-        additionalImages = project.twoRoomApartment?.images
-    }
-    else if(type == 'Apartment' && rooms == 3){
-        featuredImage = project.threeRoomApartment?.image
-        additionalImages = project.threeRoomApartment?.images
-    }
-    else if(type == 'Apartment' && rooms == 4){
-        featuredImage = project.fourRoomApartment?.image
-        additionalImages = project.fourRoomApartment?.images
-    }
-    else if(type == 'Apartment' && rooms == 5){
-        featuredImage = project.fiveRoomApartment?.image
-        additionalImages = project.fiveRoomApartment?.images
-    }
-    else if(type == 'office'){
-        featuredImage = project.office?.image
-        additionalImages = project.office?.images
-    }
-    else if(type == 'store'){
-        featuredImage = project.store?.image
-        additionalImages = project.store?.images
+    } catch (error) {
+        console.log('Error: ', error)
+        return res.json({ status: 'error', msg: 'Your are not authorised' })
     }
 
-    console.log('Featured Image: ', featuredImage)
-    console.log('AdditionalImages Images: ', additionalImages)
-
-    // return
-
-    const property = new Property()
-    property.pid = getCid()
-    property.title = type + ' in ' + project.projectTitle
-    property.propertyType = type
-    property.propertySize = parseInt(propertyDetails.surface) || 0
-    property.price = parseInt(propertyDetails.price) || 0
-    property.bedroom = parseInt(rooms) || 0
-    property.rooms = parseInt(rooms) || 0
-    property.bathroom = parseInt(propertyDetails.bathrooms) || 0
-    property.floor = null
-    property.featuredImage = featuredImage
-    property.image = featuredImage
-
-    property.additionalImages = additionalImages
-    property.images = additionalImages
-
-    property.features = project.features
-    property.country = project.country
-    property.district = project.district
-    property.city = project.city
-    property.zip = project.zip
-    property.address = project.address
-    property.latitude = project.latitude
-    property.longitude = project.longitude
-    property.readyTime = project.deliveryIn
-    property.description = project.description
-    property.nearby = project.nearby
-
-    // property.featuredImage = propertyDetails?.image || null
-    // property.image = propertyDetails?.image || null
-
-    // property.additionalImages = propertyDetails?.images || null
-    // property.images = propertyDetails?.images || null
-
-    property.virtualTourLink = propertyDetails?.virtualTour || null
-    property.videoLink = propertyDetails?.videoLink || null
-
-    property.developer = project.developer
-    property.manager = project.manager
-    property.company = project.company
-    property.project = project._id
+}
 
 
-    await property.save()
+exports.save_project_details = async (req, res) => {
+    const token = req.headers.authorization
 
-    // const file = await File.findOne({location: propertyDetails?.image?.shift() }) 
-    // if(file){
-    //     property.image = file._id
-    //     await property.save()
-    // }
+    const { project_id,
+        numberOfBuilding,
+        numberOfFloor,
+        heightOfBuilding,
+        surfaceOfBuilding,
+        parkingOfBuilding,
+        features,
+        projectStartedDate,
+        projectCompleteDate,
+        deliveryIn,
+        projectImage,
+        projectImages,
+        virtualTour,
+        videoLink,
+        description } = req.body
 
-    project.properties = [...project.properties, property._id]
-    await project.save()
+    // console.log('properties : ', properties)
+    // return res.json({ status: 'success' })
 
-    manager.properties = [...manager.properties, property._id]
-    await manager.save()
+    if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
 
-    company.projects = [...company.projects, property._id]
-    await company.save()
+    try {
+        const data = jwt.verify(token, process.env.APP_SECRET)
 
-    return property
+        const user = await User.findOne({ _id: data.id })
+
+        if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
+        const project = await Project.findOne({ _id: project_id, developer: user._id })
+
+
+        if (project) {
+
+            project.numberOfBuilding = numberOfBuilding
+            project.numberOfFloor = numberOfFloor
+            project.heightOfBuilding = heightOfBuilding
+            project.surfaceOfBuilding = surfaceOfBuilding
+            project.parkingOfBuilding = parkingOfBuilding
+            project.features = features
+            project.projectStartedDate = projectStartedDate
+            project.projectCompleteDate = projectCompleteDate
+            project.deliveryIn = deliveryIn
+            project.projectImage = projectImage[0]
+            project.projectImages = projectImages
+            project.virtualTour = virtualTour
+            project.videoLink = videoLink
+            project.description = description
+            project.status = 'pending'
+
+            await project.save()
+
+            for(let i = 0; i < project.numberOfFloor; i++){
+
+                const floor = new Floor()
+                floor.floorNo = i
+                floor.project = project._id 
+                floor.developer = project.developer 
+                await floor.save()
+
+                project.floors = [...project.floors, floor._id]
+                await project.save()
+
+            }
+        }
+
+        return res.json({ status: 'success', project })
+
+
+    } catch (error) {
+        console.log('Error: ', error)
+        return res.json({ status: 'error', msg: 'Your are not authorised' })
+    }
+
 }

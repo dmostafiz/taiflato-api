@@ -94,12 +94,6 @@ const propertySchema = mongoose.Schema({
         ref: 'File'
     },
 
-    featuredImage: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'File'
-    },
-
-
     images: [
         {
             type: mongoose.Schema.Types.ObjectId,
@@ -107,18 +101,6 @@ const propertySchema = mongoose.Schema({
         }
     ],
 
-
-    additionalImages: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'File'
-        }
-    ],
-
-    floorplanImage: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'File'
-    },
 
     virtualTourLink: {
         type: String

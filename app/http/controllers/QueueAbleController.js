@@ -10,7 +10,7 @@ const Floor = require('../../models/Floor');
 const Building = require('../../models/Building');
 const Company = require('../../models/Company');
 const Project = require('../../models/Project');
-const QueueUpload = require('../../models/QueueUpload');
+const QueueUpload = require('../../models/QueueProperty');
 
 AWS.config.update({
     accessKeyId: process.env.AWS_ACCESS_KEY,

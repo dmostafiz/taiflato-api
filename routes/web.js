@@ -72,14 +72,14 @@ router.post('/upload_profile_image', UploadController.uploadProfileImage)
 
 router.post('/upload_project_image', UploadController.upload_project_image)
 router.post('/create_drafted_project', ProjectController.create_drafted_project)
-
 router.post('/get_my_managers', ProjectController.get_my_managers)
 router.post('/save_drafted_project', ProjectController.save_drafted_project)
 // router.post('/generate_properties', ProjectController.generate_properties)
 router.get('/get_projects/', ProjectController.get_projects)
 router.get('/get_project_by_id/:id', ProjectController.get_project_by_id)
 router.post('/update_property', ProjectController.update_property)
-
+router.post('/save_project_properties', ProjectController.save_project_properties)
+router.post('/save_project_details', ProjectController.save_project_details)
 
 
 //Compnay
