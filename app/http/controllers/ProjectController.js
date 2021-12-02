@@ -15,6 +15,8 @@ const User = require("../../models/User")
 
 exports.create_drafted_project = async (req, res) => {
 
+    const {projectCode, title} = req.body
+
     const token = req.headers.authorization
 
     console.log('Token: ', token)
@@ -34,6 +36,8 @@ exports.create_drafted_project = async (req, res) => {
         const project = new Project()
 
         project.cid = getCid()
+        project.projectTitle = title
+        project.projectCode = projectCode
         project.manager = manager._id
         project.company = user.company
         project.developer = user._id
@@ -93,8 +97,8 @@ exports.save_drafted_project = async (req, res) => {
         lawyer,
         projectLegalCopies,
         managerEmail,
-        projectCode,
-        title,
+        // projectCode,
+        // title,
         features,
         country,
         district,
@@ -197,8 +201,8 @@ exports.save_drafted_project = async (req, res) => {
 
         project.manager = manager._id
 
-        project.projectCode = projectCode
-        project.projectTitle = title
+        // project.projectCode = projectCode
+        // project.projectTitle = title
 
         project.features = features
 
@@ -482,8 +486,8 @@ exports.save_project_details = async (req, res) => {
 
         if (project) {
 
-            project.numberOfBuilding = numberOfBuilding
-            project.numberOfFloor = numberOfFloor
+            project.numberOfBuildings = numberOfBuilding
+            project.numberOfFloors = numberOfFloor
             project.heightOfBuilding = heightOfBuilding
             project.surfaceOfBuilding = surfaceOfBuilding
             project.parkingOfBuilding = parkingOfBuilding
