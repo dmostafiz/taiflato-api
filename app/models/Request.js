@@ -2,21 +2,26 @@ const mongoose = require('mongoose')
 
 const RequestSchema = mongoose.Schema({
 
-    cid:{
+    cid: {
         type: String,
     },
 
-    admin:{
+    admin: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
 
-    buyer:{
-       type: mongoose.Schema.Types.ObjectId,
-       ref: 'User'
+    developer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
 
-    developer:{
+    manager: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+
+    buyer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
@@ -24,6 +29,11 @@ const RequestSchema = mongoose.Schema({
     property: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Property'
+    },
+
+    negotiation: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Negotiation'
     },
 
     coverLetter: {
@@ -36,22 +46,22 @@ const RequestSchema = mongoose.Schema({
     }],
 
     request_type: {
-        type:String,
-        enum:['buy', 'offer', 'meet'],
+        type: String,
+        enum: ['buy', 'offer', 'meet'],
         default: 'buy'
     },
 
-    price:{
-        type: Number
-    },
+    // price:{
+    //     type: Number
+    // },
 
-    meetingDate:{
+    meetingDate: {
         type: Date
     },
 
-    status:{
-        type:String,
-        enum:['pending', 'accepted', 'cancelled'],
+    status: {
+        type: String,
+        enum: ['pending', 'accepted', 'cancelled'],
         default: 'pending'
     },
 

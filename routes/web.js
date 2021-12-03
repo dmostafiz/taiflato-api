@@ -29,6 +29,7 @@ const InvitationController = require('../app/http/controllers/InvitationControll
 const CompanyController = require('../app/http/controllers/CompanyController')
 const ProfileController = require('../app/http/controllers/ProfileController')
 const ProjectController = require('../app/http/controllers/ProjectController')
+const NegotiationController = require('../app/http/controllers/NegotiationController')
 
 
 // const upload = require('../helpers/cloudinary')
@@ -159,6 +160,9 @@ router.post('/send_meeting_request', RequestController.sendMeetingRequest)
 
 //Requests
 router.post('/response_request', RequestController.response_request)
+
+//Negotiation
+router.post('/make_negotiation', NegotiationController.make_negotiation)
 
 
 

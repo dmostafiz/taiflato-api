@@ -8,6 +8,7 @@ const getCid = require("../../../helpers/getCid");
 const Notification = require("../../models/Notification");
 const Property = require("../../models/Property");
 var mongoose = require('mongoose');
+const Negotiation = require("../../models/Negotiation");
 
 exports.sendBuyingRequest = async (req, res) => {
 
@@ -31,7 +32,21 @@ exports.sendBuyingRequest = async (req, res) => {
       req.property = propertyId
       req.coverLetter = text
       req.request_type = 'buy'
-      req.price = price
+      // req.price = price
+      await req.save()
+
+      const neg = new Negotiation()
+      neg.admin = user._id
+      neg.developer = developerId
+      neg.manager = developerId
+      neg.buyer = user._id
+      neg.property = propertyId
+      neg.request = req._id
+      neg.message = text
+      neg.price = price
+      await  neg.save()
+
+      req.negotiation = neg._id
       await req.save()
 
       const property = await Property.findById(propertyId)
@@ -74,6 +89,7 @@ exports.sendBuyingRequest = async (req, res) => {
       msg.price = price
       msg.property = propertyId
       msg.request = req._id
+      msg.negotiation = neg._id
       msg.type = 'buy'
       await msg.save()
 

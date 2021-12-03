@@ -183,6 +183,10 @@ exports.getThreadMessages = async (req, res) => {
             model: 'Request',
           },
           {
+            path: 'negotiation',
+            model: 'Negotiation',
+          },
+          {
             path: 'files',
             model: 'File',
             // options: {
@@ -191,7 +195,7 @@ exports.getThreadMessages = async (req, res) => {
           }
         ])
 
-      // console.log('Thread Messages: ', messages)
+      console.log('Thread Messages: ', messages)
 
 
       return res.json({ messages: messages, thread: thread })

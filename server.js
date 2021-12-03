@@ -6,7 +6,7 @@ const router = require('./routes/web')
 const expressValidator = require('express-validator')
 const cors = require('cors')
 const connectDB = require('./db/connect')
-var exphbs  = require('express-handlebars');
+var exphbs = require('express-handlebars');
 // const Auction = require('./app/models/Auction');
 const cron = require('node-cron');
 // const socketBidding = require('./app/socket/socketBidding');
@@ -40,11 +40,11 @@ getProjectsAndUpdate(cron)
 let users = []
 
 const addUser = (userId, socketId) => {
-    !users.some(user=>user.userId == userId) && users.push({userId, socketId})
+    !users.some(user => user.userId == userId) && users.push({ userId, socketId })
 }
 
 const removeUser = (socketId) => {
-   users = users.filter(user=> user.socketId != socketId)
+    users = users.filter(user => user.socketId != socketId)
 }
 
 io.on('connection', socket => {
@@ -58,23 +58,23 @@ io.on('connection', socket => {
 
 
     const getUser = (userId) => {
-        return users.find(user=>user.userId == userId)
-     }
- 
-     socket.on('messageSent', async ({ senderId, receiverId, message }) => {
- 
-         const user = getUser(receiverId)
-        
-         io.to(user.socketId).emit('messageReceived', {senderId,message} )
-         io.emit('updateMessanger', senderId )
-     })
+        return users.find(user => user.userId == userId)
+    }
 
+    socket.on('messageSent', async ({ senderId, receiverId, message }) => {
 
-     socket.on('userTyping', async ({ senderId, receiverId }) => {
- 
         const user = getUser(receiverId)
-       
-        io.to(user.socketId).emit('userTypingReceived',  senderId )
+
+        io.to(user?.socketId).emit('messageReceived', { senderId, message })
+        io.emit('updateMessanger', senderId)
+    })
+
+
+    socket.on('userTyping', async ({ senderId, receiverId }) => {
+
+        const user = getUser(receiverId)
+
+        io.to(user?.socketId).emit('userTypingReceived', senderId)
 
     })
 

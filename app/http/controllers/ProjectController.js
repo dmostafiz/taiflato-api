@@ -504,7 +504,7 @@ exports.save_project_details = async (req, res) => {
 
             await project.save()
 
-            for(let i = 0; i < project.numberOfFloor; i++){
+            for(let i = 0; i < project.numberOfFloors; i++){
 
                 const floor = new Floor()
                 floor.floorNo = i

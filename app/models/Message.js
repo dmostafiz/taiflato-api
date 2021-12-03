@@ -35,6 +35,11 @@ const MessageSchema = mongoose.Schema({
         ref: 'Request'
     },
 
+    negotiation: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Negotiation'
+    },
+
     price:{
         type: Number
     },
