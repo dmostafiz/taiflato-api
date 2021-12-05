@@ -304,7 +304,11 @@ exports.get_project_by_id = async (req, res) => {
                 },
                 {
                     path: 'properties',
-                    model: 'Property'
+                    model: 'Property',
+                    // populate: {
+                    //     path: 'floor',
+                    //     model: 'Floor',    
+                    // }
                 },
                 {
                     path: 'floors',
@@ -312,6 +316,7 @@ exports.get_project_by_id = async (req, res) => {
                 },
             ])
 
+            // console.log("project: ", project)
 
         return res.json({ status: 'success', project })
 
@@ -321,10 +326,39 @@ exports.get_project_by_id = async (req, res) => {
     }
 }
 
+
+// exports.get_properties_by_projectid = async (req, res) => {
+//     const id = req.params.projectId
+
+//     try {
+//            const project = await Project.findById(id)
+  
+//             if(project){
+//                 const properties = await Property.find({project: project._id})
+//                                          .populate([
+//                                              {
+//                                                  path:'floor',
+//                                                  model:'Floor'
+//                                              }
+//                                          ])
+
+//                 console.log("project: ", properties)
+
+//                 return res.json({ status: 'success', properties })
+//             }
+
+
+
+//     } catch (error) {
+//         console.log('Error: ', error.message)
+//         return res.json({ status: 'error', msg: 'Something went wrong' })
+//     }
+// }
+
 exports.update_property = async (req, res) => {
     const token = req.headers.authorization
 
-    const { propertyId, title, serialNo, floor, price, hasBalcony } = req.body
+    const { propertyId, title, rooms, bathroom, propertyType, serialNo, floor, price, hasBalcony } = req.body
 
     console.log('My Token: ', token)
 
@@ -340,14 +374,16 @@ exports.update_property = async (req, res) => {
         const property = await Property.findById(propertyId)
 
         property.title = title
+        property.rooms = rooms
+        property.bathroom = bathroom
         property.serialNo = serialNo
         property.floor = floor
         property.price = price
+        property.propertyType =propertyType
         property.isUpdated = true
         property.hasBalcony = hasBalcony
 
         await property.save()
-
 
         const project = await Project.findById(property.project)
             .populate([

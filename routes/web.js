@@ -78,6 +78,10 @@ router.post('/save_drafted_project', ProjectController.save_drafted_project)
 // router.post('/generate_properties', ProjectController.generate_properties)
 router.get('/get_projects/', ProjectController.get_projects)
 router.get('/get_project_by_id/:id', ProjectController.get_project_by_id)
+
+// router.get('/get_properties_by_projectid/:projectId', ProjectController.get_properties_by_projectid)
+
+
 router.post('/update_property', ProjectController.update_property)
 router.post('/save_project_properties', ProjectController.save_project_properties)
 router.post('/save_project_details', ProjectController.save_project_details)

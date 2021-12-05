@@ -36,7 +36,7 @@ exports.getMyThreadById = async (req, res) => {
         }
       ])
       .sort({ 'updatedAt': -1 })
-    console.log('My Thread: ', thread)
+    // console.log('My Thread: ', thread)
 
     return res.json({ thread })
 
@@ -195,7 +195,7 @@ exports.getThreadMessages = async (req, res) => {
           }
         ])
 
-      console.log('Thread Messages: ', messages)
+      // console.log('Thread Messages: ', messages)
 
 
       return res.json({ messages: messages, thread: thread })

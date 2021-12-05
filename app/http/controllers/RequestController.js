@@ -44,7 +44,7 @@ exports.sendBuyingRequest = async (req, res) => {
       neg.request = req._id
       neg.message = text
       neg.price = price
-      await  neg.save()
+      await neg.save()
 
       req.negotiation = neg._id
       await req.save()
@@ -342,17 +342,32 @@ exports.response_request = async (req, res) => {
       console.log('Req Admin: ', req.admin, type)
       console.log('Req User : ', user._id, type)
 
-      if (String(req.admin) == String(user._id)) {
+      // if (String(req.admin) == String(user._id)) {
 
-        
+        const neg = await Negotiation.findById(req.negotiation)
+
+        // return console.log('Canceling negotiation: ',neg)
+
         if (type == 'cancel') {
+
+          if (neg) {
+
+            neg.status = 'cancelled'
+            await neg.save()
+
+          }
+
           req.status = 'cancelled'
+
+          await req.save()
+
         }
 
-        await req.save()
+
+
 
         console.log('Req Canceled: ', req)
-      }
+      // }
 
 
       // const property = await Property.findById(propertyId)
