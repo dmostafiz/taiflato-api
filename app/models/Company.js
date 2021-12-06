@@ -89,11 +89,6 @@ const CompanySchema = mongoose.Schema({
         ref: 'User'
     }],
 
-    properties: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Property'  
-    }],
-   
     projects: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Project'  

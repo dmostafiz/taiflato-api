@@ -326,7 +326,42 @@ exports.get_project_by_id = async (req, res) => {
     }
 }
 
+exports.get_single_project = async (req, res) => {
+    const id = req.params.id
 
+    try {
+        const project = await Project.findById(id)
+            .populate([])
+
+            // console.log("project: ", project)
+
+        return res.json({ status: 'success', project })
+
+    } catch (error) {
+        console.log('Error: ', error.message)
+        return res.json({ status: 'error', msg: 'Something went wrong' })
+    }
+}
+
+exports.get_properties_by_project = async (req, res) => {
+    const id = req.params.id
+
+    try {
+        const project = await Project.findById(id)
+            .populate([])
+
+            // console.log("project: ", project)
+        if(project){
+            const properties = await Property.find({project:project._id})
+            return res.json({ status: 'success', properties })
+        }
+
+
+    } catch (error) {
+        console.log('Error: ', error.message)
+        return res.json({ status: 'error', msg: 'Something went wrong' })
+    }   
+}
 // exports.get_properties_by_projectid = async (req, res) => {
 //     const id = req.params.projectId
 
@@ -539,6 +574,12 @@ exports.save_project_details = async (req, res) => {
             project.status = 'pending'
 
             await project.save()
+
+            const company = await Company.findById(project.company)
+            if(company){
+                company.projects = [...company.projects, project._id]
+                await company.save()
+            }
 
             for(let i = 0; i < project.numberOfFloors; i++){
 

@@ -22,6 +22,17 @@ function getProjectsAndUpdate(cron) {
 
             if(project){
 
+
+                project.prices = [...project.prices, queuedProperty.price]
+                project.rooms = [...project.rooms, queuedProperty.numberOfRooms]
+                project.bathrooms = [...project.bathrooms, queuedProperty.numberOfBathrooms]
+                project.sizes = [...project.sizes, queuedProperty.propertySize]
+                project.types = [...project.types, queuedProperty.propertyType]
+
+                await project.save()
+
+
+
                 console.log('queuedProperty.total: ', queuedProperty.total)
 
                  for(let i = 0; i < queuedProperty.total; i++){
@@ -71,6 +82,7 @@ function getProjectsAndUpdate(cron) {
                         await property.save()
     
                         project.properties = [...project.properties, property._id]
+
                         await project.save()
 
                         // console.log('Property: ', property)

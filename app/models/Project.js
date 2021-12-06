@@ -182,6 +182,26 @@ const ProjectSchema = mongoose.Schema({
         type: String,
     },
 
+    prices:[{
+        type: Number
+    }],
+
+    rooms:[{
+        type: Number
+    }],
+
+    bathrooms:[{
+        type: Number
+    }],
+
+    sizes:[{
+        type: Number
+    }],
+
+    types:[{
+        type: String
+    }],  
+
     status: {
         type: String,
         enum:['pending','published', 'drafted', 'declined'],
