@@ -217,9 +217,24 @@ const propertySchema = mongoose.Schema({
         ref: 'Project'
     },
 
-    hasBalcony: {
-        type: Boolean,
-        default: false
+    balcony: {
+        type: Number,
+        default: 0
+    },
+
+    terrace: {
+        type: Number,
+        default: 0
+    },
+
+    garden: {
+        type: Number,
+        default: 0
+    },
+
+    loggia: {
+        type: Number,
+        default: 0
     },
 
     isUpdated: {

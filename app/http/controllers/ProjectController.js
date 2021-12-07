@@ -219,12 +219,12 @@ exports.save_drafted_project = async (req, res) => {
 
         await project.save()
 
-        const company = await Company.findById(user.company)
+        // const company = await Company.findById(user.company)
 
-        if (company) {
-            company.projects = [...company.projects, project._id]
-            await company.save()
-        }
+        // if (company) {
+        //     company.projects = [...company.projects, project._id]
+        //     await company.save()
+        // }
 
         manager.projects = [...manager.projects, project._id]
         await manager.save()
@@ -393,7 +393,7 @@ exports.get_properties_by_project = async (req, res) => {
 exports.update_property = async (req, res) => {
     const token = req.headers.authorization
 
-    const { propertyId, title, rooms, bathroom, propertyType, serialNo, floor, price, hasBalcony } = req.body
+    const { propertyId, title, rooms, bathroom, propertyType, serialNo, floor, price, balcony, terrace, garden, loggia } = req.body
 
     console.log('My Token: ', token)
 
@@ -416,7 +416,10 @@ exports.update_property = async (req, res) => {
         property.price = price
         property.propertyType =propertyType
         property.isUpdated = true
-        property.hasBalcony = hasBalcony
+        property.balcony = balcony
+        property.terrace = terrace
+        property.garden = garden
+        property.loggia = loggia
 
         await property.save()
 
@@ -520,7 +523,6 @@ exports.save_project_properties = async (req, res) => {
 
 }
 
-
 exports.save_project_details = async (req, res) => {
     const token = req.headers.authorization
 
@@ -575,11 +577,7 @@ exports.save_project_details = async (req, res) => {
 
             await project.save()
 
-            const company = await Company.findById(project.company)
-            if(company){
-                company.projects = [...company.projects, project._id]
-                await company.save()
-            }
+
 
             for(let i = 0; i < project.numberOfFloors; i++){
 
@@ -593,9 +591,17 @@ exports.save_project_details = async (req, res) => {
                 await project.save()
 
             }
+
+            const company = await Company.findById(project.company)
+
+            if(company){
+                company.projects = [...company.projects, project._id]
+                await company.save()
+            }
+
+            return res.json({ status: 'success', project })
         }
 
-        return res.json({ status: 'success', project })
 
 
     } catch (error) {
