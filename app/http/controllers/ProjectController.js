@@ -326,23 +326,6 @@ exports.get_project_by_id = async (req, res) => {
     }
 }
 
-exports.get_single_project = async (req, res) => {
-    const id = req.params.id
-
-    try {
-        const project = await Project.findById(id)
-            .populate([])
-
-            // console.log("project: ", project)
-
-        return res.json({ status: 'success', project })
-
-    } catch (error) {
-        console.log('Error: ', error.message)
-        return res.json({ status: 'error', msg: 'Something went wrong' })
-    }
-}
-
 exports.get_properties_by_project = async (req, res) => {
     const id = req.params.id
 

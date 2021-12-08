@@ -1,4 +1,6 @@
 const mongoose = require('mongoose')
+const Company = require('../../models/Company')
+const Project = require('../../models/Project')
 const Property = require("../../models/Property")
 
 exports.getFeaturedProperties = async (req, res) => {
@@ -230,5 +232,83 @@ exports.getSinglePropertyForHome = async (req, res) => {
     } catch (error) {
         console.warn('Error: ', error)
         res.send({status: 'error', msg: error})
+    }
+}
+
+exports.getCompanies = async (req, res) => {
+
+    try {
+
+        const companies = await Company.find()
+
+        return res.json({status: 'success', companies})
+        
+    } catch (error) {
+        console.log('Error: ', error.message)
+        return res.json({status: 'error', msg: error.message})
+    }
+}
+
+exports.get_single_company = async (req, res) => {
+    const id = req.params.companyId
+
+    try {
+
+        const company = await Company.findById(id)
+
+        return res.json({status: 'success', company})
+        
+
+    } catch (error) {
+        console.log('Error: ', error.message)
+        return res.json({status: 'error', msg: error.message})     
+    }
+}
+
+exports.get_projects_by_company = async (req, res) => {
+    const companyId = req.params.companyId
+
+    try {
+
+        const projects = await Project.find({company: companyId})
+                                .populate([
+                                    {
+                                        path: 'projectImage',
+                                        model: 'File'
+                                    },
+                                    {
+                                        path: 'manager',
+                                        model: 'User'
+                                    }
+                                ])
+
+        return res.json({status: 'success', projects})
+        
+
+    } catch (error) {
+        console.log('Error: ', error.message)
+        return res.json({status: 'error', msg: error.message})     
+    } 
+}
+
+exports.get_single_project = async (req, res) => {
+    const id = req.params.id
+
+    try {
+        const project = await Project.findById(id)
+            .populate([
+                {
+                    path:'projectImage',
+                    model: 'File'
+                }
+            ])
+
+            // console.log("project: ", project)
+
+        return res.json({ status: 'success', project })
+
+    } catch (error) {
+        console.log('Error: ', error.message)
+        return res.json({ status: 'error', msg: 'Something went wrong' })
     }
 }

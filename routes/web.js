@@ -78,7 +78,6 @@ router.post('/save_drafted_project', ProjectController.save_drafted_project)
 // router.post('/generate_properties', ProjectController.generate_properties)
 router.get('/get_projects/', ProjectController.get_projects)
 router.get('/get_project_by_id/:id', ProjectController.get_project_by_id)
-router.get('/get_single_project/:id', ProjectController.get_single_project)
 router.get('/get_properties_by_project/:id', ProjectController.get_properties_by_project)
 
 
@@ -190,8 +189,12 @@ router.get('/get_best_deal_properties', HomeController.getBestDealProperties)
 router.get('/get_single_property_home/:id', HomeController.getSinglePropertyForHome)
 
 
+//Companies
 
-
+router.get('/get_companies',HomeController.getCompanies)
+router.get('/get_single_company/:companyId',HomeController.get_single_company)
+router.get('/get_projects_by_company/:companyId',HomeController.get_projects_by_company)
+router.get('/get_single_project/:id', HomeController.get_single_project)
 
 
 
