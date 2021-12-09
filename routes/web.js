@@ -30,11 +30,18 @@ const CompanyController = require('../app/http/controllers/CompanyController')
 const ProfileController = require('../app/http/controllers/ProfileController')
 const ProjectController = require('../app/http/controllers/ProjectController')
 const NegotiationController = require('../app/http/controllers/NegotiationController')
+const AdminController = require('../app/http/controllers/AdminController')
 
 
 // const upload = require('../helpers/cloudinary')
 
 router.get('/send_mail', TestController.sendMail)
+
+// Admin controller
+router.get('/all_projects/', AdminController.getAllProjects)
+router.get('/project_details_for_admin/:id', AdminController.projectDetails)
+
+
 
 //Auth
 router.post('/login', AuthController.login)
