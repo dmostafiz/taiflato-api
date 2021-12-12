@@ -32,6 +32,7 @@ const ProjectController = require('../app/http/controllers/ProjectController')
 const NegotiationController = require('../app/http/controllers/NegotiationController')
 const AdminController = require('../app/http/controllers/AdminController')
 
+const SliderController = require('../app/http/controllers/SliderController')
 
 // const upload = require('../helpers/cloudinary')
 
@@ -228,7 +229,7 @@ router.get('/get_single_project/:id', HomeController.get_single_project)
 // router.get('/category/:slug/posts', PostController.getPostsByCategory)
 
 // //Sliders
-// router.post('/slider/save', Authorization, SliderController.save)
+router.post('/slider/save', SliderController.saveSlider)
 // router.post('/slider/save/:id', Authorization, SliderController.saveByID)
 // router.post('/slider/delete/:id', Authorization, SliderController.deleteByID)
 
