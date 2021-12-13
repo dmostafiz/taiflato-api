@@ -32,7 +32,10 @@ const ProjectController = require('../app/http/controllers/ProjectController')
 const NegotiationController = require('../app/http/controllers/NegotiationController')
 const AdminController = require('../app/http/controllers/AdminController')
 
+const SystemController = require('../app/http/controllers/SystemController')
+
 const SliderController = require('../app/http/controllers/SliderController')
+
 
 // const upload = require('../helpers/cloudinary')
 
@@ -227,8 +230,10 @@ router.get('/get_single_project/:id', HomeController.get_single_project)
 // router.get('/post/get/top/:limit', PostController.getTopByLimit)
 // router.get('/post/get/random/:limit', PostController.getTopByLimit)
 // router.get('/category/:slug/posts', PostController.getPostsByCategory)
+router.get('/get_system_option/', SystemController.getSystemOptions)
 
 // //Sliders
+router.post('/slider/slider_status', SliderController.saveSliderStatus)
 router.post('/slider/save', SliderController.saveSlider)
 // router.post('/slider/save/:id', Authorization, SliderController.saveByID)
 // router.post('/slider/delete/:id', Authorization, SliderController.deleteByID)

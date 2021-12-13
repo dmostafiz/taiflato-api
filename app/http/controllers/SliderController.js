@@ -2,6 +2,7 @@
 const Slider = require('../../models/Slider');
 const User = require('../../models/User');
 const jwt = require('jsonwebtoken');
+const Option = require('../../models/Option');
 
 
 exports.saveSlider = async (req, res) => {
@@ -35,9 +36,8 @@ exports.saveSlider = async (req, res) => {
 
          let img_url = ''
 
-         if(image) 
-         {
- 
+         if (image) {
+
          }
 
          console.log(img_url)
@@ -72,3 +72,44 @@ exports.saveSlider = async (req, res) => {
 
 }
 
+exports.saveSliderStatus = async (req, res) => {
+
+   const token = req.headers.authorization
+
+   const {
+      status
+   } = req.body
+
+   console.log('Slider Status: ', status)
+
+   if (!token) return res.status(401).json({ type: 'error', msg: 'You are not allowed to do this action' })
+
+   try {
+
+      const data = jwt.verify(token, process.env.APP_SECRET);
+
+      const user = await User.findOne({ _id: data.id })
+
+      
+      
+      
+      if (user && user.user_type == 'admin') {
+         
+         // console.log('Slider user.type: ', user.user_type)
+
+         const option = await Option.findOne()
+
+         console.log('Slider option: ', option)
+
+         option.slider = status 
+
+         await option.save()
+
+         return res.json({ status: 'success', option })
+      }
+
+
+   } catch (error) {
+      return res.json({ status: 'error', msg: error.message })
+   }
+}
