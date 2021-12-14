@@ -233,8 +233,13 @@ router.get('/get_single_project/:id', HomeController.get_single_project)
 router.get('/get_system_option/', SystemController.getSystemOptions)
 
 // //Sliders
+router.post('/slider/get_properties', SliderController.get_properties)
+router.post('/slider/get_projects', SliderController.get_projects)
+
 router.post('/slider/slider_status', SliderController.saveSliderStatus)
 router.post('/slider/save', SliderController.saveSlider)
+router.get('/slider/get', SliderController.getSlider)
+
 // router.post('/slider/save/:id', Authorization, SliderController.saveByID)
 // router.post('/slider/delete/:id', Authorization, SliderController.deleteByID)
 

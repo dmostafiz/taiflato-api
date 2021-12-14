@@ -4,17 +4,17 @@ const SliderSchema = mongoose.Schema({
 
     name:{
         type:String,
-        required:true
+        // required:true
     },
 
     title:{
         type:String,
-        required:true
+        // required:true
     },
 
     description:{
         type:String,
-        required:true
+        // required:true
     },
 
     property:{
@@ -22,9 +22,13 @@ const SliderSchema = mongoose.Schema({
         ref: 'Property'
     },
 
-    property:{
+    project:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Project'
+    },
+
+    background: {
+        type: String, 
     },
 
     image:{
@@ -35,10 +39,10 @@ const SliderSchema = mongoose.Schema({
         type:String
     },
 
-    status:{
+    sliderType:{
         type:String,
-        enum:['property', 'project', 'banner'],
-        default: 'active'
+        enum:['property', 'project', 'custom'],
+        default: 'project'
     },
 
     status:{
