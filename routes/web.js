@@ -36,6 +36,7 @@ const SystemController = require('../app/http/controllers/SystemController')
 
 const SliderController = require('../app/http/controllers/SliderController')
 
+const LocationController = require('../app/http/controllers/LocationController')
 
 // const upload = require('../helpers/cloudinary')
 
@@ -202,16 +203,18 @@ router.get('/get_single_property_home/:id', HomeController.getSinglePropertyForH
 
 
 //Companies
-
 router.get('/get_companies',HomeController.getCompanies)
 router.get('/get_single_company/:companyId',HomeController.get_single_company)
 router.get('/get_projects_by_company/:companyId',HomeController.get_projects_by_company)
 router.get('/get_single_project/:id', HomeController.get_single_project)
 
 
+//Location
+router.get('/get_districts',LocationController.getDistricts)
+router.get('/get_cities',LocationController.getCities)
 
-
-
+router.post('/save_district',LocationController.saveDistrict)
+router.post('/save_city',LocationController.saveCity)
 
 
 //Categories
