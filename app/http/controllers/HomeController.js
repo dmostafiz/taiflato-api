@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const Company = require('../../models/Company')
 const Project = require('../../models/Project')
 const Property = require("../../models/Property")
+const Slider = require('../../models/Slider')
 
 exports.getFeaturedProperties = async (req, res) => {
 
@@ -83,53 +84,31 @@ exports.getFeaturedProjects = async (req, res) => {
 }
 
 
-exports.getHeroSliderProperties = async (req, res) => {
+exports.getHeroSlider = async (req, res) => {
 
     try {
 
-        const properties = Property.aggregate()
-            // .pipeline([
-            //     {
-            //         developer: {
-            //             password: -1
-            //         }
-            //     }
-            // ])
-            // .sort({createdAt:-1})
-            .limit(4)
-            .lookup({
-                from: 'files',
-                localField: 'image',
-                foreignField: '_id',
-                as: 'image'
-            })
+        const sliders = await Slider.find().populate([
+            {
+                path: 'property',
+                model: 'Property',
+                populate: {
+                    path: 'image',
+                    model: 'File'
+                }
+            },
+            {
+                path: 'project',
+                model: 'Project',
+                populate: {
+                    path: 'projectImage',
+                    model: 'File'
+                }
+            },
+        ])
 
-            .lookup({
-                from: 'files',
-                localField: 'images',
-                foreignField: '_id',
-                as: 'images'
-            })
 
-            .lookup({
-                from: 'users',
-                localField: 'developer',
-                foreignField: '_id',
-                // $unset: ["password"],
-                as: 'developer'
-            })
-
-            .project({
-                'developer.password': 0,
-                'developer.email': 0,
-            })
-        // .unset('developer.password')
-
-        properties.exec().then(result => {
-            // console.log('Features properties: ', result)
-            return res.send(result)
-        })
-
+        return res.json({status: 'success', sliders})
 
     } catch (error) {
         console.warn('Error: ', error)
@@ -324,6 +303,10 @@ exports.get_single_project = async (req, res) => {
             .populate([
                 {
                     path: 'projectImage',
+                    model: 'File'
+                },
+                {
+                    path: 'projectImages',
                     model: 'File'
                 }
             ])

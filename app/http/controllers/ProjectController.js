@@ -291,6 +291,10 @@ exports.get_project_by_id = async (req, res) => {
                     model: 'File'
                 },
                 {
+                    path: 'projectImages',
+                    model: 'File'
+                },
+                {
                     path: 'expert.copies',
                     model: 'File'
                 },
@@ -336,6 +340,7 @@ exports.get_properties_by_project = async (req, res) => {
             // console.log("project: ", project)
         if(project){
             const properties = await Property.find({project:project._id})
+                                             
             return res.json({ status: 'success', properties })
         }
 

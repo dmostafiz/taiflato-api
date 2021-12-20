@@ -196,7 +196,7 @@ router.get('/get_managers_by_company_admin/:adminId', CompanyController.get_mana
 //Home
 router.get('/get_featured_properties', HomeController.getFeaturedProperties)
 router.get('/get_featured_projects', HomeController.getFeaturedProjects)
-router.get('/get_hero_slider_properties', HomeController.getHeroSliderProperties)
+router.get('/get_hero_slider', HomeController.getHeroSlider)
 router.get('/get_best_deal_properties', HomeController.getBestDealProperties)
 
 router.get('/get_single_property_home/:id', HomeController.getSinglePropertyForHome)
