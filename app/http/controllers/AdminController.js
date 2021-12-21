@@ -53,6 +53,11 @@ exports.projectDetails = async (req, res) => {
                     path: 'projectImages',
                     model: 'File'
                 },
+
+                {
+                    path: 'properties',
+                    model: 'Property'
+                },
                 
                 {
                     path: 'manager',
