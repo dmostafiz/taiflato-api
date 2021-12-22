@@ -86,6 +86,7 @@ router.post('/upload_profile_image', UploadController.uploadProfileImage)
 router.post('/upload_project_image', UploadController.upload_project_image)
 router.post('/create_drafted_project', ProjectController.create_drafted_project)
 router.post('/get_my_managers', ProjectController.get_my_managers)
+router.post('/change_project_manager', ProjectController.change_project_manager)
 router.post('/save_drafted_project', ProjectController.save_drafted_project)
 // router.post('/generate_properties', ProjectController.generate_properties)
 router.get('/get_projects/', ProjectController.get_projects)
@@ -186,6 +187,7 @@ router.post('/make_negotiation', NegotiationController.make_negotiation)
 
 //Invitation of account manager
 router.post('/send_invitation', InvitationController.sendInvitation)
+router.post('/re_send_invitation', InvitationController.reSendInvitationLink)
 router.get('/get_my_invitation', InvitationController.getMyInvitation)
 router.post('/get_invited_user', InvitationController.getInvite)
 

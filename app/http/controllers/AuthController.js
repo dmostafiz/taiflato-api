@@ -297,9 +297,9 @@ exports.authorize = async (req, res) => {
 
         if(!user) return res.json({isAuth:false, msg: 'You are not authorized'})
 
-        const {_id, username, email, user_type, dashboard,} = user;
+        const {_id, username, email, user_type, dashboard, is_realestate_admin} = user;
 
-        return res.json({isAuth:true, _id, username, email, type: user_type, dashboard, token})
+        return res.json({isAuth:true, _id, username, email, type: user_type, dashboard, token, is_realestate_admin})
 
     } catch (error) {
         return res.json({isAuth:false, msg: 'You are not authorized'})

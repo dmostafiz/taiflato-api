@@ -6,6 +6,10 @@ const RequestSchema = mongoose.Schema({
         type: String,
     },
 
+    members: {
+        type: Array
+    },
+
     admin: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

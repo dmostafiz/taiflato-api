@@ -73,8 +73,8 @@ exports.get_my_managers = async (req, res) => {
 
         const managers = await User.find({ realestate_admin: user._id, account_verified: true })
 
-        // console.log('Managers: ', managers)
-        return res.json({ managers: managers })
+        console.log('Managers: ', managers)
+        return res.json({ status: 'success', managers: managers })
 
 
 
@@ -84,6 +84,55 @@ exports.get_my_managers = async (req, res) => {
     }
 
 }
+
+exports.change_project_manager = async (req, res) => {
+    const token = req.headers.authorization
+
+    const {projectId, managerId} = req.body
+
+    console.log('My Token: ', token)
+
+    if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
+    try {
+        const data = jwt.verify(token, process.env.APP_SECRET)
+
+        const user = await User.findOne({ _id: data.id })
+
+        if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
+        const manager = await User.findOne({ _id: managerId, account_verified: true })
+        const project = await Project.findOne({ _id: projectId, developer: user._id })
+
+        console.log('New Manager: ', manager)
+        console.log('Project ID: ', projectId)
+        console.log('Project: ', project)
+
+        if(manager && project){
+            project.manager = manager._id 
+            await project.save()
+
+            const properties = await Property.find({project: project._id})
+
+            if(properties){
+                properties.forEach(async pty => {
+                    pty.manager = manager
+                    await pty.save()
+                })
+            }
+        }
+
+        // console.log('Managers: ', managers)
+        return res.json({ status: 'success', manager: manager })
+
+
+    } catch (error) {
+        console.log('Error: ', error)
+        return res.json({ status: 'error', msg: 'Your are not authorised' })
+    }
+
+}
+
 
 exports.save_drafted_project = async (req, res) => {
     const token = req.headers.authorization
@@ -317,6 +366,10 @@ exports.get_project_by_id = async (req, res) => {
                 {
                     path: 'floors',
                     model: 'Floor'
+                },
+                {
+                    path: 'manager',
+                    model: 'User'
                 },
             ])
 

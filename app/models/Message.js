@@ -11,15 +11,19 @@ const MessageSchema = mongoose.Schema({
         ref: 'Thread'
     },
 
+    members: {
+        type: Array
+    },
+
     sender: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
 
-    // receiver: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'User'
-    // },
+    receiver: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
 
     text:{
         type: String

@@ -9,6 +9,8 @@ const Notification = require("../../models/Notification");
 const Property = require("../../models/Property");
 var mongoose = require('mongoose');
 const Negotiation = require("../../models/Negotiation");
+const mailTransporter = require("../../../helpers/mailTransporter");
+const errorLogger = require("../../../helpers/errorLogger");
 
 
 exports.make_negotiation = async (req, res) => {
@@ -28,20 +30,23 @@ exports.make_negotiation = async (req, res) => {
 
         const user = await User.findOne({ _id: data.id })
 
-        if(user){
+        if (user) {
 
             const req = await Request.findById(requestId)
 
 
-            if(req){
+            if (req) {
 
                 const existingNeg = await Negotiation.findById(req.negotiation)
-                if(existingNeg){
+
+                if (existingNeg) {
+
                     existingNeg.status = 'cancelled'
                     await existingNeg.save()
                 }
-                
+
                 const neg = new Negotiation()
+                neg.members = req.members
                 neg.admin = user._id
                 neg.developer = req.developer
                 neg.manager = req.manager
@@ -50,20 +55,26 @@ exports.make_negotiation = async (req, res) => {
                 neg.request = req._id
                 neg.message = message
                 neg.price = price
-                await  neg.save()
-          
+
+                await neg.save()
+
                 req.negotiation = neg._id
                 await req.save()
 
                 const thread = await Thread.findById(threadId)
-                
-                if(thread){
+
+                if (thread) {
+
+                    const receiver = req.members.filter(mbr => mbr != user._id )
+
+                    console.log('Receliver: ', receiver)
 
                     const msg = new Message()
                     msg.cid = getCid()
+                    msg.members = req.members
                     msg.thread = thread._id
-                    msg.sender =  user._id 
-                    msg.receiver = user._id == req.manager ? req.buyer : req.manager
+                    msg.sender = user._id
+                    msg.receiver = receiver.toString()
                     msg.text = message
                     msg.price = price
                     msg.property = req.property
@@ -71,12 +82,46 @@ exports.make_negotiation = async (req, res) => {
                     msg.negotiation = neg._id
                     msg.type = 'buy'
                     await msg.save()
-              
+
                     thread.messages = [...thread.messages, msg._id]
                     thread.newMessages = [...thread.newMessages, msg._id]
                     await thread.save()
 
-                    return res.json({status:'success', message: msg})
+                    // return res.json({status:'success', message: msg})
+                    console.log('Request: ', req)
+                    console.log('Receiver: ', receiver)
+
+                    const notifiedUser = await User.findById(receiver.toString())
+                    console.log('Notify User: ', notifiedUser)
+
+                    if (notifiedUser) {
+                        try {
+
+                            const mail = await mailTransporter.sendMail({
+                                from: 'No Reply <no-reply@israpoly.com>',
+                                to: notifiedUser.email,
+                                subject: 'You got an offer',
+                                // text: 'That was easy! we sending you mail for testing our application',
+                                template: 'negotiation_msg',
+                                context: {
+                                    receiver: notifiedUser.username,
+                                    sender: user.username,
+                                    negotiation_message: neg.message,
+                                    negotiation_price: neg.price
+                                }
+                            })
+
+                            console.log('Mail Sent: ', mail )
+
+
+                        } catch (error) {
+                            console.log('Mail Error: ', error.message)
+                            return await errorLogger(error, 'Email send failed')
+                        }
+                    }
+
+
+                    return res.json({ status: 'success', message: msg })
 
                 }
 
@@ -88,6 +133,8 @@ exports.make_negotiation = async (req, res) => {
     } catch (error) {
         console.log('Request Error: ', error.message)
         res.json({ status: 'error', msg: error.message })
+        return await errorLogger(error, 'Server Error')
+
     }
 
 }

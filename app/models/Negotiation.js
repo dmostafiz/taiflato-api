@@ -1,6 +1,10 @@
 const mongoose = require('mongoose')
 
 const NegotiationSchema = mongoose.Schema({
+    
+    members: {
+        type: Array
+    },
 
     admin:{
         type: mongoose.Schema.Types.ObjectId,

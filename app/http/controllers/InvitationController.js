@@ -80,6 +80,77 @@ exports.sendInvitation = async (req, res) => {
     }
 }
 
+exports.reSendInvitationLink = async (req, res) => {
+    const token = req.headers.authorization
+
+    const { inviteId } = req.body
+
+    if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
+    try {
+        const data = jwt.verify(token, process.env.APP_SECRET)
+
+        const user = await User.findOne({ _id: data.id })
+
+        // console.log(user)
+
+        if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
+        const exsInvite = await Invite.findById(inviteId)
+
+        if(exsInvite){
+
+            const invData = exsInvite
+            await exsInvite.delete()
+
+            const secure_url_token = customAlphabet('1234567890abcdefghizklmnopqrst', 90)()
+
+            console.log('Old Invitation: ', invData)
+
+    
+            const mail = await mailTransporter.sendMail({
+                from: 'noreply@israpoly.com',
+                to: invData.email,
+                subject: 'Accept invitation',
+                // text: 'That was easy! we sending you mail for testing our application',
+                template: 'invitation',
+                context: {
+                    name: user.username,
+                    token: secure_url_token,
+                    email: invData.email 
+                }
+            })
+    
+            const invite = new Invite()
+            invite.cid = getCid()
+            invite.sender = user._id
+            invite.user = invData.user
+            invite.email = invData.email
+            invite.company = user.company
+            invite.inviteType = 'account_manager'
+            invite.secure_token = secure_url_token
+            await invite.save()
+
+            console.log('New Invitation: ', invite)
+
+            return res.json({ status: 'success', invitation: invite })
+        }
+
+        // return res.json({ message })
+
+        // const email_code = customAlphabet('1234567890', 6)()
+
+
+
+
+
+    } catch (error) {
+        console.log('Error: ', error)
+        return res.json({ status: 'error', msg: 'Your are not authorised' })
+    }
+}
+
+
 exports.getMyInvitation = async (req, res) => {
     const token = req.headers.authorization
 
