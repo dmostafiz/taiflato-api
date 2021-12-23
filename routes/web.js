@@ -7,7 +7,6 @@ const AuthController = require('../app/http/controllers/AuthController')
 const PropertyController = require('../app/http/controllers/PropertyController')
 const UploadController = require('../app/http/controllers/UploadController')
 
-
 // const CategoryController = require('../app/http/controllers/CategoryController')
 // const PostController = require('../app/http/controllers/PostController')
 // const SliderController = require('../app/http/controllers/SliderController')
@@ -47,7 +46,6 @@ router.get('/all_projects/', AdminController.getAllProjects)
 router.get('/project_details_for_admin/:id', AdminController.projectDetails)
 
 
-
 //Auth
 router.post('/login', AuthController.login)
 
@@ -71,8 +69,6 @@ router.post('/verify_user_email', AuthController.verify_user_email)
 router.post('/get_user_for_phone_verification', AuthController.get_user_for_phone_verification)
 router.post('/submit_phone_for_verify', AuthController.submit_phone_for_verify)
 router.post('/submit_phone_verify_code', AuthController.submit_phone_verify_code)
-
-
 
 
 router.get('/get_user_by_id/:id', UserController.getUserById)
@@ -149,7 +145,6 @@ router.get('/my_auctions', AuctionController.myAuctions)
 router.get('/all_promotions', AuctionController.allAuctions)
 
 
-
 router.get('/get_single_promotion/:id', AuctionController.getSingleAuction)
 
 router.get('/auctioned_properties', AuctionController.auctionedProperties)
@@ -184,7 +179,6 @@ router.post('/response_request', RequestController.response_request)
 router.post('/make_negotiation', NegotiationController.make_negotiation)
 
 
-
 //Invitation of account manager
 router.post('/send_invitation', InvitationController.sendInvitation)
 router.post('/re_send_invitation', InvitationController.reSendInvitationLink)
@@ -192,8 +186,6 @@ router.get('/get_my_invitation', InvitationController.getMyInvitation)
 router.post('/get_invited_user', InvitationController.getInvite)
 
 router.get('/get_managers_by_company_admin/:adminId', CompanyController.get_managers_by_company_admin)
-
-
 
 //Home
 router.get('/get_featured_properties', HomeController.getFeaturedProperties)
