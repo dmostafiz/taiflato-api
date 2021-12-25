@@ -10,10 +10,6 @@ const profileSchema = mongoose.Schema({
         type: Date
     },
 
-    age: {
-        type: String
-    },
-
     gender: {
         type: String
     },

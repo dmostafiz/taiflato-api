@@ -37,6 +37,9 @@ const SliderController = require('../app/http/controllers/SliderController')
 
 const LocationController = require('../app/http/controllers/LocationController')
 
+const LoanApplicationController = require('../app/http/controllers/LoanApplicationController')
+
+
 // const upload = require('../helpers/cloudinary')
 
 router.get('/send_mail', TestController.sendMail)
@@ -236,6 +239,14 @@ router.post('/slider/get_projects', SliderController.get_projects)
 router.post('/slider/slider_status', SliderController.saveSliderStatus)
 router.post('/slider/save', SliderController.saveSlider)
 router.get('/slider/get', SliderController.getSlider)
+
+
+router.post('/get_user_loan_application_info', LoanApplicationController.getUserLoanApplication)
+router.post('/save_user_loan_application_info', LoanApplicationController.saveUserLoanApplication)
+
+router.post('/save_buyer_profile', ProfileController.save_buyer_profile)
+router.post('/get_buyer_profile', ProfileController.get_buyer_profile)
+
 
 // router.post('/slider/save/:id', Authorization, SliderController.saveByID)
 // router.post('/slider/delete/:id', Authorization, SliderController.deleteByID)
