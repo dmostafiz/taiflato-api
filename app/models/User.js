@@ -61,6 +61,11 @@ const userSchema = mongoose.Schema({
         ref: 'Profile'  
     },
 
+    buyerProfile:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Profile'  
+    },
+
     company:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Company'  

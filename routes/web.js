@@ -39,6 +39,8 @@ const LocationController = require('../app/http/controllers/LocationController')
 
 const LoanApplicationController = require('../app/http/controllers/LoanApplicationController')
 
+const ProcessController = require('../app/http/controllers/ProcessController')
+
 
 // const upload = require('../helpers/cloudinary')
 
@@ -246,6 +248,32 @@ router.post('/save_user_loan_application_info', LoanApplicationController.saveUs
 
 router.post('/save_buyer_profile', ProfileController.save_buyer_profile)
 router.post('/get_buyer_profile', ProfileController.get_buyer_profile)
+
+
+router.post('/get_user_notifications', DashboardController.get_user_notification)
+router.post('/set_notification_unseen', DashboardController.set_notification_unseen)
+
+router.post('/bookmark_property', DashboardController.bookmarkProperty)
+router.get('/get_buyer_favourite_list/:userId', DashboardController.get_buyer_favourite_list)
+
+router.post('/compare_property', DashboardController.compare_property)
+router.get('/get_buyer_compare_list/:userId', DashboardController.get_buyer_compare_list)
+
+router.post('/accept_appointment', RequestController.acceptAppointment)
+
+router.post('/get_appointments', RequestController.getAppointments)
+
+
+
+
+// Purchase Process
+router.post('/create_purchase_process', ProcessController.createPurchaseProcess)
+router.post('/get_secured_process', ProcessController.get_secured_process)
+router.post('/get_my_property_process', ProcessController.get_my_property_process)
+
+router.post('/save_buyer_consult_lawyer_process', ProcessController.save_buyer_consult_lawyer_process)
+router.post('/save_developer_consult_lawyer_process', ProcessController.save_developer_consult_lawyer_process)
+
 
 
 // router.post('/slider/save/:id', Authorization, SliderController.saveByID)

@@ -9,6 +9,7 @@ const Notification = require("../../models/Notification");
 const Property = require("../../models/Property");
 var mongoose = require('mongoose');
 const Negotiation = require("../../models/Negotiation");
+const Appointment = require("../../models/Appointment");
 
 exports.sendBuyingRequest = async (req, res) => {
 
@@ -23,38 +24,6 @@ exports.sendBuyingRequest = async (req, res) => {
     const user = await User.findOne({ _id: data.id })
 
     if (user) {
-
-      const req = new Request()
-      req.cid = getCid()
-      req.admin = developerId
-      req.buyer = user._id
-      req.developer = developerId
-      req.property = propertyId
-      req.coverLetter = text
-      req.request_type = 'buy'
-      // req.price = price
-      await req.save()
-
-      const neg = new Negotiation()
-      neg.admin = user._id
-      neg.developer = developerId
-      neg.manager = developerId
-      neg.buyer = user._id
-      neg.property = propertyId
-      neg.request = req._id
-      neg.message = text
-      neg.price = price
-      await neg.save()
-
-      req.negotiation = neg._id
-      await req.save()
-
-      const property = await Property.findById(propertyId)
-      if (property) {
-        property.requests = [...property.requests, req._id]
-        await property.save()
-      }
-
 
 
       const existedThread = await Thread.findOne({
@@ -79,6 +48,40 @@ exports.sendBuyingRequest = async (req, res) => {
         ]
         await thread.save()
       }
+
+      const req = new Request()
+      req.cid = getCid()
+      req.members = thread.members
+      req.admin = developerId
+      req.buyer = user._id
+      req.developer = developerId
+      req.property = propertyId
+      req.coverLetter = text
+      req.request_type = 'buy'
+      // req.price = price
+      await req.save()
+
+      const neg = new Negotiation()
+      req.members = thread.members
+      neg.admin = user._id
+      neg.developer = developerId
+      neg.manager = developerId
+      neg.buyer = user._id
+      neg.property = propertyId
+      neg.request = req._id
+      neg.message = text
+      neg.price = price
+      await neg.save()
+
+      req.negotiation = neg._id
+      await req.save()
+
+      const property = await Property.findById(propertyId)
+      if (property) {
+        property.requests = [...property.requests, req._id]
+        await property.save()
+      }
+
 
       const msg = new Message()
       msg.cid = getCid()
@@ -138,23 +141,16 @@ exports.sendOfferRequest = async (req, res) => {
 
     if (user) {
 
-      const req = new Request()
-      req.cid = getCid()
-      req.admin = developerId
-      req.buyer = user._id
-      req.developer = developerId
-      req.property = propertyId
-      req.coverLetter = text
-      req.request_type = 'offer'
-      req.price = price
-      await req.save()
-
-      const property = await Property.findById(propertyId)
-      if (property) {
-        property.requests = [...property.requests, req._id]
-        await property.save()
-      }
-
+      // const req = new Request()
+      // req.cid = getCid()
+      // req.admin = developerId
+      // req.buyer = user._id
+      // req.developer = developerId
+      // req.property = propertyId
+      // req.coverLetter = text
+      // req.request_type = 'offer'
+      // req.price = price
+      // await req.save()
 
 
       const existedThread = await Thread.findOne({
@@ -179,8 +175,39 @@ exports.sendOfferRequest = async (req, res) => {
         await thread.save()
       }
 
+      const req = new Request()
+      req.cid = getCid()
+      req.members = thread.members
+      req.admin = developerId
+      req.buyer = user._id
+      req.developer = developerId
+      req.property = propertyId
+      req.coverLetter = text
+      req.request_type = 'offer'
+      // req.price = price
+      await req.save()
+
+      const neg = new Negotiation()
+      req.members = thread.members
+      neg.admin = user._id
+      neg.developer = developerId
+      neg.manager = developerId
+      neg.buyer = user._id
+      neg.property = propertyId
+      neg.request = req._id
+      neg.message = text
+      neg.price = price
+      await neg.save()
+
+      const property = await Property.findById(propertyId)
+      if (property) {
+        property.requests = [...property.requests, req._id]
+        await property.save()
+      }
+
       const msg = new Message()
       msg.cid = getCid()
+      req.members = thread.members
       msg.thread = thread._id
       msg.sender = user._id
       msg.receiver = developerId
@@ -188,6 +215,7 @@ exports.sendOfferRequest = async (req, res) => {
       msg.price = price
       msg.property = propertyId
       msg.request = req._id
+      msg.negotiation = neg._id
       msg.type = 'offer'
       await msg.save()
 
@@ -306,7 +334,7 @@ exports.sendMeetingRequest = async (req, res) => {
       const notify = new Notification()
       notify.cid = getCid()
       notify.user = developerId
-      notify.text = `<strong>${user.first_name} ${user.last_name}</strong> have sent an offer to you.`
+      notify.text = `<strong>${user.first_name} ${user.last_name}</strong> have sent you an appointment request.`
       notify.link = `/developer/requests/${req._id}`
       notify.icon = 'exchange'
       await notify.save()
@@ -344,29 +372,29 @@ exports.response_request = async (req, res) => {
 
       // if (String(req.admin) == String(user._id)) {
 
-        const neg = await Negotiation.findById(req.negotiation)
+      const neg = await Negotiation.findById(req.negotiation)
 
-        // return console.log('Canceling negotiation: ',neg)
+      // return console.log('Canceling negotiation: ',neg)
 
-        if (type == 'cancel') {
+      if (type == 'cancel') {
 
-          if (neg) {
+        if (neg) {
 
-            neg.status = 'cancelled'
-            await neg.save()
-
-          }
-
-          req.status = 'cancelled'
-
-          await req.save()
+          neg.status = 'cancelled'
+          await neg.save()
 
         }
 
+        req.status = 'cancelled'
+
+        await req.save()
+
+      }
 
 
 
-        console.log('Req Canceled: ', req)
+
+      console.log('Req Canceled: ', req)
       // }
 
 
@@ -445,5 +473,85 @@ exports.response_request = async (req, res) => {
   } catch (error) {
     console.log('Request Error: ', error.message)
     res.json({ status: 'error', msg: error.message })
+  }
+}
+
+exports.acceptAppointment = async (req, res) => {
+  const token = req.headers.authorization
+
+  const { requestId,
+    threadId } = req.body
+  try {
+
+    const data = jwt.verify(token, process.env.APP_SECRET)
+
+    const user = await User.findOne({ _id: data.id })
+
+    if (user) {
+
+      const request = await Request.findById(requestId)
+      const thread = await Thread.findById(threadId)
+      const property = await Property.findById(request.property)
+
+      console.log('thread: ', thread)
+      const buyer = user.dashboard == 'buyer' ? user._id : thread.members.find(mbr => mbr.toString() != user._id.toString())
+
+      console.log('Buyer ID: ', buyer)
+
+      const appointment = new Appointment()
+      appointment.cid = getCid()
+      appointment.members = thread.members
+      appointment.buyer = buyer
+      appointment.manager = property.manager
+      appointment.developer = property.developer
+      appointment.thread = property.thread
+      appointment.property = property._id
+      appointment.appointmentDate = request.meetingDate
+      appointment.status = 'accepted'
+      await appointment.save()
+
+      request.status = 'accepted'
+      await request.save()
+
+      return res.json({ status: 'success', appointment: appointment })
+
+    }
+
+  } catch (error) {
+    console.log('Error: ', error.message)
+    return res.json({ status: 'error', msg: error.message })
+  }
+}
+
+exports.getAppointments = async (req, res) => {
+  const token = req.headers.authorization
+
+  try {
+
+    const data = jwt.verify(token, process.env.APP_SECRET)
+
+    const user = await User.findOne({ _id: data.id })
+
+    if (user) {
+      const appointments = await Appointment.find({
+        members: { $in: [user._id] }
+      }).populate([
+        {
+          path:'members',
+          model: 'User'
+        },
+        {
+          path:'property',
+          model: 'Property'
+        }
+      ])
+
+      console.log('appointments: ', appointments)
+      return res.json({ status: 'success', appointments })
+    }
+
+  } catch (error) {
+    console.log('Error: ', error.message)
+    return res.json({ status: 'error', msg: error.message })
   }
 }

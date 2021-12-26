@@ -65,16 +65,17 @@ exports.make_negotiation = async (req, res) => {
 
                 if (thread) {
 
-                    const receiver = req.members.filter(mbr => mbr != user._id )
+                    const receiver = thread.members.find(mbr => mbr.toString() != user._id.toString() )
 
-                    console.log('Receliver: ', receiver)
+                    // console.log('Current User: ', user._id)
+                    // return console.log('Receliver: ', receiver)
 
                     const msg = new Message()
                     msg.cid = getCid()
                     msg.members = req.members
                     msg.thread = thread._id
                     msg.sender = user._id
-                    msg.receiver = receiver.toString()
+                    msg.receiver = receiver
                     msg.text = message
                     msg.price = price
                     msg.property = req.property
@@ -91,7 +92,10 @@ exports.make_negotiation = async (req, res) => {
                     console.log('Request: ', req)
                     console.log('Receiver: ', receiver)
 
-                    const notifiedUser = await User.findById(receiver.toString())
+                    const notifiedUser = await User.findById(receiver)
+
+                    console.log('Current User: ', user._id)
+                    console.log('Receliver: ', receiver)
                     console.log('Notify User: ', notifiedUser)
 
                     if (notifiedUser) {
@@ -118,7 +122,17 @@ exports.make_negotiation = async (req, res) => {
                             console.log('Mail Error: ', error.message)
                             return await errorLogger(error, 'Email send failed')
                         }
+
+                        const not = new Notification()
+                        not.cid = getCid()
+                        not.sender = user._id 
+                        not.user = notifiedUser._id
+                        not.text = neg.message
+                        not.link = `http://`
+                        await not.save()
+
                     }
+
 
 
                     return res.json({ status: 'success', message: msg })

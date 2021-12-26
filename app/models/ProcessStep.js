@@ -17,6 +17,11 @@ const processStepSchema = mongoose.Schema({
         ref: 'User'
     },
 
+    manager:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+
     property:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Property'
@@ -31,6 +36,7 @@ const processStepSchema = mongoose.Schema({
     },
 
     buyerFiles:[],
+
     developerFiles:[],
     
     status: {
@@ -38,6 +44,8 @@ const processStepSchema = mongoose.Schema({
         enum:['pending', 'processing', 'completed'],
         default:'pending'
     },
+
+    
 })
 
 processStepSchema.set('timestamps', true)

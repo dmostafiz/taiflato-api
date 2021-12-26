@@ -23,6 +23,10 @@ const promotionSchema = mongoose.Schema({
     promotionPrice:{
         type: Number
     },
+
+    startAt:{
+        type: Date
+    },
   
     expireAt:{
         type: Date

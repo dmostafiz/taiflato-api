@@ -46,7 +46,7 @@ const NegotiationSchema = mongoose.Schema({
 
     status:{
         type: String,
-        enum:['accpeted', 'cancelled', 'pending'],
+        enum:['accepted', 'cancelled', 'pending'],
         default: 'pending'
     },
 
