@@ -39,6 +39,16 @@ const processSchema = mongoose.Schema({
         type: Number
     },
 
+    reservationAgreement: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Agreement'
+    },
+
+    finalAgreement: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Agreement'
+    },
+
     //steps
     stepLawyer: {
 
