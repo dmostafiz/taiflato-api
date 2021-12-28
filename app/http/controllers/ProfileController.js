@@ -5,7 +5,6 @@ const BuyerProfile = require("../../models/BuyerProfile");
 
 exports.update_user_profile_data = async (req, res) => {
 
-
   const token = req.headers.authorization
   console.log('Server Token:', token)
 
@@ -81,6 +80,9 @@ exports.get_buyer_profile = async (req, res) => {
         const cProfile = new BuyerProfile()
         cProfile.user = user._id
         await cProfile.save()
+
+        user.buyerProfile = cProfile._id
+        await user.save()
 
         res.json({ status: 'success', profile: cProfile })
 
@@ -167,7 +169,7 @@ exports.save_buyer_profile = async (req, res) => {
       }
 
       if (profile) {
-
+        
         profile.firstName = firstName
         profile.lastName = lastName
         profile.dateOfBirth = dateOfBirth

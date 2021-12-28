@@ -84,3 +84,36 @@ exports.projectDetails = async (req, res) => {
 
     }
 }
+
+exports.getIsrapolyMembers = async (req, res) => {
+    try {
+        
+        const users = await User.find({
+            account_verified: true,
+            dashboard: 'buyer'
+        })
+
+        return res.json({status: 'success', users})
+
+    } catch (error) {
+        console.log('Error: ', error.message)
+        return res.json({status: 'error', msg: error.message})
+    }
+}
+
+exports.getRealestateDevelopers = async (req, res) => {
+    try {
+        
+        const users = await User.find({
+            account_verified: true,
+            dashboard: 'developer',
+            is_realestate_admin: true
+        })
+
+        return res.json({status: 'success', users})
+
+    } catch (error) {
+        console.log('Error: ', error.message)
+        return res.json({status: 'error', msg: error.message})
+    }
+}

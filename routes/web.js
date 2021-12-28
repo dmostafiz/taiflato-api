@@ -263,7 +263,19 @@ router.post('/accept_appointment', RequestController.acceptAppointment)
 
 router.post('/get_appointments', RequestController.getAppointments)
 
+router.get('/get_pending_loan_profiles', LoanApplicationController.get_pending_loan_profiles)
+router.get('/get_approved_loan_profiles', LoanApplicationController.get_approved_loan_profiles)
+router.get('/get_user_loan_profile/:loanId', LoanApplicationController.get_user_loan_profile)
 
+router.post('/change_loan_status/', LoanApplicationController.change_loan_status)
+
+//Get thread or create new one
+router.post('/get_thread_or_create/', MessangerController.get_thread_or_create)
+
+
+//Get Israpoly users for admin
+router.get('/get_israpoly_members/', AdminController.getIsrapolyMembers)
+router.get('/get_realestate_developers/', AdminController.getRealestateDevelopers)
 
 
 // Purchase Process

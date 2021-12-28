@@ -42,10 +42,12 @@ const userSchema = mongoose.Schema({
         type: String,
         require:true  
     },
+
     realestate_admin:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'  
     },
+
     is_realestate_admin:{
         type: Boolean,
         default:true  
@@ -63,7 +65,12 @@ const userSchema = mongoose.Schema({
 
     buyerProfile:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Profile'  
+        ref: 'BuyerProfile'  
+    },
+
+    loanProfile:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'LoanApplication'  
     },
 
     company:{

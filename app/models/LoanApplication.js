@@ -169,8 +169,8 @@ const LoanApplicationSchema = mongoose.Schema({
 
     status: {
         type: String,
-        enum:['pending','approved', 'declined'],
-        default:'pending'
+        enum:['created','pending','approved', 'declined'],
+        default:'created'
     },
 
 })

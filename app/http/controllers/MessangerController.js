@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken')
+const getCid = require('../../../helpers/getCid')
 const Message = require('../../models/Message')
 const Thread = require('../../models/Thread')
 const User = require("../../models/User")
+var mongoose = require('mongoose');
 
 exports.getMyThreadById = async (req, res) => {
 
@@ -26,7 +28,7 @@ exports.getMyThreadById = async (req, res) => {
           model: 'User',
           select: { 'password': 0 },
         },
-  
+
         {
           path: 'messages',
           model: 'Message',
@@ -62,7 +64,7 @@ exports.getMyThreads = async (req, res) => {
 
 
     const threads = await Thread.find({
-      members: {$in:[user._id]}
+      members: { $in: [user._id] }
       // $or: [
       //   { 'sender': user._id },
       //   { 'receiver': user._id },
@@ -292,6 +294,78 @@ exports.sendMessage = async (req, res) => {
 
 
 
+
+
+  } catch (error) {
+    console.log('Error: ', error)
+    return res.json({ status: 'error', msg: 'Your are not authorised' })
+  }
+}
+
+exports.get_thread_or_create = async (req, res) => {
+
+  const token = req.headers.authorization
+
+  const { receiverId } = req.body
+
+  if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
+  try {
+    const data = jwt.verify(token, process.env.APP_SECRET)
+
+    const user = await User.findOne({ _id: data.id })
+
+    if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
+    const receiver = await User.findById(receiverId)
+
+    if (receiver) {
+
+      const existedThread = await Thread.findOne({
+        members: { $in: [mongoose.Types.ObjectId(user._id)] },
+        $and: [
+          {
+            // members:{ $in: [mongoose.Types.ObjectId(user._id)]},  
+            members: { $in: [mongoose.Types.ObjectId(receiver._id)] }
+          }
+        ]
+
+      })
+
+      const thread = existedThread ? existedThread : new Thread()
+
+      if (!existedThread) {
+        thread.cid = getCid()
+        thread.members = [
+          mongoose.Types.ObjectId(user._id),
+          mongoose.Types.ObjectId(receiver._id)
+        ]
+        await thread.save()
+      }
+
+      const messages = await Message.find({thread: thread._id})
+
+      if(!messages.length){
+        const msg = new Message()
+        msg.cid = getCid()
+        msg.thread = thread._id
+        msg.sender = user._id
+        msg.receiver = receiver._id
+        msg.text = `Hello ${receiver.username}!`
+        // msg.meetingDate = appoinmentDate
+        // msg.property = propertyId
+        // msg.request = req._id
+        msg.type = 'text'
+        await msg.save()
+  
+        thread.messages = [...thread.messages, msg._id]
+        thread.newMessages = [...thread.newMessages, msg._id]
+        await thread.save()
+      }
+
+      return res.json({ status: 'success', thread})
+
+    }
 
 
   } catch (error) {
