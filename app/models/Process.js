@@ -97,7 +97,7 @@ const processSchema = mongoose.Schema({
         buyerStatus: {
             type: String,
             enum: ['pending', 'processing', 'done'],
-            default: 'pending'
+            default: 'processing'
         },
 
         developerStatus: {

@@ -29,6 +29,33 @@ const MessageSchema = mongoose.Schema({
         type: String
     },
 
+    zoom: {
+        uuid: {
+            type: String, 
+        },
+        host_id:{
+            type: String, 
+        },
+        host_email: {
+            type: String, 
+        },
+        start_url: {
+            type: String, 
+        }, 
+        join_url: {
+            type: String, 
+        }, 
+        password: {
+            type: String, 
+        }, 
+        encrypted_password:{
+            type: String, 
+        }, 
+        status: {
+            type: String, 
+        }, 
+    },
+
     property: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Property'
@@ -59,7 +86,7 @@ const MessageSchema = mongoose.Schema({
 
     type:{
         type:String,
-        enum:['text', 'file', 'image', 'buy', 'offer', 'meet'],
+        enum:['text', 'file', 'image', 'buy', 'offer', 'meet', 'zoomMeeting'],
         default: 'text'
     },
 

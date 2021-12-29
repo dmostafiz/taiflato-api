@@ -113,8 +113,8 @@ exports.sendBuyingRequest = async (req, res) => {
       const notify = new Notification()
       notify.cid = getCid()
       notify.user = developerId
-      notify.text = `<strong>${user.first_name} ${user.last_name}</strong> have sent a buying request to you.`
-      notify.link = `/developer/requests/${req._id}`
+      notify.text = `<strong>${user.first_name} ${user.last_name}</strong> have sent you a buying request.`
+      notify.link = `/developer/messages?thread=${thread._id}`
       notify.icon = 'exchange'
       await notify.save()
 
@@ -236,8 +236,8 @@ exports.sendOfferRequest = async (req, res) => {
       const notify = new Notification()
       notify.cid = getCid()
       notify.user = developerId
-      notify.text = `<strong>${user.first_name} ${user.last_name}</strong> have sent an offer to you.`
-      notify.link = `/developer/requests/${req._id}`
+      notify.text = `<strong>${user.first_name} ${user.last_name}</strong> have sent you an offer.`
+      notify.link = `/developer/messages?thread=${thread._id}`
       notify.icon = 'exchange'
       await notify.save()
 
@@ -335,8 +335,8 @@ exports.sendMeetingRequest = async (req, res) => {
       notify.cid = getCid()
       notify.user = developerId
       notify.text = `<strong>${user.first_name} ${user.last_name}</strong> have sent you an appointment request.`
-      notify.link = `/developer/requests/${req._id}`
-      notify.icon = 'exchange'
+      notify.link = `/developer/messages?thread=${thread._id}`
+      notify.icon = 'calendar'
       await notify.save()
 
       // console.log(property)
@@ -495,6 +495,8 @@ exports.acceptAppointment = async (req, res) => {
 
       console.log('thread: ', thread)
       const buyer = user.dashboard == 'buyer' ? user._id : thread.members.find(mbr => mbr.toString() != user._id.toString())
+      const receiver  = thread.members.find(mbr => mbr.toString() != user._id.toString())
+      const receiverUser = await User.findById(receiver)
 
       console.log('Buyer ID: ', buyer)
 
@@ -502,16 +504,24 @@ exports.acceptAppointment = async (req, res) => {
       appointment.cid = getCid()
       appointment.members = thread.members
       appointment.buyer = buyer
-      appointment.manager = property.manager
-      appointment.developer = property.developer
-      appointment.thread = property.thread
-      appointment.property = property._id
+      appointment.manager = property?.manager
+      appointment.developer = property?.developer
+      appointment.thread = property?.thread || threadId
+      appointment.property = property?._id
       appointment.appointmentDate = request.meetingDate
       appointment.status = 'accepted'
       await appointment.save()
 
       request.status = 'accepted'
       await request.save()
+
+      const notify = new Notification()
+      notify.cid = getCid()
+      notify.user = receiverUser._id
+      notify.text = `<strong>${user.first_name} ${user.last_name}</strong> have accepted your appointment request.`
+      notify.link = `/${receiverUser.dashboard}/messages?thread=${thread._id}`
+      notify.icon = 'exchange'
+      await notify.save()
 
       return res.json({ status: 'success', appointment: appointment })
 

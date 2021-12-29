@@ -128,12 +128,12 @@ exports.make_negotiation = async (req, res) => {
                         not.sender = user._id 
                         not.user = notifiedUser._id
                         not.text = neg.message
-                        not.link = `http://`
+                        not.link = `/${notifiedUser.dashboard}/messages?thread=${thread._id}`
                         await not.save()
 
                     }
 
-
+ 
 
                     return res.json({ status: 'success', message: msg })
 

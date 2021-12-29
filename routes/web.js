@@ -40,6 +40,7 @@ const LocationController = require('../app/http/controllers/LocationController')
 const LoanApplicationController = require('../app/http/controllers/LoanApplicationController')
 
 const ProcessController = require('../app/http/controllers/ProcessController')
+const ZoomController = require('../app/http/controllers/ZoomController')
 
 
 // const upload = require('../helpers/cloudinary')
@@ -164,8 +165,10 @@ router.get('/my_activities', DashboardController.getMyActivities)
 //Messanger
 router.post('/get_my_thread_by_id', MessangerController.getMyThreadById)
 router.get('/get_my_threads', MessangerController.getMyThreads)
-router.get('/get_thread_messages/:id', MessangerController.getThreadMessages)
+router.get('/get_thread_messages/:id/:msgLimit', MessangerController.getThreadMessages)
 router.post('/send_message', MessangerController.sendMessage)
+
+router.post('/make_appointment_request', MessangerController.make_appointment_request)
 
 
 //Buyers
@@ -276,6 +279,10 @@ router.post('/get_thread_or_create/', MessangerController.get_thread_or_create)
 //Get Israpoly users for admin
 router.get('/get_israpoly_members/', AdminController.getIsrapolyMembers)
 router.get('/get_realestate_developers/', AdminController.getRealestateDevelopers)
+
+//Zoom Meeting
+router.post('/create_zoom_meeting', ZoomController.createMeetingLink)
+
 
 
 // Purchase Process

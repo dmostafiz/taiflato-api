@@ -9,6 +9,7 @@ const Request = require('../../models/Request')
 const Thread = require('../../models/Thread')
 const User = require('../../models/User')
 const mongoose = require('mongoose')
+const Notification = require('../../models/Notification')
 
 exports.createPurchaseProcess = async (req, res) => {
 
@@ -65,6 +66,19 @@ exports.createPurchaseProcess = async (req, res) => {
 
             negot.status = 'accepted'
             await negot.save()
+
+            const findReceiverId = request.members.find(mbr=> mbr.toString() != user._id.toString())
+            const findReceiver = await User.findById(findReceiverId)
+
+           if(findReceiver){
+               const notify = new Notification()
+               notify.cid = getCid()
+               notify.user = findReceiver._id
+               notify.text = `<strong>${user.first_name} ${user.last_name}</strong> have accepted your offer.`
+               notify.link = `/${findReceiver.dashboard}/process/${process._id}?thread=${process.thread}`
+               notify.icon = 'check'
+               await notify.save()
+           }
 
             return res.json({ status: 'success', process: process })
 

@@ -31,7 +31,7 @@ const notificationSchema = mongoose.Schema({
 
   icon: {
     type: String,
-    enum: ['bell', 'envelope', 'completed', 'comment', 'money', 'file', 'check', 'calendar', 'bullhorn', 'exchange'],
+    enum: ['bell', 'envelope', 'completed', 'comment', 'money', 'file', 'check', 'calendar', 'bullhorn', 'exchange', 'video-camera'],
     default: 'bell'
   },
 
