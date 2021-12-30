@@ -41,6 +41,7 @@
     "react": "^17.0.2",
     "react-player": "^2.9.0",
     "react-video-js-player": "^1.1.1",
+    "request": "^2.88.2",
     "request-promise": "^4.2.6",
     "s3-node": "0.0.1",
     "sequelize": "^6.6.5",
