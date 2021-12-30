@@ -498,7 +498,7 @@ exports.acceptAppointment = async (req, res) => {
       const receiver  = thread.members.find(mbr => mbr.toString() != user._id.toString())
       const receiverUser = await User.findById(receiver)
 
-      console.log('Buyer ID: ', buyer)
+      // console.log('Buyer ID: ', buyer)
 
       const appointment = new Appointment()
       appointment.cid = getCid()

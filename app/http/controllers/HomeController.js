@@ -86,6 +86,7 @@ exports.getFeaturedProjects = async (req, res) => {
 
 exports.getHeroSlider = async (req, res) => {
 
+
     try {
 
         const sliders = await Slider.find().populate([
@@ -121,14 +122,7 @@ exports.getBestDealProperties = async (req, res) => {
     try {
 
         const properties = Property.aggregate()
-            // .pipeline([
-            //     {
-            //         developer: {
-            //             password: -1
-            //         }
-            //     }
-            // ])
-            // .sort({createdAt:-1})
+
             .limit(4)
             // .sample({ size: 2 })
 
