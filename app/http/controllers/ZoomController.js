@@ -1,11 +1,11 @@
 // const thenrequest = require('then-request');
 const jwt = require('jsonwebtoken')
-const rp = require('request-promise');
-const getCid = require('../../../helpers/getCid');
-const Message = require('../../models/Message');
-const Notification = require('../../models/Notification');
-const Thread = require('../../models/Thread');
-const User = require('../../models/User');
+const rp = require('request-promise')
+const getCid = require('../../../helpers/getCid')
+const Message = require('../../models/Message')
+const Notification = require('../../models/Notification')
+const Thread = require('../../models/Thread')
+const User = require('../../models/User')
 
 exports.createMeetingLink = async (req, res) => {
 
