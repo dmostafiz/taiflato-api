@@ -73,7 +73,7 @@ exports.createMeetingLink = async (req, res) => {
                         type: 1,
                         settings: {
                             host_video: "false",
-                            participant_video: "true"
+                            participant_video: "false"
                         }
                     },
                     auth: {
