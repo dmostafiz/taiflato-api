@@ -10,6 +10,7 @@ const Thread = require('../../models/Thread')
 const User = require('../../models/User')
 const mongoose = require('mongoose')
 const Notification = require('../../models/Notification')
+const Agreement = require('../../models/Agreement')
 
 exports.createPurchaseProcess = async (req, res) => {
 
@@ -177,6 +178,95 @@ exports.get_my_property_process = async (req, res) => {
         return res.json({ status: 'error', msg: error.message })
     }
 }
+
+
+exports.get_reservation_agreement = async (req, res) => {
+
+    const token = req.headers.authorization
+
+    const {processId, agreementType} = req.body
+
+    try {
+
+        const data = jwt.verify(token, process.env.APP_SECRET)
+
+        const user = await User.findOne({ _id: data.id })
+
+        if (user) {
+
+            const prc = await Process.findById( processId )
+
+            console.log('Agreement process: ', prc)
+
+            const agreement = await Agreement.findOne({
+                process: prc._id,
+                agreementType: agreementType
+            })
+
+
+            console.log('Agreement: ', agreement )
+
+            res.json({ status: 'success', agreement:  agreement})
+        }
+
+    } catch (error) {
+        console.log('Error: ', error.message)
+        return res.json({ status: 'error', msg: error.message })
+    }
+}
+
+exports.create_sale_agreement = async (req, res) => {
+
+    const token = req.headers.authorization
+
+    const {processId, agreementType, agreementFiles} = req.body
+
+    try {
+
+        const data = jwt.verify(token, process.env.APP_SECRET)
+
+        const user = await User.findOne({ _id: data.id })
+
+        if (user) {
+
+            const prc = await Process.findById( processId ).populate([
+                {
+                    path:'property',
+                    model: 'Property'
+                }
+            ])
+
+            console.log('Agreement process: ', prc)
+
+            const getAgreement = await Agreement.findOne({
+                process: prc._id,
+                agreementType: 'reservation'
+            })
+
+            const agreement = getAgreement ? getAgreement : new Agreement()
+            agreement.cid = getCid()
+            agreement.property = prc.property._id 
+            agreement.process = prc._id 
+            agreement.members = prc.members 
+            agreement.buyer = prc.buyer
+            agreement.manager = prc.manager
+            agreement.developer = prc.developer 
+            agreement.company = prc.property.company  
+            agreement.files = agreementFiles
+            agreement.agreentType = agreementType
+            agreement.agreentType = agreementType 
+            agreement.save()
+
+            console.log('Process: ', prc )
+            res.json({ status: 'success', agreement:  agreement})
+        }
+
+    } catch (error) {
+        console.log('Error: ', error.message)
+        return res.json({ status: 'error', msg: error.message })
+    }
+}
+
 
 
 exports.save_buyer_consult_lawyer_process = async (req, res) => {

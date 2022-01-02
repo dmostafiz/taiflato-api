@@ -44,14 +44,28 @@ const AgreementSchema = mongoose.Schema({
         type: Array
     },
 
-    agreentType: {
+    signedFiles: {
+        type: Array
+    },
+
+    agreementType: {
         type: String,
+    },
+
+    mobileOTP: {
+        type: String,
+        default: null
+    },
+
+    emailOTP: {
+        type: String,
+        default: null
     },
 
     status: {
         type: String,
-        enum: ['pending', 'done'],
-        default: 'pending'
+        enum: ['created','pending', 'done'],
+        default: 'created'
     },
 
 })

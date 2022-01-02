@@ -990,3 +990,108 @@ exports.upload_project_image = async (req, res) => {
 
 
 }
+
+
+exports.upload_process_agreement = async (req, res) => {
+
+  // console.log('Ok: ', req.body)
+  const form = new multiparty.Form();
+
+  form.parse(req, async (error, fields, files) => {
+
+    // console.log('files: ', files)
+
+    if (error) {
+      console.log('Error: ', error)
+      return res.json({ status: 'error', error })
+    }
+
+    try {
+
+      // const token = fields.tken
+
+      // return console.log('Upload fields: ', fields)
+
+      const token = fields.token[0]
+      const process_id = fields.process_id[0]
+
+      console.log('process_id: ', process_id)
+      // return console.log('token: ', token)
+
+      const data = jwt.verify(token, process.env.APP_SECRET)
+      const user = await User.findOne({ _id: data.id })
+
+      // return console.log('File Paths: ', files)
+      
+      if (user && files.file.length) {
+
+        const uploadedIds = []
+
+         await files.file.forEach(async (file, index) => {
+          // return console.log(index, 'Single File: ', file)
+          const path = file.path 
+          const folder =  user.username + '/process/' + process_id
+          const buffer = fs.readFileSync(path);
+          const type = await fileType.fromBuffer(buffer);
+          const originalFilename = file.originalFilename.split('.')[0]
+          const fileName = `${folder}/${originalFilename}-${getCid()}`;
+
+          // return console.log('originalFilename: ', originalFilename)
+          const data = await uploadFile(buffer, fileName, type)
+
+
+          if(data){
+            const file = new File()
+            file.fileName = originalFilename
+            file.bucket = data.Bucket
+            file.eTag = data.ETag
+            file.key = data.Key
+            file.location = data.Location
+            file.versionId = data.VersionId
+            file.mime = type.mime
+            file.fileExt = type.ext
+            file.folder = folder
+            file.user = user._id
+  
+            await file.save()
+
+            uploadedIds.push(file.location)
+
+            if(uploadedIds.length == files.file.length){
+              console.log(uploadedIds.length, 'All files has been uploaded')
+              return res.json({ status: 'success', files:uploadedIds })
+          }
+
+          }
+
+
+        })
+
+        
+          // console.log('All uploaded: ', uploaded)
+    
+        
+      }
+
+      // return res.json({ status: 'success', files })
+      // return console.log('project_id: ', project_id)
+
+      // return res.json({ status: 'success' })
+
+
+
+  
+
+
+    } catch (err) {
+      console.log("Uplaod Error: ", err.message)
+
+      return err;
+
+    }
+
+  })
+
+
+
+}

@@ -199,7 +199,7 @@ exports.getThreadMessages = async (req, res) => {
           }
         ])
 
-      console.log('Thread Messages: ', messages)
+      // console.log('Thread Messages: ', messages)
 
       const sortMessages = messages.reverse()
 

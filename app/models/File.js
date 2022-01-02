@@ -10,6 +10,11 @@ const fileSchema = mongoose.Schema({
     key:{
         type: String
     },
+
+    fileName:{
+        type: String,
+    },
+    
     location:{
         type: String,
     },

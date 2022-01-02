@@ -293,6 +293,10 @@ router.post('/get_my_property_process', ProcessController.get_my_property_proces
 router.post('/save_buyer_consult_lawyer_process', ProcessController.save_buyer_consult_lawyer_process)
 router.post('/save_developer_consult_lawyer_process', ProcessController.save_developer_consult_lawyer_process)
 
+//Procss
+router.post('/upload_process_agreement', UploadController.upload_process_agreement)
+router.post('/create_sale_agreement', ProcessController.create_sale_agreement)
+router.post('/get_reservation_agreement', ProcessController.get_reservation_agreement)
 
 
 // router.post('/slider/save/:id', Authorization, SliderController.saveByID)
