@@ -253,8 +253,7 @@ exports.create_sale_agreement = async (req, res) => {
             agreement.developer = prc.developer 
             agreement.company = prc.property.company  
             agreement.files = agreementFiles
-            agreement.agreentType = agreementType
-            agreement.agreentType = agreementType 
+            agreement.agreementType = agreementType
             agreement.save()
 
             console.log('Process: ', prc )
