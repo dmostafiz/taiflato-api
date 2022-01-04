@@ -50,61 +50,20 @@ const processSchema = mongoose.Schema({
     },
 
     //steps
-    stepLawyer: {
-
-        buyerStatus: {
-            type: String,
-            enum: ['pending', 'processing', 'done'],
-            default: 'processing'
-        },
-
-        developerStatus: {
-            type: String,
-            enum: ['pending', 'processing', 'done'],
-            default: 'processing'
-        },
-
-        buyerOwnLawyer: {
-            type: Boolean
-        },
-
-        buyerPartnerLawyer: {
-            type: Boolean
-        },
-
-        developerOwnLawyer:{
-            type: Boolean
-        },
-
-        developerPartnerLawyer:{
-            type: Boolean
-        },
-
-        title: {
-            type: String,
-            default: 'Consult a lawyer'
-        }
-        ,
-        description: {
-            type: String,
-            default: 'Consult a lawyer as soon as possible: On the various topics that will help you in your decision making. Aspects related to taxation and tax planning, aspects related to the mortgage, consultation and preliminary examinations concerning the apartment and/or apartments on the agenda assistance in negotiations with the developer.'
-        }
-
-
-    },
 
     stepReservationContractSign: {
         buyerStatus: {
             type: String,
-            enum: ['pending', 'processing', 'done'],
+            enum: ['created', 'processing', 'done'],
             default: 'processing'
         },
 
         developerStatus: {
             type: String,
-            enum: ['pending', 'processing', 'done'],
-            default: 'pending'
+            enum: ['created', 'processing', 'done'],
+            default: 'processing'
         },
+
 
         buyerFiles: [{
             type: String
@@ -128,14 +87,14 @@ const processSchema = mongoose.Schema({
 
         buyerStatus: {
             type: String,
-            enum: ['pending', 'processing', 'done'],
-            default: 'pending'
+            enum: ['created', 'processing', 'done'],
+            default: 'created'
         },
 
         developerStatus: {
             type: String,
-            enum: ['pending', 'processing', 'done'],
-            default: 'pending'
+            enum: ['created', 'processing', 'done'],
+            default: 'created'
         },
 
         payment: {

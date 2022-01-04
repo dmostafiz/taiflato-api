@@ -13,6 +13,7 @@ const cron = require('node-cron');
 const appSocket = require('./app/socket/appSocket');
 const getAuctionsAndUpdate = require('./app/cron/getAuctionsAndUpdate');
 const getProjectsAndUpdate = require('./app/cron/getProjectsAndUpdate');
+const getAgreementsAndSignStatus = require('./app/cron/getAgreementsAndSignStatus');
 
 const app = express()
 const server = require('http').createServer(app)
@@ -36,6 +37,7 @@ connectDB()
 
 getAuctionsAndUpdate(cron)
 getProjectsAndUpdate(cron)
+getAgreementsAndSignStatus(cron)
 
 let users = []
 

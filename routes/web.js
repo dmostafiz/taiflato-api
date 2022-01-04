@@ -290,13 +290,22 @@ router.post('/create_purchase_process', ProcessController.createPurchaseProcess)
 router.post('/get_secured_process', ProcessController.get_secured_process)
 router.post('/get_my_property_process', ProcessController.get_my_property_process)
 
-router.post('/save_buyer_consult_lawyer_process', ProcessController.save_buyer_consult_lawyer_process)
-router.post('/save_developer_consult_lawyer_process', ProcessController.save_developer_consult_lawyer_process)
+// router.post('/save_buyer_consult_lawyer_process', ProcessController.save_buyer_consult_lawyer_process)
+// router.post('/save_developer_consult_lawyer_process', ProcessController.save_developer_consult_lawyer_process)
 
 //Procss
 router.post('/upload_process_agreement', UploadController.upload_process_agreement)
 router.post('/create_sale_agreement', ProcessController.create_sale_agreement)
 router.post('/get_reservation_agreement', ProcessController.get_reservation_agreement)
+
+//Agreement OTP
+router.post('/send_secret_code_again', ProcessController.send_secret_code_again)
+
+// router.post('/varify_developer_agreement_mobile_otp', ProcessController.varify_developer_agreement_mobile_otp)
+
+// router.post('/get_user_signature_url', ProcessController.get_user_signature_url)
+
+
 
 
 // router.post('/slider/save/:id', Authorization, SliderController.saveByID)

@@ -52,22 +52,35 @@ const AgreementSchema = mongoose.Schema({
         type: String,
     },
 
-    mobileOTP: {
-        type: String,
-        default: null
+    developerSecretPin:{
+        type: Number,
     },
 
-    emailOTP: {
-        type: String,
-        default: null
+    buyerSecretPin:{
+        type: Number,
     },
 
-    status: {
+    signature_request_id:{
+        type: String,
+    },
+
+    developerStatus: {
         type: String,
         enum: ['created','pending', 'done'],
         default: 'created'
     },
 
+    buyerStatus: {
+        type: String,
+        enum: ['created','pending', 'done'],
+        default: 'created'
+    },
+
+    agreementStatus: {
+        type: String,
+        enum: ['created','pending', 'done'],
+        default: 'created'
+    },
 })
 
 AgreementSchema.set('timestamps', true)

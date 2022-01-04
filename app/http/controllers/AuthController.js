@@ -11,6 +11,7 @@ var validator = require('validator');
 const Invite = require('../../models/Invite');
 const Company = require('../../models/Company');
 const getCid = require('../../../helpers/getCid');
+const twilioClient = require('../../../helpers/twilioClient');
 
 exports.login = async (req, res) => {
 
@@ -522,14 +523,16 @@ exports.submit_phone_for_verify = async (req, res) => {
 
         const message = `Hello ${user.username}, \nYour phone verification code is ${phone_code}`
 
-        const twilio = require('twilio')
-        const client = new twilio(
-            'AC40426886092f8bf411327d5f461684b7', 
-            '84cf61bce3031ef25c872f6d8c618f1d'
-        );
+        // const twilio = require('twilio')
+        // const client = new twilio(
+        //     'AC40426886092f8bf411327d5f461684b7', 
+        //     '84cf61bce3031ef25c872f6d8c618f1d'
+        // );
+
+        // const client = twilioClient
         try {
 
-            const msg = await client.messages.create({
+            const msg = await twilioClient.messages.create({
                body: message,
             //    from: '+13373586639',
                from: 'Israpoly',

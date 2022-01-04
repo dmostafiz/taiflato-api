@@ -11,6 +11,7 @@ const User = require('../../models/User')
 const mongoose = require('mongoose')
 const Notification = require('../../models/Notification')
 const Agreement = require('../../models/Agreement')
+const twilioClient = require('../../../helpers/twilioClient')
 
 exports.createPurchaseProcess = async (req, res) => {
 
@@ -48,7 +49,6 @@ exports.createPurchaseProcess = async (req, res) => {
             process.price = negot.price
             await process.save()
 
-
             // steps.map(async (stp, index) => {
 
             //     const step = new ProcessStep()
@@ -68,18 +68,18 @@ exports.createPurchaseProcess = async (req, res) => {
             negot.status = 'accepted'
             await negot.save()
 
-            const findReceiverId = request.members.find(mbr=> mbr.toString() != user._id.toString())
+            const findReceiverId = request.members.find(mbr => mbr.toString() != user._id.toString())
             const findReceiver = await User.findById(findReceiverId)
 
-           if(findReceiver){
-               const notify = new Notification()
-               notify.cid = getCid()
-               notify.user = findReceiver._id
-               notify.text = `<strong>${user.first_name} ${user.last_name}</strong> have accepted your offer.`
-               notify.link = `/${findReceiver.dashboard}/process/${process._id}?thread=${process.thread}`
-               notify.icon = 'check'
-               await notify.save()
-           }
+            if (findReceiver) {
+                const notify = new Notification()
+                notify.cid = getCid()
+                notify.user = findReceiver._id
+                notify.text = `<strong>${user.first_name} ${user.last_name}</strong> have accepted your offer.`
+                notify.link = `/${findReceiver.dashboard}/process/${process._id}?thread=${process.thread}`
+                notify.icon = 'check'
+                await notify.save()
+            }
 
             return res.json({ status: 'success', process: process })
 
@@ -179,12 +179,11 @@ exports.get_my_property_process = async (req, res) => {
     }
 }
 
-
 exports.get_reservation_agreement = async (req, res) => {
 
     const token = req.headers.authorization
 
-    const {processId, agreementType} = req.body
+    const { processId, agreementType } = req.body
 
     try {
 
@@ -194,7 +193,7 @@ exports.get_reservation_agreement = async (req, res) => {
 
         if (user) {
 
-            const prc = await Process.findById( processId )
+            const prc = await Process.findById(processId)
 
             console.log('Agreement process: ', prc)
 
@@ -204,9 +203,9 @@ exports.get_reservation_agreement = async (req, res) => {
             })
 
 
-            console.log('Agreement: ', agreement )
+            console.log('Agreement: ', agreement)
 
-            res.json({ status: 'success', agreement:  agreement})
+            res.json({ status: 'success', agreement: agreement })
         }
 
     } catch (error) {
@@ -219,7 +218,7 @@ exports.create_sale_agreement = async (req, res) => {
 
     const token = req.headers.authorization
 
-    const {processId, agreementType, agreementFiles} = req.body
+    const { processId, agreementType, agreementFiles } = req.body
 
     try {
 
@@ -229,9 +228,9 @@ exports.create_sale_agreement = async (req, res) => {
 
         if (user) {
 
-            const prc = await Process.findById( processId ).populate([
+            const prc = await Process.findById(processId).populate([
                 {
-                    path:'property',
+                    path: 'property',
                     model: 'Property'
                 }
             ])
@@ -243,21 +242,87 @@ exports.create_sale_agreement = async (req, res) => {
                 agreementType: 'reservation'
             })
 
+            const buyerPin = getCid(6)
+            const developerPin = getCid(6)
+
             const agreement = getAgreement ? getAgreement : new Agreement()
             agreement.cid = getCid()
-            agreement.property = prc.property._id 
-            agreement.process = prc._id 
-            agreement.members = prc.members 
+            agreement.property = prc.property._id
+            agreement.process = prc._id
+            agreement.members = prc.members
             agreement.buyer = prc.buyer
             agreement.manager = prc.manager
-            agreement.developer = prc.developer 
-            agreement.company = prc.property.company  
+            agreement.developer = prc.developer
+            agreement.company = prc.property.company
             agreement.files = agreementFiles
             agreement.agreementType = agreementType
-            agreement.save()
+            agreement.developerSecretPin = developerPin
+            agreement.buyerSecretPin = buyerPin
+            agreement.agreementStatus = 'pending'
+            await agreement.save()
 
-            console.log('Process: ', prc )
-            res.json({ status: 'success', agreement:  agreement})
+            const hellosign = require('hellosign-sdk')({ key: '89c6d48bbc1f8d2f2894bb6080ae31d57095ea3440349b0fef284f224b4948c7' });
+
+            const buyer = await User.findById(agreement.buyer)
+
+
+            const signers = [
+                {
+                    email_address: user.email,
+                    name: user.first_name + ' ' + user.last_name,
+                    signer_role: 'realestate_developer',
+                    pin: developerPin
+                },
+                {
+                    email_address: buyer.email,
+                    name: buyer.first_name + ' ' + buyer.last_name,
+                    signer_role: 'member',
+                    pin: buyerPin
+                }
+            ]
+
+
+            // var signature = null
+
+            console.log('Agreement files: ', agreement.files)
+
+            const opts = {
+                test_mode: 1,
+                clientId: '9c4ca4b559a1c03a1ca60a6f84a5f3c9',
+                subject: 'Property reservation agreement',
+                message: 'Check your phone for a secret pin to sign this document.',
+                signers: signers,
+                file_url: agreement.files
+            };
+
+            const signRes = await hellosign.signatureRequest.send(opts)
+
+            await twilioClient.messages.create({
+                body: `Hello ${buyer.first_name} ${buyer.last_name},\nYour secret code is ${buyerPin}`,
+                //    from: '+13373586639',
+                from: 'Israpoly',
+                to: buyer.phone
+            })
+
+            await twilioClient.messages.create({
+                body: `Hello ${user.first_name} ${user.last_name}, \nYour secret code is ${developerPin}`,
+                //    from: '+13373586639',
+                from: 'Israpoly',
+                to: user.phone
+            })
+
+            //   signRes.signature_request.signatures.forEach(async sgn => {
+
+            agreement.signature_request_id = signRes.signature_request.signature_request_id
+            await agreement.save()
+
+
+            console.log('Signature Agreement Response: ', signRes.signature_request)
+
+
+
+            res.json({ status: 'success', agreement: agreement })
+
         }
 
     } catch (error) {
@@ -267,12 +332,11 @@ exports.create_sale_agreement = async (req, res) => {
 }
 
 
-
-exports.save_buyer_consult_lawyer_process = async (req, res) => {
+exports.send_secret_code_again = async (req, res) => {
 
     const token = req.headers.authorization
 
-    const {processId,ownLawyer, partnerLawyer} = req.body
+    const { agreementId } = req.body
 
     try {
 
@@ -282,16 +346,60 @@ exports.save_buyer_consult_lawyer_process = async (req, res) => {
 
         if (user) {
 
-            const prc = await Process.findById( processId )
-            prc.stepLawyer.buyerOwnLawyer = ownLawyer 
-            prc.stepLawyer.buyerPartnerLawyer = partnerLawyer
-            prc.stepLawyer.buyerStatus = 'done'
-            prc.stepReservationContractSign.buyerStatus = 'processing' 
-            await prc.save() 
+            // const process = await Process.findById(processId)
+            // prc.stepLawyer.developerOwnLawyer = ownLawyer 
+            // prc.stepLawyer.developerPartnerLawyer = partnerLawyer
+            // prc.stepLawyer.developerStatus = 'done'
+            // prc.stepReservationContractSign.developerStatus = 'processing' 
+            // await prc.save() 
+            const agreement = await Agreement.findById(agreementId)
 
-            console.log('Process: ', prc )
+            if (agreement) {
 
-            res.json({ status: 'success', processProperty:  prc})
+                var pin = null
+
+                if (user.dashboard == 'developer') {
+                    pin = agreement.developerSecretPin 
+                }
+
+                else if (user.dashboard == 'buyer') {
+                    pin = pinagreement.buyerSecretPin
+                }
+
+                // await agreement.save()
+
+                const message = `Hello ${user.username}, \nYour agreement signature secret pin is ${pin}`
+
+                try {
+
+                    const msg = await twilioClient.messages.create({
+                        body: message,
+                        //    from: '+13373586639',
+                        from: 'Israpoly',
+
+                        to: user.phone
+                    })
+
+                    if (msg) {
+                        console.log('Message Sent: ', msg.sid)
+                    }
+
+                    console.log('Verification message: ', message)
+
+                    // console.log('Process: ', process)
+
+                    res.json({ status: 'success', msg: `Secret pin has been sent to ${user.phone}`, agreement: agreement })
+
+
+                } catch (error) {
+                    console.log('Message Error: ', error.message)
+                    console.log('Verification message: ', message)
+                    return res.json({ status: 'error', msg: error.message })
+
+                }
+            }
+
+
         }
 
     } catch (error) {
@@ -300,35 +408,5 @@ exports.save_buyer_consult_lawyer_process = async (req, res) => {
     }
 }
 
-exports.save_developer_consult_lawyer_process = async (req, res) => {
 
-    const token = req.headers.authorization
-
-    const {processId,ownLawyer, partnerLawyer} = req.body
-
-    try {
-
-        const data = jwt.verify(token, process.env.APP_SECRET)
-
-        const user = await User.findOne({ _id: data.id })
-
-        if (user) {
-
-            const prc = await Process.findById( processId )
-            prc.stepLawyer.developerOwnLawyer = ownLawyer 
-            prc.stepLawyer.developerPartnerLawyer = partnerLawyer
-            prc.stepLawyer.developerStatus = 'done'
-            prc.stepReservationContractSign.developerStatus = 'processing' 
-            await prc.save() 
-
-            console.log('Process: ', prc )
-
-            res.json({ status: 'success', processProperty:  prc})
-        }
-
-    } catch (error) {
-        console.log('Error: ', error.message)
-        return res.json({ status: 'error', msg: error.message })
-    }
-}
 
