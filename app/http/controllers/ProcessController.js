@@ -12,6 +12,8 @@ const mongoose = require('mongoose')
 const Notification = require('../../models/Notification')
 const Agreement = require('../../models/Agreement')
 const twilioClient = require('../../../helpers/twilioClient')
+const fs = require('fs');
+
 
 exports.createPurchaseProcess = async (req, res) => {
 
@@ -359,7 +361,7 @@ exports.send_secret_code_again = async (req, res) => {
                 var pin = null
 
                 if (user.dashboard == 'developer') {
-                    pin = agreement.developerSecretPin 
+                    pin = agreement.developerSecretPin
                 }
 
                 else if (user.dashboard == 'buyer') {
@@ -400,6 +402,58 @@ exports.send_secret_code_again = async (req, res) => {
             }
 
 
+        }
+
+    } catch (error) {
+        console.log('Error: ', error.message)
+        return res.json({ status: 'error', msg: error.message })
+    }
+}
+
+
+exports.download_signed_agreement = async (req, res) => {
+
+    const token = req.headers.authorization
+
+    const { processId, agreementType } = req.body
+
+    try {
+
+        const data = jwt.verify(token, process.env.APP_SECRET)
+
+        const user = await User.findOne({ _id: data.id })
+
+        if (user) {
+
+            const prc = await Process.findById(processId)
+
+            console.log('Agreement process: ', prc)
+
+            const agreement = await Agreement.findOne({
+                process: prc._id,
+                agreementType: agreementType
+            })
+
+
+            console.log('Agreement: ', agreement)
+
+            const hellosign = require('hellosign-sdk')({ key: '89c6d48bbc1f8d2f2894bb6080ae31d57095ea3440349b0fef284f224b4948c7' });
+
+            const dFile = await hellosign.signatureRequest.get(agreement.signature_request_id)
+
+            // const file = fs.createWriteStream('file.pdf');
+
+            // dFile.pipe(file);
+
+            // res.download(file)
+
+            console.log('Download File Response: ', dFile)
+            
+            res.json({ status: 'success', agreement: agreement, file: null })
+            
+            // file.on('finish', () => {
+            //     file.close();
+            // });
         }
 
     } catch (error) {

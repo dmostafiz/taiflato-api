@@ -301,6 +301,9 @@ router.post('/get_reservation_agreement', ProcessController.get_reservation_agre
 //Agreement OTP
 router.post('/send_secret_code_again', ProcessController.send_secret_code_again)
 
+router.post('/download_signed_agreement', ProcessController.download_signed_agreement)
+
+
 // router.post('/varify_developer_agreement_mobile_otp', ProcessController.varify_developer_agreement_mobile_otp)
 
 // router.post('/get_user_signature_url', ProcessController.get_user_signature_url)
