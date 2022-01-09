@@ -295,13 +295,23 @@ router.post('/get_my_property_process', ProcessController.get_my_property_proces
 
 //Procss
 router.post('/upload_process_agreement', UploadController.upload_process_agreement)
-router.post('/create_sale_agreement', ProcessController.create_sale_agreement)
+router.post('/get_process_negotiations', ProcessController.get_process_negotiations)
+router.post('/send_contract_to_buyer', ProcessController.send_contract_to_buyer)
+router.post('/validate_contract_by_buyer', ProcessController.validate_contract_by_buyer)
+router.post('/confirming_sign_by_buyer', ProcessController.confirming_sign_by_buyer)
+router.post('/get_otp_on_mobile', ProcessController.get_otp_on_mobile)
+router.post('/send_signed_document_by_buyer', ProcessController.send_signed_document_by_buyer)
+router.post('/developer_confirm_signature_done', ProcessController.developer_confirm_signature_done)
+
+router.post('/download_signed_contract', ProcessController.download_signed_agreement)
+
+
+
 router.post('/get_reservation_agreement', ProcessController.get_reservation_agreement)
 
 //Agreement OTP
-router.post('/send_secret_code_again', ProcessController.send_secret_code_again)
+// router.post('/send_secret_code_again', ProcessController.send_secret_code_again)
 
-router.post('/download_signed_agreement', ProcessController.download_signed_agreement)
 
 
 // router.post('/varify_developer_agreement_mobile_otp', ProcessController.varify_developer_agreement_mobile_otp)

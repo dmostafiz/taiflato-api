@@ -51,12 +51,111 @@ const processSchema = mongoose.Schema({
 
     //steps
 
+    request: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Request'
+    },
+
+
+    sendContractByDeveloper: {
+
+        status: {
+            type: String,
+            enum: ['created', 'pending', 'done'],
+            default: 'pending'
+        },
+
+        files: {
+            type: Array
+        }
+    },
+
+
+    
+    contractValidateByBuyer: {
+
+        status: {
+            type: String,
+            enum: ['created', 'pending', 'done'],
+            default: 'created'
+        }
+    },
+
+
+    contractSignedByBuyer: {
+
+        status: {
+            type: String,
+            enum: ['created', 'pending', 'done'],
+            default: 'created'
+        },
+
+        // signatureType:{
+        //     type: String,
+        //     enum: ['online', 'offline']
+        // },
+
+        // signature_request_id:{
+        //     type: String
+        // },
+
+        // files: {
+        //     type: Array
+        // }
+    },
+
+
+    signedContractSendByBuyer: {
+
+        status: {
+            type: String,
+            enum: ['created', 'pending', 'done'],
+            default: 'created'
+        },
+
+        signedStatus: {
+            type: Boolean,
+            enum: [true, false],
+            default: false
+        },
+
+        pin: {
+            type:Number
+        },
+
+        signatureType:{
+            type: String,
+            enum: ['online', 'offline']
+        },
+        
+        files: {
+            type: Array
+        },
+
+        signature_request_id:{
+            type: String
+        }
+
+    },
+
+
+    buyerLawyerNegotiationFinalContract: {
+
+        status: {
+            type: String,
+            enum: ['created', 'pending', 'done'],
+            default: 'created'
+        },
+
+    },
+
     stepReservationContractSign: {
         buyerStatus: {
             type: String,
             enum: ['created', 'processing', 'done'],
             default: 'processing'
         },
+        
 
         developerStatus: {
             type: String,
