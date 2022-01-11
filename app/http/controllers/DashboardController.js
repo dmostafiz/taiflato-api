@@ -23,14 +23,14 @@ exports.getMyActivities = async (req, res) => {
 
           const activities = await Activity.find({ user: user._id }).limit(8).sort({ 'createdAt': -1 })
 
-          console.log('Activities: ', activities.length)
+          // console.log('Activities: ', activities.length)
           return res.json(activities)
 
 
 
 
      } catch (error) {
-          console.log('Error: ', error)
+          // console.log('Error: ', error)
           return res.json({ status: 'error', msg: 'Your are not authorised' })
      }
 
@@ -40,7 +40,7 @@ exports.getMyActivities = async (req, res) => {
 exports.get_my_managers = async (req, res) => {
      const token = req.headers.authorization
 
-     console.log('My Token: ', token)
+     // console.log('My Token: ', token)
 
      if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
 
@@ -54,13 +54,13 @@ exports.get_my_managers = async (req, res) => {
 
           const managers = await User.find({ realestate_admin: user._id, account_verified: true })
 
-          console.log('Managers: ', managers)
+          // console.log('Managers: ', managers)
           return res.json({ managers: managers })
 
 
 
      } catch (error) {
-          console.log('Error: ', error)
+          // console.log('Error: ', error)
           return res.json({ status: 'error', msg: 'Your are not authorised' })
      }
 
@@ -69,7 +69,7 @@ exports.get_my_managers = async (req, res) => {
 exports.get_user_notification = async (req, res) => {
      const token = req.headers.authorization
 
-     console.log('My Token: ', token)
+     // console.log('My Token: ', token)
 
      if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
 
@@ -83,12 +83,12 @@ exports.get_user_notification = async (req, res) => {
 
           const notifications = await Notification.find({ user: user._id, status: 'unseen' }).limit(8).sort({ 'createdAt': -1 })
 
-          console.log('Activities: ', notifications.length)
+          // console.log('Activities: ', notifications.length)
           return res.json({status: 'success', notifications})
 
 
      } catch (error) {
-          console.log('Error: ', error)
+          // console.log('Error: ', error)
           return res.json({ status: 'error', msg: 'Your are not authorised' })
      }
 
@@ -97,7 +97,7 @@ exports.get_user_notification = async (req, res) => {
 exports.set_notification_unseen = async (req, res) => {
      const token = req.headers.authorization
      const {notificationId} = req.body
-     console.log('My Token: ', token)
+     // console.log('My Token: ', token)
 
      if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
 
@@ -115,12 +115,12 @@ exports.set_notification_unseen = async (req, res) => {
 
           const notifications = await Notification.find({ user: user._id, status: 'unseen' }).limit(8).sort({ 'createdAt': -1 })
 
-          console.log('Notification: ', not)
+          // console.log('Notification: ', not)
           return res.json({status: 'success', notifications: notifications})
 
 
      } catch (error) {
-          console.log('Error: ', error)
+          // console.log('Error: ', error)
           return res.json({ status: 'error', msg: 'Your are not authorised' })
      }
 
@@ -248,13 +248,13 @@ exports.get_buyer_favourite_list = async (req, res) => {
                
           ])
 
-          console.log('BookMarks: ', bookmarks)
+          // console.log('BookMarks: ', bookmarks)
 
           return res.json({ status: 'success', bookmarks})   
           
           
      } catch (error) {
-          console.log('Error: ', error)
+          // console.log('Error: ', error)
           return res.json({ status: 'error', msg: error.message})   
      }
 }
@@ -262,7 +262,7 @@ exports.get_buyer_favourite_list = async (req, res) => {
 exports.get_buyer_compare_list = async (req, res) => {
      const userId = req.params.userId 
 
-     console.log('User ID: ', req.params)
+     // console.log('User ID: ', req.params)
 
      try {
 
@@ -285,13 +285,13 @@ exports.get_buyer_compare_list = async (req, res) => {
                
           ])
 
-          console.log('Compares: ', bookmarks)
+          // console.log('Compares: ', bookmarks)
 
           return res.json({ status: 'success', bookmarks})   
           
           
      } catch (error) {
-          console.log('Error: ', error)
+          // console.log('Error: ', error)
           return res.json({ status: 'error', msg: error.message})   
      }
 }

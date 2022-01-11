@@ -26,7 +26,7 @@ exports.getAllProjects = async (req, res) => {
                 },
             ])
 
-        console.log('Admin projects: ', projects)
+        // console.log('Admin projects: ', projects)
 
         return res.json({ status: 'success', projects: projects })
 
@@ -73,7 +73,7 @@ exports.projectDetails = async (req, res) => {
                 },
             ])
 
-        console.log('Admin project: ', project)
+        // console.log('Admin project: ', project)
 
         return res.json({ status: 'success', project: project })
 
@@ -96,7 +96,7 @@ exports.getIsrapolyMembers = async (req, res) => {
         return res.json({status: 'success', users})
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({status: 'error', msg: error.message})
     }
 }
@@ -113,7 +113,7 @@ exports.getRealestateDevelopers = async (req, res) => {
         return res.json({status: 'success', users})
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({status: 'error', msg: error.message})
     }
 }

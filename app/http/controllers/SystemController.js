@@ -10,6 +10,7 @@ exports.getSystemOptions = async (req, res) => {
         if(!option){
             option = new Option()
             option.slider = true
+            option.selectedProperties = true
             await option.save()
         }
         

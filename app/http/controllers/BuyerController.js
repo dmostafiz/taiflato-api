@@ -45,7 +45,7 @@ exports.getMySelectedProperties = async (req, res) => {
     
         properties.exec().then(result => {
           // result has your... results
-          console.log("Properties in buying process: ", result)
+          // console.log("Properties in buying process: ", result)
     
           return res.json(result)
         });

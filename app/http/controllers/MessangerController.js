@@ -47,7 +47,7 @@ exports.getMyThreadById = async (req, res) => {
 
 
   } catch (error) {
-    console.log('Error: ', error)
+    // console.log('Error: ', error)
     return res.json({ status: 'error', msg: 'Your are not authorised' })
   }
 }
@@ -101,7 +101,7 @@ exports.getMyThreads = async (req, res) => {
 
 
   } catch (error) {
-    console.log('Error: ', error)
+    // console.log('Error: ', error)
     return res.json({ status: 'error', msg: 'Your are not authorised' })
   }
 
@@ -214,7 +214,7 @@ exports.getThreadMessages = async (req, res) => {
 
 
   } catch (error) {
-    console.log('Error: ', error)
+    // console.log('Error: ', error)
     return res.json({ status: 'error', msg: 'Your are not authorised' })
   }
 
@@ -255,7 +255,7 @@ exports.sendMessage = async (req, res) => {
 
       ])
 
-    console.log('My Threads: ', thread)
+    // console.log('My Threads: ', thread)
 
     if (thread) {
       const msg = new Message()
@@ -270,7 +270,7 @@ exports.sendMessage = async (req, res) => {
 
       const findReceiver = thread.members.find(mbr => mbr._id.toString() != user._id.toString())
 
-      console.log('findReceiver: ', findReceiver)
+      // console.log('findReceiver: ', findReceiver)
 
       const notify = new Notification()
       notify.cid = getCid()
@@ -280,7 +280,7 @@ exports.sendMessage = async (req, res) => {
       notify.icon = 'envelope'
       await notify.save()
 
-      console.log('Notify: ', notify)
+      // console.log('Notify: ', notify)
 
       const message = await Message.findById(msg._id)
         .populate([
@@ -315,7 +315,7 @@ exports.sendMessage = async (req, res) => {
 
 
   } catch (error) {
-    console.log('Error: ', error)
+    // console.log('Error: ', error)
     return res.json({ status: 'error', msg: 'Your are not authorised' })
   }
 }
@@ -393,7 +393,7 @@ exports.make_appointment_request = async (req, res) => {
       await thread.save()
 
 
-      console.log('findReceiver: ', findReceiver)
+      // console.log('findReceiver: ', findReceiver)
 
       const notify = new Notification()
       notify.cid = getCid()
@@ -403,7 +403,7 @@ exports.make_appointment_request = async (req, res) => {
       notify.icon = 'calendar'
       await notify.save()
 
-      console.log('Notify: ', notify)
+      // console.log('Notify: ', notify)
 
       const message = await Message.findById(msg._id)
         .populate([
@@ -438,7 +438,7 @@ exports.make_appointment_request = async (req, res) => {
 
 
   } catch (error) {
-    console.log('Error: ', error)
+    // console.log('Error: ', error)
     return res.json({ status: 'error', msg: 'Your are not authorised' })
   }
 }
@@ -510,7 +510,7 @@ exports.get_thread_or_create = async (req, res) => {
 
 
   } catch (error) {
-    console.log('Error: ', error)
+    // console.log('Error: ', error)
     return res.json({ status: 'error', msg: 'Your are not authorised' })
   }
 }

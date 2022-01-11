@@ -73,7 +73,7 @@ exports.getFeaturedProjects = async (req, res) => {
         ])
         .limit(4)
 
-        console.log('Featured projects: ', projects)
+        // console.log('Featured projects: ', projects)
 
         res.send({ status: 'success', projects })
 
@@ -170,7 +170,7 @@ exports.getSinglePropertyForHome = async (req, res) => {
 
     const id = req.params.id
 
-    console.log('Property ID: ', id)
+    // console.log('Property ID: ', id)
 
     try {
 
@@ -242,7 +242,7 @@ exports.getCompanies = async (req, res) => {
         return res.json({ status: 'success', companies })
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: error.message })
     }
 }
@@ -258,7 +258,7 @@ exports.get_single_company = async (req, res) => {
 
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: error.message })
     }
 }
@@ -284,7 +284,7 @@ exports.get_projects_by_company = async (req, res) => {
 
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: error.message })
     }
 }
@@ -310,7 +310,7 @@ exports.get_single_project = async (req, res) => {
         return res.json({ status: 'success', project })
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: 'Something went wrong' })
     }
 }

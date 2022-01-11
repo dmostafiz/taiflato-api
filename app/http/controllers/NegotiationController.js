@@ -89,14 +89,14 @@ exports.make_negotiation = async (req, res) => {
                     await thread.save()
 
                     // return res.json({status:'success', message: msg})
-                    console.log('Request: ', req)
-                    console.log('Receiver: ', receiver)
+                    // console.log('Request: ', req)
+                    // console.log('Receiver: ', receiver)
 
                     const notifiedUser = await User.findById(receiver)
 
-                    console.log('Current User: ', user._id)
-                    console.log('Receliver: ', receiver)
-                    console.log('Notify User: ', notifiedUser)
+                    // console.log('Current User: ', user._id)
+                    // console.log('Receliver: ', receiver)
+                    // console.log('Notify User: ', notifiedUser)
 
                     if (notifiedUser) {
                         try {
@@ -115,11 +115,11 @@ exports.make_negotiation = async (req, res) => {
                                 }
                             })
 
-                            console.log('Mail Sent: ', mail )
+                            // console.log('Mail Sent: ', mail )
 
 
                         } catch (error) {
-                            console.log('Mail Error: ', error.message)
+                            // console.log('Mail Error: ', error.message)
                             return await errorLogger(error, 'Email send failed')
                         }
 
@@ -145,7 +145,7 @@ exports.make_negotiation = async (req, res) => {
         }
 
     } catch (error) {
-        console.log('Request Error: ', error.message)
+        // console.log('Request Error: ', error.message)
         res.json({ status: 'error', msg: error.message })
         return await errorLogger(error, 'Server Error')
 

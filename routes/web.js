@@ -42,6 +42,8 @@ const LoanApplicationController = require('../app/http/controllers/LoanApplicati
 const ProcessController = require('../app/http/controllers/ProcessController')
 const ZoomController = require('../app/http/controllers/ZoomController')
 
+const SelectedPropertiesController = require('../app/http/controllers/SelectedPropertiesController')
+
 
 // const upload = require('../helpers/cloudinary')
 
@@ -244,6 +246,17 @@ router.post('/slider/get_projects', SliderController.get_projects)
 router.post('/slider/slider_status', SliderController.saveSliderStatus)
 router.post('/slider/save', SliderController.saveSlider)
 router.get('/slider/get', SliderController.getSlider)
+
+
+router.post('/selected-properties/selected_properties_status', SelectedPropertiesController.saveSelectedPropertiesStatus)
+router.post('/selected-properties/save', SelectedPropertiesController.save_selected_properties)
+router.get('/selected-properties/get', SelectedPropertiesController.getSelectedProperties)
+router.post('/selected-properties/remove', SelectedPropertiesController.remove_selected_property)
+
+
+
+// router.post('/slider/save', SliderController.saveSlider)
+// router.get('/slider/get', SliderController.getSlider)
 
 
 router.post('/get_user_loan_application_info', LoanApplicationController.getUserLoanApplication)

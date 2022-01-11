@@ -10,7 +10,7 @@ exports.saveAuction = async (req, res) => {
   const { propetyId, propertyImage, promotionPrice, expirationDate } = req.body
   // return res.json({fid, floorNo, coordinates})
 
-  console.log('Promotion Data: ', req.body)
+  // console.log('Promotion Data: ', req.body)
   const token = req.headers.authorization
 
   try {
@@ -18,7 +18,7 @@ exports.saveAuction = async (req, res) => {
     const data = jwt.verify(token, process.env.APP_SECRET)
     const user = await User.findOne({ _id: data.id })
 
-    console.log('User: ', user)
+    // console.log('User: ', user)
 
     // return
 
@@ -47,7 +47,7 @@ exports.saveAuction = async (req, res) => {
         await property.save()
       }
 
-      console.log('property: ', property)
+      // console.log('property: ', property)
 
       // return
 
@@ -60,7 +60,7 @@ exports.saveAuction = async (req, res) => {
 
 
   } catch (error) {
-    console.log('Error: ', error.message)
+    // console.log('Error: ', error.message)
     return res.json({ status: 'error', msg: error.message })
   }
 
@@ -68,7 +68,7 @@ exports.saveAuction = async (req, res) => {
 
 exports.myAuctions = async (req, res) => {
 
-  console.log("My Query String: ", req.query)
+  // console.log("My Query String: ", req.query)
 
 
   const token = req.headers.authorization
@@ -167,7 +167,7 @@ exports.allAuctions = async (req, res) => {
 exports.getSingleAuction = async (req, res) => {
   const id = req.params.id
 
-  // console.log('Promotion ID: ', id)
+  console.log('Promotion ID: ', id)
 
   try {
 
@@ -206,7 +206,7 @@ exports.getSingleAuction = async (req, res) => {
 
 
   } catch (error) {
-    console.log('Aggr Error: ', error.message)
+    // console.log('Aggr Error: ', error.message)
     return res.json({ status: 'error', msg: error.message })
   }
 
@@ -260,7 +260,7 @@ exports.saveBid = async (req, res) => {
   const { auctionId, propertyId, propertyImage, developerId, price, text } = req.body
   // return res.json({fid, floorNo, coordinates})
 
-  // console.log('Promotion Data: ', req.body)
+  console.log('Promotion Data: ', req.body)
 
   const token = req.headers.authorization
 
@@ -307,7 +307,7 @@ exports.saveBid = async (req, res) => {
 
 
   } catch (error) {
-    console.log('Error: ', error.message)
+    // console.log('Error: ', error.message)
     return res.json({ status: 'error', msg: error.message })
   }
 

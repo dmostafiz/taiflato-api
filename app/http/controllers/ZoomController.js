@@ -88,7 +88,7 @@ exports.createMeetingLink = async (req, res) => {
 
                 const response = await rp(createMeetingOptions)
 
-                console.log('response.join_url: ', response)
+                // console.log('response.join_url: ', response)
 
                 if (response) {
 
@@ -127,7 +127,7 @@ exports.createMeetingLink = async (req, res) => {
                     not.icon = 'video-camera'
                     await not.save()
 
-                    console.log('Conferance Msg: ', msg)
+                    // console.log('Conferance Msg: ', msg)
 
                     return res.json({ status: 'success', message: msg });
                 }
@@ -142,7 +142,7 @@ exports.createMeetingLink = async (req, res) => {
 
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: error.message })
     }
 }

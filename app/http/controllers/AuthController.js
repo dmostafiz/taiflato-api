@@ -40,7 +40,12 @@ exports.login = async (req, res) => {
             await user.save()
         }
 
-        const token = jwt.sign({id: user.id}, process.env.APP_SECRET, {expiresIn:'1d'})
+        const token = jwt.sign({
+            id: user.id, 
+            dashboard: user.dashboard,
+            type: user.user_type,
+            isAdmin: user.is_realestate_admin
+        }, process.env.APP_SECRET, {expiresIn:'1d'})
         
         const userData = {
             _id:user._id, 
@@ -337,7 +342,7 @@ exports.secure_user = async (req, res) => {
 exports.switch_dashboard = async (req, res) => {
 
     const token = req.headers.authorization
-    console.log("My Dashboard ============= : ", req.body)
+    // console.log("My Dashboard ============= : ", req.body)
 
     try {
         
@@ -555,7 +560,7 @@ exports.submit_phone_for_verify = async (req, res) => {
         }
 
 
-        console.log('Verification message: ', message)
+        // console.log('Verification message: ', message)
 
        
         res.json({status:'success', user})
@@ -640,7 +645,7 @@ exports.submit_phone_verify_code = async (req, res) => {
         }
 
 
-        console.log('Verification user: ', user)
+        // console.log('Verification user: ', user)
 
         // res.status(201).json({isAuth:true, token, user:userData, msg: "Logged in successfully."})
        

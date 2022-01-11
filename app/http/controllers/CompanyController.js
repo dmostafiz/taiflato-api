@@ -12,7 +12,7 @@ exports.getCompanyByUserId = async (req, res) => {
         return res.json({status: 'success', company})
         
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         res.json({status: 'error', msg: error.message})
     }
 }
@@ -77,7 +77,7 @@ exports.update_user_company_data = async (req, res) => {
 
             await company.save()
 
-            console.log('Company: ', company)
+            // console.log('Company: ', company)
 
             res.json({status: 'success', company})
         }
@@ -98,7 +98,7 @@ exports.get_managers_by_company_admin = async (req, res) => {
 
         const user = await User.findOne({_id: id, is_realestate_admin: true})
 
-        console.log('Manager Admin: ', user)
+        // console.log('Manager Admin: ', user)
 
         if(user){
             
@@ -111,7 +111,7 @@ exports.get_managers_by_company_admin = async (req, res) => {
 
         
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         res.json({status: 'error', msg: error.message})
     }
 }

@@ -15,12 +15,12 @@ function getAgreementsAndSignStatus(cron){
             
             if(agreement){
 
-                console.log("Pending agreement from cron: ", agreement)
+                // console.log("Pending agreement from cron: ", agreement)
              
                 const res = await hellosign.signatureRequest.get(agreement.signature_request_id)
 
                 
-                console.log('Agreement Signers: ', res)
+                // console.log('Agreement Signers: ', res)
                 
                 if(res.signature_request.is_complete == true){
                     
@@ -39,10 +39,10 @@ function getAgreementsAndSignStatus(cron){
 
                     const signers = res.signature_request.signatures
 
-                    console.log('Cron signatures: ', signers)
+                    // console.log('Cron signatures: ', signers)
 
                     const user1 = await User.findOne({email: signers[0].signer_email_address})
-                    console.log('Cron signer 1: ', user1)
+                    // console.log('Cron signer 1: ', user1)
 
                     if(user1){
                         const notify = new Notification()
@@ -63,7 +63,7 @@ function getAgreementsAndSignStatus(cron){
                     }
 
                     const user2 = await User.findOne({email: signers[1].signer_email_address})
-                    console.log('Cron signer 2: ', user2)
+                    // console.log('Cron signer 2: ', user2)
 
                     if(user2){
 
@@ -87,7 +87,7 @@ function getAgreementsAndSignStatus(cron){
                 }
 
 
-                console.log("Cronde agreement sign status: ", res.signature_request)
+                // console.log("Cronde agreement sign status: ", res.signature_request)
             }
 
         }

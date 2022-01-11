@@ -17,7 +17,7 @@ exports.getUserLoanApplication = async (req, res) => {
 
         const user = await User.findOne({ _id: data.id })
 
-        console.log(user)
+        // console.log(user)
 
         if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
 
@@ -26,7 +26,7 @@ exports.getUserLoanApplication = async (req, res) => {
         return res.json({ status: 'success', loanApply: loanApp })
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         res.json({ status: 'error', msg: error.message })
     }
 }
@@ -85,7 +85,7 @@ exports.saveUserLoanApplication = async (req, res) => {
 
         const user = await User.findOne({ _id: data.id })
 
-        console.log(user)
+        // console.log(user)
 
         if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
 
@@ -146,7 +146,7 @@ exports.saveUserLoanApplication = async (req, res) => {
         return res.json({ status: 'success', loanApply: loanApp })
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         res.json({ status: 'error', msg: error.message })
     }
 
@@ -167,7 +167,7 @@ exports.get_pending_loan_profiles = async (req, res) => {
         return res.json({ status: 'success', loanProfiles })
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: error.message })
     }
 }
@@ -192,7 +192,7 @@ exports.get_approved_loan_profiles = async (req, res) => {
         return res.json({ status: 'success', loanProfiles })
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: error.message })
     }
 }
@@ -220,7 +220,7 @@ exports.get_user_loan_profile = async (req, res) => {
         return res.json({ status: 'success', loanProfile })
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: error.message })
     }
 }
@@ -242,7 +242,7 @@ exports.change_loan_status = async (req, res) => {
 
         const user = await User.findOne({ _id: data.id })
 
-        console.log(user)
+        // console.log(user)
 
         if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
         if (user && user.dashboard != 'admin') return res.json({ status: 'error', msg: 'Your are not authorised' })
@@ -255,7 +255,7 @@ exports.change_loan_status = async (req, res) => {
         return res.json({ status: 'success', loanProfile })
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: error.message })
     }
 }

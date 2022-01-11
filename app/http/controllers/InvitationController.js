@@ -18,7 +18,7 @@ exports.sendInvitation = async (req, res) => {
 
         const user = await User.findOne({ _id: data.id })
 
-        console.log(user)
+        // console.log(user)
 
         if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
 
@@ -75,7 +75,7 @@ exports.sendInvitation = async (req, res) => {
 
 
     } catch (error) {
-        console.log('Error: ', error)
+        // console.log('Error: ', error)
         return res.json({ status: 'error', msg: 'Your are not authorised' })
     }
 }
@@ -105,7 +105,7 @@ exports.reSendInvitationLink = async (req, res) => {
 
             const secure_url_token = customAlphabet('1234567890abcdefghizklmnopqrst', 90)()
 
-            console.log('Old Invitation: ', invData)
+            // console.log('Old Invitation: ', invData)
 
     
             const mail = await mailTransporter.sendMail({
@@ -131,7 +131,7 @@ exports.reSendInvitationLink = async (req, res) => {
             invite.secure_token = secure_url_token
             await invite.save()
 
-            console.log('New Invitation: ', invite)
+            // console.log('New Invitation: ', invite)
 
             return res.json({ status: 'success', invitation: invite })
         }
@@ -145,7 +145,7 @@ exports.reSendInvitationLink = async (req, res) => {
 
 
     } catch (error) {
-        console.log('Error: ', error)
+        // console.log('Error: ', error)
         return res.json({ status: 'error', msg: 'Your are not authorised' })
     }
 }
@@ -163,7 +163,7 @@ exports.getMyInvitation = async (req, res) => {
 
         const user = await User.findOne({ _id: data.id })
 
-        console.log(user)
+        // console.log(user)
 
         if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
 
@@ -184,7 +184,7 @@ exports.getMyInvitation = async (req, res) => {
 
 
     } catch (error) {
-        console.log('Error: ', error)
+        // console.log('Error: ', error)
         return res.json({ status: 'error', msg: 'Your are not authorised' })
     }
 }
@@ -203,12 +203,12 @@ exports.getInvite = async (req, res) => {
             }
         }])
 
-        console.log("Invite found: ", invite)
+        // console.log("Invite found: ", invite)
 
         res.json({status: 'success', invite})
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         res.json({status: 'error', msg: error.message})
     }
 }

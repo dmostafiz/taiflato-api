@@ -100,7 +100,7 @@ exports.sendBuyingRequest = async (req, res) => {
       thread.newMessages = [...thread.newMessages, msg._id]
       await thread.save()
 
-      console.log('Updated Thread: ', thread)
+      // console.log('Updated Thread: ', thread)
 
 
       const act = new Activity()
@@ -124,7 +124,7 @@ exports.sendBuyingRequest = async (req, res) => {
     }
 
   } catch (error) {
-    console.log('Request Error: ', error.message)
+    // console.log('Request Error: ', error.message)
     res.json({ status: 'error', msg: error.message })
   }
 }
@@ -223,7 +223,7 @@ exports.sendOfferRequest = async (req, res) => {
       thread.newMessages = [...thread.newMessages, msg._id]
       await thread.save()
 
-      console.log('Updated Thread: ', thread)
+      // console.log('Updated Thread: ', thread)
 
 
       const act = new Activity()
@@ -247,7 +247,7 @@ exports.sendOfferRequest = async (req, res) => {
     }
 
   } catch (error) {
-    console.log('Request Error: ', error.message)
+    // console.log('Request Error: ', error.message)
     res.json({ status: 'error', msg: error.message })
   }
 }
@@ -321,7 +321,7 @@ exports.sendMeetingRequest = async (req, res) => {
       thread.newMessages = [...thread.newMessages, msg._id]
       await thread.save()
 
-      console.log('Updated Thread: ', thread)
+      // console.log('Updated Thread: ', thread)
 
 
       const act = new Activity()
@@ -345,7 +345,7 @@ exports.sendMeetingRequest = async (req, res) => {
     }
 
   } catch (error) {
-    console.log('Request Error: ', error.message)
+    // console.log('Request Error: ', error.message)
     res.json({ status: 'error', msg: error.message })
   }
 }
@@ -367,8 +367,8 @@ exports.response_request = async (req, res) => {
 
       const req = await Request.findById(requestId)
 
-      console.log('Req Admin: ', req.admin, type)
-      console.log('Req User : ', user._id, type)
+      // console.log('Req Admin: ', req.admin, type)
+      // console.log('Req User : ', user._id, type)
 
       // if (String(req.admin) == String(user._id)) {
 
@@ -394,7 +394,7 @@ exports.response_request = async (req, res) => {
 
 
 
-      console.log('Req Canceled: ', req)
+      // console.log('Req Canceled: ', req)
       // }
 
 
@@ -471,7 +471,7 @@ exports.response_request = async (req, res) => {
     }
 
   } catch (error) {
-    console.log('Request Error: ', error.message)
+    // console.log('Request Error: ', error.message)
     res.json({ status: 'error', msg: error.message })
   }
 }
@@ -493,7 +493,7 @@ exports.acceptAppointment = async (req, res) => {
       const thread = await Thread.findById(threadId)
       const property = await Property.findById(request.property)
 
-      console.log('thread: ', thread)
+      // console.log('thread: ', thread)
       const buyer = user.dashboard == 'buyer' ? user._id : thread.members.find(mbr => mbr.toString() != user._id.toString())
       const receiver  = thread.members.find(mbr => mbr.toString() != user._id.toString())
       const receiverUser = await User.findById(receiver)
@@ -528,7 +528,7 @@ exports.acceptAppointment = async (req, res) => {
     }
 
   } catch (error) {
-    console.log('Error: ', error.message)
+    // console.log('Error: ', error.message)
     return res.json({ status: 'error', msg: error.message })
   }
 }
@@ -556,12 +556,12 @@ exports.getAppointments = async (req, res) => {
         }
       ])
 
-      console.log('appointments: ', appointments)
+      // console.log('appointments: ', appointments)
       return res.json({ status: 'success', appointments })
     }
 
   } catch (error) {
-    console.log('Error: ', error.message)
+    // console.log('Error: ', error.message)
     return res.json({ status: 'error', msg: error.message })
   }
 }

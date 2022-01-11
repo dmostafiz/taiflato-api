@@ -7,7 +7,10 @@ const OptionSchema = mongoose.Schema({
        default: true
     },
   
-
+    selectedProperties: {
+        type: Boolean,
+        default: true
+     },
 
 })
 

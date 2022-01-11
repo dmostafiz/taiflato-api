@@ -38,7 +38,7 @@ exports.createPurchaseProcess = async (req, res) => {
 
             const buyer = user.dashboard == 'buyer' ? user._id : request.members.find(mbr => mbr.toString() != user._id.toString())
 
-            console.log('Buyer ID: ', buyer)
+            // console.log('Buyer ID: ', buyer)
 
             const process = new Process()
             process.cid = getCid()
@@ -89,7 +89,7 @@ exports.createPurchaseProcess = async (req, res) => {
         }
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: error.message })
     }
 
@@ -100,7 +100,7 @@ exports.get_secured_process = async (req, res) => {
 
     const { processId } = req.body
 
-    console.log('processId: ', processId)
+    // console.log('processId: ', processId)
 
     try {
 
@@ -135,7 +135,7 @@ exports.get_secured_process = async (req, res) => {
         }
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: error.message })
     }
 }
@@ -171,13 +171,13 @@ exports.get_my_property_process = async (req, res) => {
                 }
             ])
 
-            console.log('Process: ', processProperties)
+            // console.log('Process: ', processProperties)
 
             res.json({ status: 'success', processProperties })
         }
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: error.message })
     }
 }
@@ -198,7 +198,7 @@ exports.get_reservation_agreement = async (req, res) => {
 
             const prc = await Process.findById(processId)
 
-            console.log('Agreement process: ', prc)
+            // console.log('Agreement process: ', prc)
 
             const agreement = await Agreement.findOne({
                 process: prc._id,
@@ -206,13 +206,13 @@ exports.get_reservation_agreement = async (req, res) => {
             })
 
 
-            console.log('Agreement: ', agreement)
+            // console.log('Agreement: ', agreement)
 
             res.json({ status: 'success', agreement: agreement })
         }
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: error.message })
     }
 }
@@ -234,7 +234,7 @@ exports.get_process_negotiations = async (req, res) => {
 
             const prc = await Process.findById(processId)
 
-            console.log('Current Process: ', prc)
+            // console.log('Current Process: ', prc)
 
             if(prc){
                
@@ -246,7 +246,7 @@ exports.get_process_negotiations = async (req, res) => {
                 ])
                 .sort({createdAt: -1})
 
-                console.log('Process Negotiations: ', negots)
+                // console.log('Process Negotiations: ', negots)
                 res.json({ status: 'success', negotiations: negots })
             }
 
@@ -255,7 +255,7 @@ exports.get_process_negotiations = async (req, res) => {
         }
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: error.message })
     }
 }
@@ -360,7 +360,7 @@ exports.send_contract_to_buyer = async (req, res) => {
         }
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: error.message })
     }
 }
@@ -397,7 +397,7 @@ exports.validate_contract_by_buyer = async (req, res) => {
         }
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: error.message })
     }
 }
@@ -436,7 +436,7 @@ exports.confirming_sign_by_buyer = async (req, res) => {
         }
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: error.message })
     }
 }
@@ -464,7 +464,7 @@ exports.get_otp_on_mobile = async (req, res) => {
                 }
             ])
 
-            console.log('Pin from process: ', pprocess)
+            // console.log('Pin from process: ', pprocess)
 
             if (pprocess) {
 
@@ -482,10 +482,10 @@ exports.get_otp_on_mobile = async (req, res) => {
                     })
 
                     if (msg) {
-                        console.log('Message Sent: ', msg.sid)
+                        // console.log('Message Sent: ', msg.sid)
                     }
 
-                    console.log('Verification message: ', message)
+                    // console.log('Verification message: ', message)
 
                     // console.log('Process: ', process)
 
@@ -494,8 +494,8 @@ exports.get_otp_on_mobile = async (req, res) => {
 
                 } catch (error) {
 
-                    console.log('Message Error: ', error.message)
-                    console.log('Verification message: ', message)
+                    // console.log('Message Error: ', error.message)
+                    // console.log('Verification message: ', message)
                     return res.json({ status: 'error', msg: error.message })
 
                 }
@@ -505,7 +505,7 @@ exports.get_otp_on_mobile = async (req, res) => {
         }
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: error.message })
     }
 }
@@ -592,7 +592,7 @@ exports.send_signed_document_by_buyer = async (req, res) => {
         }
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: error.message })
     }
 }
@@ -630,7 +630,7 @@ exports.developer_confirm_signature_done = async (req, res) => {
         }
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: error.message })
     }
 }
@@ -658,7 +658,7 @@ exports.download_signed_agreement = async (req, res) => {
             const pprocess = await Process.findById(processId)
 
 
-            console.log('Insomnia pprocess: ', pprocess)
+            // console.log('Insomnia pprocess: ', pprocess)
 
             if(pprocess.signedContractSendByBuyer.signatureType == 'online'){
                 const hellosign = require('hellosign-sdk')({ key: '89c6d48bbc1f8d2f2894bb6080ae31d57095ea3440349b0fef284f224b4948c7' });
@@ -668,7 +668,7 @@ exports.download_signed_agreement = async (req, res) => {
                     get_url: true
                 })
     
-                console.log('Download File Response: ', dFile)
+                // console.log('Download File Response: ', dFile)
                 
                 res.json({ status: 'success', process: pprocess, file_url: dFile.file_url })
             }
@@ -684,7 +684,7 @@ exports.download_signed_agreement = async (req, res) => {
         // }
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: error.message })
     }
 }

@@ -240,6 +240,11 @@ const propertySchema = mongoose.Schema({
     isUpdated: {
         type: Boolean,
         default: false
+    },
+
+    homePageSelected: {
+        type: Boolean,
+        default: false
     }
 })
 

@@ -7,7 +7,7 @@ const mongoose = require('mongoose')
 exports.filterSearch = (req, res) => {
 
 
-  // console.log('Filter Queary: ', req.query.district.split(','))
+  //console.log('Filter Queary: ', req.query.district.split(','))
 
   try {
     
@@ -105,7 +105,7 @@ exports.filterSearch = (req, res) => {
             }
 
             // properties.exec().then( result => {
-            //     // console.log('Searched Properties: ', result)
+            //     //console.log('Searched Properties: ', result)
             //     res.send({status:'success', result})
             // })
 
@@ -116,7 +116,7 @@ exports.filterSearch = (req, res) => {
 
             Property.aggregatePaginate(properties, options)
             .then(function (result) {
-              // console.log("Pagination result: ", result);
+              //console.log("Pagination result: ", result);
               res.send({status:'success', result})
 
             })
@@ -129,10 +129,10 @@ exports.filterSearch = (req, res) => {
 exports.saveProperty = async (req, res) => {
 
 
-  console.log("Property Data: ", req.body)
+  // console.log("Property Data: ", req.body)
 
   const token = req.headers.authorization
-  console.log('Server Token:', token)
+  // console.log('Server Token:', token)
 
   const {
     title,
@@ -169,7 +169,7 @@ exports.saveProperty = async (req, res) => {
       const date = Date.now().toString()
       const pid = date.substr(-6)
 
-      // console.log('User: ',user)
+      //console.log('User: ',user)
       const property = new Property()
       property.pid = pid
       property.title = title
@@ -196,7 +196,7 @@ exports.saveProperty = async (req, res) => {
 
       await property.save()
 
-      // console.log(property)
+      //console.log(property)
 
       res.json(property)
     }
@@ -220,7 +220,7 @@ exports.actionProperty = async (req, res) => {
 
     if (user) {
        
-      // console.log("Request body: ", req.body)
+      //console.log("Request body: ", req.body)
 
       if(action_type == 'approve' && user.user_type == 'admin'){
 
@@ -257,26 +257,26 @@ exports.actionProperty = async (req, res) => {
     }
 
   } catch (error) {
-    console.log('Error: ', error)
+    // console.log('Error: ', error)
     return res.json({status: 'error', msg: error})
   }
 }
 
 exports.getMyProperty = async (req, res) => {
 
-  console.log("My Query String: ", req.query)
+  // console.log("My Query String: ", req.query)
 
 
   const token = req.headers.authorization
 
   try {
 
-    // console.log("Token: ", token)
+    //console.log("Token: ", token)
 
     const data = jwt.verify(token, process.env.APP_SECRET)
     const user = await User.findOne({ _id: data.id })
 
-    // console.log("I Am: ", user)
+    //console.log("I Am: ", user)
 
     if (user) {
 
@@ -321,7 +321,7 @@ exports.getMyProperty = async (req, res) => {
 
       properties.exec().then(result => {
         // result has your... results
-        // console.log("My Properties: ", result)
+        //console.log("My Properties: ", result)
 
         res.json(result)
       });
@@ -337,7 +337,7 @@ exports.getSingleProperty = async (req, res) => {
 
   const id = req.params.id
 
-  // console.log('Property ID: ', id)
+  //console.log('Property ID: ', id)
 
   try {
 
@@ -400,11 +400,11 @@ exports.getSingleProperty = async (req, res) => {
     //   fr
     // })
 
-    // console.log("My Property: ", property)
+    //console.log("My Property: ", property)
     return res.json(property)
 
     // property.exec().then(result => {
-    //   // console.log("My Property: ", result.length ? result[0] : {})
+    //   //console.log("My Property: ", result.length ? result[0] : {})
 
     //   return res.json(result.length ? result[0] : null)
     // })
@@ -417,7 +417,7 @@ exports.getSingleProperty = async (req, res) => {
 }
 
 exports.getAllProperty = async (req, res) => {
-  // console.log("My Query String: ", req.query)
+  //console.log("My Query String: ", req.query)
 
   try {
 
@@ -461,7 +461,7 @@ exports.getAllProperty = async (req, res) => {
 
     properties.exec().then(result => {
       // result has your... results
-      // console.log("All Properties: ", result)
+      //console.log("All Properties: ", result)
 
       return res.json(result)
     });
@@ -515,7 +515,7 @@ exports.getPendingProperty = async (req, res) => {
 
     properties.exec().then(result => {
       // result has your... results
-      // console.log("My Properties: ", result)
+      //console.log("My Properties: ", result)
 
       res.json(result)
     });

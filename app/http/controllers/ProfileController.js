@@ -49,7 +49,7 @@ exports.update_user_profile_data = async (req, res) => {
 
         await profile.save()
 
-        console.log('Profile: ', profile)
+        // console.log('Profile: ', profile)
 
         res.json({ status: 'success', profile })
       }
@@ -90,7 +90,7 @@ exports.get_buyer_profile = async (req, res) => {
     }
 
   } catch (error) {
-    console.log('Error: ', error.message)
+    // console.log('Error: ', error.message)
     res.json({ status: 'error', msg: error.message })
   }
 }
@@ -219,7 +219,7 @@ exports.save_buyer_profile = async (req, res) => {
 
         await profile.save()
 
-        console.log('Profile: ', profile)
+        // console.log('Profile: ', profile)
 
         res.json({ status: 'success', profile })
       }

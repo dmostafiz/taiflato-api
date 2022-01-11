@@ -32,7 +32,7 @@ exports.saveSlider = async (req, res) => {
 
       if (user && user.user_type == 'admin') {
 
-         console.log('Auth User ok?: ', user)
+         // console.log('Auth User ok?: ', user)
          // let img_url = ''
 
          // if (image) {
@@ -59,7 +59,7 @@ exports.saveSlider = async (req, res) => {
          // slider.buttonTextColor = buttonTextColor
          await slider.save()
 
-         console.log('Saved Slider =', slider)
+         // console.log('Saved Slider =', slider)
 
          res.json({ status: 'success', msg: 'Slider saved successfully.' })
 
@@ -68,7 +68,7 @@ exports.saveSlider = async (req, res) => {
       }
 
    } catch (error) {
-      console.log(error.message)
+      // console.log(error.message)
       res.json({ type: 'error', msg: 'You are not allowed to do this action' })
    }
 
@@ -111,7 +111,7 @@ exports.saveSliderStatus = async (req, res) => {
       status
    } = req.body
 
-   console.log('Slider Status: ', status)
+   // console.log('Slider Status: ', status)
 
    if (!token) return res.status(401).json({ type: 'error', msg: 'You are not allowed to do this action' })
 
@@ -130,7 +130,7 @@ exports.saveSliderStatus = async (req, res) => {
 
          const option = await Option.findOne()
 
-         console.log('Slider option: ', option)
+         // console.log('Slider option: ', option)
 
          option.slider = status
 
@@ -156,7 +156,7 @@ exports.get_properties = async (req, res) => {
       if (propertyId) {
          find.pid = { $regex: propertyId, $options: 'i' }
       }
-      console.log('Query: ', find)
+      // console.log('Query: ', find)
 
       const properties = await Property.find(find).populate([
          {
@@ -193,7 +193,7 @@ exports.get_projects = async (req, res) => {
             projectCode: { $regex: projectQuery, $options: 'i' }
          }
       }
-      console.log('Query: ', find)
+      // console.log('Query: ', find)
 
       const projects = await Project.find(find).populate([
          {

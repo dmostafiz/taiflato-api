@@ -19,7 +19,7 @@ exports.create_drafted_project = async (req, res) => {
 
     const token = req.headers.authorization
 
-    console.log('Token: ', token)
+    // console.log('Token: ', token)
 
     if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
 
@@ -45,12 +45,12 @@ exports.create_drafted_project = async (req, res) => {
         await project.save()
 
 
-        console.log('Created draft Project: ', project)
+        // console.log('Created draft Project: ', project)
 
         return res.json({ status: 'success', project: project })
 
     } catch (error) {
-        console.log('Error: ', error)
+        // console.log('Error: ', error)
         return res.json({ status: 'error', msg: 'Your are not authorised' })
     }
 
@@ -59,7 +59,7 @@ exports.create_drafted_project = async (req, res) => {
 exports.get_my_managers = async (req, res) => {
     const token = req.headers.authorization
 
-    console.log('My Token: ', token)
+    // console.log('My Token: ', token)
 
     if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
 
@@ -73,13 +73,13 @@ exports.get_my_managers = async (req, res) => {
 
         const managers = await User.find({ realestate_admin: user._id, account_verified: true })
 
-        console.log('Managers: ', managers)
+        // console.log('Managers: ', managers)
         return res.json({ status: 'success', managers: managers })
 
 
 
     } catch (error) {
-        console.log('Error: ', error)
+        // console.log('Error: ', error)
         return res.json({ status: 'error', msg: 'Your are not authorised' })
     }
 
@@ -90,7 +90,7 @@ exports.change_project_manager = async (req, res) => {
 
     const {projectId, managerId} = req.body
 
-    console.log('My Token: ', token)
+    // console.log('My Token: ', token)
 
     if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
 
@@ -104,9 +104,9 @@ exports.change_project_manager = async (req, res) => {
         const manager = await User.findOne({ _id: managerId, account_verified: true })
         const project = await Project.findOne({ _id: projectId, developer: user._id })
 
-        console.log('New Manager: ', manager)
-        console.log('Project ID: ', projectId)
-        console.log('Project: ', project)
+        // console.log('New Manager: ', manager)
+        // console.log('Project ID: ', projectId)
+        // console.log('Project: ', project)
 
         if(manager && project){
             project.manager = manager._id 
@@ -127,7 +127,7 @@ exports.change_project_manager = async (req, res) => {
 
 
     } catch (error) {
-        console.log('Error: ', error)
+        // console.log('Error: ', error)
         return res.json({ status: 'error', msg: 'Your are not authorised' })
     }
 
@@ -282,7 +282,7 @@ exports.save_drafted_project = async (req, res) => {
         return res.json({ status: 'success', project: project })
 
     } catch (error) {
-        console.log('Error: ', error)
+        // console.log('Error: ', error)
         return res.json({ status: 'error', msg: 'Your are not authorised' })
     }
 
@@ -291,7 +291,7 @@ exports.save_drafted_project = async (req, res) => {
 exports.get_projects = async (req, res) => {
     const token = req.headers.authorization
 
-    console.log('My Token: ', token)
+    // console.log('My Token: ', token)
 
     if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
 
@@ -324,7 +324,7 @@ exports.get_projects = async (req, res) => {
 
     }
     catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         res.json({ status: 'error', msg: error.message, projects: [] })
     }
 }
@@ -378,7 +378,7 @@ exports.get_project_by_id = async (req, res) => {
         return res.json({ status: 'success', project })
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: 'Something went wrong' })
     }
 }
@@ -392,14 +392,19 @@ exports.get_properties_by_project = async (req, res) => {
 
             // console.log("project: ", project)
         if(project){
-            const properties = await Property.find({project:project._id})
+            const properties = await Property.find({project:project._id}).populate([
+                {
+                    path: 'image',
+                    model: 'File'
+                }
+            ])
                                              
             return res.json({ status: 'success', properties })
         }
 
 
     } catch (error) {
-        console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: 'Something went wrong' })
     }   
 }
@@ -418,7 +423,7 @@ exports.get_properties_by_project = async (req, res) => {
 //                                              }
 //                                          ])
 
-//                 console.log("project: ", properties)
+                // console.log("project: ", properties)
 
 //                 return res.json({ status: 'success', properties })
 //             }
@@ -426,7 +431,7 @@ exports.get_properties_by_project = async (req, res) => {
 
 
 //     } catch (error) {
-//         console.log('Error: ', error.message)
+        // console.log('Error: ', error.message)
 //         return res.json({ status: 'error', msg: 'Something went wrong' })
 //     }
 // }
@@ -436,7 +441,7 @@ exports.update_property = async (req, res) => {
 
     const { propertyId, title, rooms, bathroom, propertyType, serialNo, floor, price, balcony, terrace, garden, loggia } = req.body
 
-    console.log('My Token: ', token)
+    // console.log('My Token: ', token)
 
     if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
 
@@ -496,7 +501,7 @@ exports.update_property = async (req, res) => {
         gfloor.properties = [...gfloor.properties, property._id]
         await gfloor.save()
 
-        console.log('Update floor: ', gfloor)
+        // console.log('Update floor: ', gfloor)
         return res.json({ status: 'success', project })
     }
     catch (error) {
@@ -558,7 +563,7 @@ exports.save_project_properties = async (req, res) => {
 
 
     } catch (error) {
-        console.log('Error: ', error)
+        // console.log('Error: ', error)
         return res.json({ status: 'error', msg: 'Your are not authorised' })
     }
 
@@ -646,7 +651,7 @@ exports.save_project_details = async (req, res) => {
 
 
     } catch (error) {
-        console.log('Error: ', error)
+        // console.log('Error: ', error)
         return res.json({ status: 'error', msg: 'Your are not authorised' })
     }
 
