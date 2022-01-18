@@ -33,6 +33,8 @@ exports.getAllProjects = async (req, res) => {
 
     } catch (error) {
 
+        console.log('Error Occured:', error.message)
+
         return res.json({ status: 'error', msg: error.message })
 
     }
@@ -80,6 +82,8 @@ exports.projectDetails = async (req, res) => {
 
     } catch (error) {
 
+        console.log('Error Occured:', error.message)
+
         return res.json({ status: 'error', msg: error.message })
 
     }
@@ -97,6 +101,8 @@ exports.getIsrapolyMembers = async (req, res) => {
 
     } catch (error) {
         // console.log('Error: ', error.message)
+        console.log('Error Occured:', error.message)
+
         return res.json({status: 'error', msg: error.message})
     }
 }
@@ -114,6 +120,8 @@ exports.getRealestateDevelopers = async (req, res) => {
 
     } catch (error) {
         // console.log('Error: ', error.message)
+        console.log('Error Occured:', error.message)
+
         return res.json({status: 'error', msg: error.message})
     }
 }

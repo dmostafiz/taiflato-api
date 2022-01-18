@@ -156,6 +156,7 @@ exports.create_drafted_project = async (req, res) => {
 
     } catch (error) {
         // console.log('Error: ', error)
+        console.log('Error Occured:', error.message)
         return res.json({ status: 'error', msg: 'Your are not authorised' })
     }
 
@@ -186,6 +187,7 @@ exports.get_my_managers = async (req, res) => {
 
     } catch (error) {
         // console.log('Error: ', error)
+        console.log('Error Occured:', error.message)
         return res.json({ status: 'error', msg: 'Your are not authorised' })
     }
 
@@ -234,6 +236,7 @@ exports.change_project_manager = async (req, res) => {
 
     } catch (error) {
         // console.log('Error: ', error)
+        console.log('Error Occured:', error.message)
         return res.json({ status: 'error', msg: 'Your are not authorised' })
     }
 
@@ -284,7 +287,7 @@ exports.save_contract_details = async (req, res) => {
         return res.json({ status: 'success', project: project })
 
     } catch (error) {
-        console.log('Error: ', error)
+        console.log('Error Occured:', error.message)
         return res.json({ status: 'error', msg: 'Your are not authorised' })
     }
 
@@ -294,19 +297,6 @@ exports.save_project_details = async (req, res) => {
     const token = req.headers.authorization
 
     const { project_id,
-        // numberOfBuilding,
-        // numberOfFloor,
-        // heightOfBuilding,
-        // surfaceOfBuilding,
-        // parkingOfBuilding,
-        // features,
-        // projectStartedDate,
-        // projectCompleteDate,
-        // deliveryIn,
-        // projectImage,
-        // projectImages,
-        // virtualTour,
-        // videoLink,
         features,
         country,
         district,
@@ -336,19 +326,7 @@ exports.save_project_details = async (req, res) => {
 
         if (project) {
 
-            // project.numberOfBuildings = numberOfBuilding
-            // project.numberOfFloors = numberOfFloor
-            // project.heightOfBuilding = heightOfBuilding
-            // project.surfaceOfBuilding = surfaceOfBuilding
-            // project.parkingOfBuilding = parkingOfBuilding
             project.features = features
-            // project.projectStartedDate = projectStartedDate
-            // project.projectCompleteDate = projectCompleteDate
-            // project.deliveryIn = deliveryIn
-            // project.projectImage = projectImage[0]
-            // project.projectImages = projectImages
-            // project.virtualTour = virtualTour
-            // project.videoLink = videoLink
             project.country = country
             project.district = district
             project.city = city
@@ -391,11 +369,12 @@ exports.save_project_details = async (req, res) => {
 
     } catch (error) {
         // console.log('Error: ', error)
+        console.log('Error Occured:', error.message)
+
         return res.json({ status: 'error', msg: 'Your are not authorised' })
     }
 
 }
-
 
 exports.get_projects = async (req, res) => {
     const token = req.headers.authorization
@@ -434,6 +413,8 @@ exports.get_projects = async (req, res) => {
     }
     catch (error) {
         // console.log('Error: ', error.message)
+        console.log('Error Occured:', error.message)
+
         res.json({ status: 'error', msg: error.message, projects: [] })
     }
 }
@@ -488,6 +469,8 @@ exports.get_project_by_id = async (req, res) => {
 
     } catch (error) {
         // console.log('Error: ', error.message)
+        console.log('Error Occured:', error.message)
+
         return res.json({ status: 'error', msg: 'Something went wrong' })
     }
 }
@@ -514,36 +497,11 @@ exports.get_properties_by_project = async (req, res) => {
 
     } catch (error) {
         // console.log('Error: ', error.message)
+        console.log('Error Occured:', error.message)
         return res.json({ status: 'error', msg: 'Something went wrong' })
     }
 }
-// exports.get_properties_by_projectid = async (req, res) => {
-//     const id = req.params.projectId
 
-//     try {
-//            const project = await Project.findById(id)
-
-//             if(project){
-//                 const properties = await Property.find({project: project._id})
-//                                          .populate([
-//                                              {
-//                                                  path:'floor',
-//                                                  model:'Floor'
-//                                              }
-//                                          ])
-
-// console.log("project: ", properties)
-
-//                 return res.json({ status: 'success', properties })
-//             }
-
-
-
-//     } catch (error) {
-// console.log('Error: ', error.message)
-//         return res.json({ status: 'error', msg: 'Something went wrong' })
-//     }
-// }
 
 exports.update_property = async (req, res) => {
     const token = req.headers.authorization
@@ -614,6 +572,8 @@ exports.update_property = async (req, res) => {
         return res.json({ status: 'success', project })
     }
     catch (error) {
+        console.log('Error Occured:', error.message)
+
         res.json({ status: 'success', msg: error.message })
     }
 }
@@ -675,6 +635,8 @@ exports.save_project_properties = async (req, res) => {
 
     } catch (error) {
         // console.log('Error: ', error)
+        console.log('Error Occured:', error.message)
+
         return res.json({ status: 'error', msg: 'Your are not authorised' })
     }
 
