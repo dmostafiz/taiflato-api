@@ -82,11 +82,15 @@ exports.getSlider = async (req, res) => {
       const sliders = await Slider.find().populate([
          {
             path: 'property',
-            Model: 'Property'
+            Model: 'Property',
+            populate: [{
+               path: 'project',
+               model: 'Project'
+            }]
          },
          {
             path: 'project',
-            Model: 'Project'
+            model: 'Project'
          },
 
       ])

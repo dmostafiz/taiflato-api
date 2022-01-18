@@ -15,151 +15,34 @@ const User = require("../../models/User")
 
 exports.create_drafted_project = async (req, res) => {
 
-    const {projectCode, title} = req.body
+    const {
+        projectCode,
+        title,
+        numberOfBuilding,
+        numberOfFloor,
+        heightOfBuilding,
+        surfaceOfBuilding,
+        parkingOfBuilding,
+        features,
+        projectStartedDate,
+        projectCompleteDate,
+        deliveryIn,
+        projectImage,
+        projectImages,
+        virtualTour,
+        videoLink,
+
+        selectManager,
+        inviteManager,
+
+        managerEmail,
+
+
+    } = req.body
 
     const token = req.headers.authorization
 
     // console.log('Token: ', token)
-
-    if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
-
-    try {
-        const data = jwt.verify(token, process.env.APP_SECRET)
-
-        const user = await User.findOne({ _id: data.id })
-
-        if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
-
-        let manager = user
-
-
-        const project = new Project()
-
-        project.cid = getCid()
-        project.projectTitle = title
-        project.projectCode = projectCode
-        project.manager = manager._id
-        project.company = user.company
-        project.developer = user._id
-        project.status = 'drafted'
-        await project.save()
-
-
-        // console.log('Created draft Project: ', project)
-
-        return res.json({ status: 'success', project: project })
-
-    } catch (error) {
-        // console.log('Error: ', error)
-        return res.json({ status: 'error', msg: 'Your are not authorised' })
-    }
-
-}
-
-exports.get_my_managers = async (req, res) => {
-    const token = req.headers.authorization
-
-    // console.log('My Token: ', token)
-
-    if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
-
-    try {
-        const data = jwt.verify(token, process.env.APP_SECRET)
-
-        const user = await User.findOne({ _id: data.id })
-
-        if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
-
-
-        const managers = await User.find({ realestate_admin: user._id, account_verified: true })
-
-        // console.log('Managers: ', managers)
-        return res.json({ status: 'success', managers: managers })
-
-
-
-    } catch (error) {
-        // console.log('Error: ', error)
-        return res.json({ status: 'error', msg: 'Your are not authorised' })
-    }
-
-}
-
-exports.change_project_manager = async (req, res) => {
-    const token = req.headers.authorization
-
-    const {projectId, managerId} = req.body
-
-    // console.log('My Token: ', token)
-
-    if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
-
-    try {
-        const data = jwt.verify(token, process.env.APP_SECRET)
-
-        const user = await User.findOne({ _id: data.id })
-
-        if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
-
-        const manager = await User.findOne({ _id: managerId, account_verified: true })
-        const project = await Project.findOne({ _id: projectId, developer: user._id })
-
-        // console.log('New Manager: ', manager)
-        // console.log('Project ID: ', projectId)
-        // console.log('Project: ', project)
-
-        if(manager && project){
-            project.manager = manager._id 
-            await project.save()
-
-            const properties = await Property.find({project: project._id})
-
-            if(properties){
-                properties.forEach(async pty => {
-                    pty.manager = manager
-                    await pty.save()
-                })
-            }
-        }
-
-        // console.log('Managers: ', managers)
-        return res.json({ status: 'success', manager: manager })
-
-
-    } catch (error) {
-        // console.log('Error: ', error)
-        return res.json({ status: 'error', msg: 'Your are not authorised' })
-    }
-
-}
-
-
-exports.save_drafted_project = async (req, res) => {
-    const token = req.headers.authorization
-
-    const {
-        project_id,
-        selectManager,
-        inviteManager,
-
-        expert,
-        lawyer,
-        projectLegalCopies,
-        managerEmail,
-        // projectCode,
-        // title,
-        features,
-        country,
-        district,
-        city,
-        zip,
-        address,
-        latitude,
-        longitude,
-        nearby
-
-    } = req.body
-    // return res.json({ status: 'success' })
 
     if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
 
@@ -235,36 +118,159 @@ exports.save_drafted_project = async (req, res) => {
         }
 
 
+        const project = new Project()
+
+        project.cid = getCid()
+        project.projectTitle = title
+        project.projectCode = projectCode
+        project.manager = manager._id
+        project.company = user.company
+        project.developer = user._id
+        project.status = 'drafted'
+        project.numberOfBuildings = numberOfBuilding
+        project.numberOfFloors = numberOfFloor
+        project.heightOfBuilding = heightOfBuilding
+        project.surfaceOfBuilding = surfaceOfBuilding
+        project.parkingOfBuilding = parkingOfBuilding
+        project.features = features
+        project.projectStartedDate = projectStartedDate
+        project.projectCompleteDate = projectCompleteDate
+        project.deliveryIn = deliveryIn
+        project.projectImage = projectImage[0]
+        project.projectImages = projectImages
+        project.virtualTour = virtualTour
+        project.videoLink = videoLink
+
+        project.company = user.company
+        project.developer = user._id
+
+        await project.save()
+
+
+        manager.projects = [...manager.projects, project._id]
+        await manager.save()
+
+        // console.log('Created draft Project: ', project)
+
+        return res.json({ status: 'success', project: project })
+
+    } catch (error) {
+        // console.log('Error: ', error)
+        return res.json({ status: 'error', msg: 'Your are not authorised' })
+    }
+
+}
+
+exports.get_my_managers = async (req, res) => {
+
+    const token = req.headers.authorization
+
+    // console.log('My Token: ', token)
+
+    if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
+    try {
+        const data = jwt.verify(token, process.env.APP_SECRET)
+
+        const user = await User.findOne({ _id: data.id })
+
+        if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
+
+        const managers = await User.find({ realestate_admin: user._id, account_verified: true })
+
+        // console.log('Managers: ', managers)
+        return res.json({ status: 'success', managers: managers })
+
+
+
+    } catch (error) {
+        // console.log('Error: ', error)
+        return res.json({ status: 'error', msg: 'Your are not authorised' })
+    }
+
+}
+
+exports.change_project_manager = async (req, res) => {
+    const token = req.headers.authorization
+
+    const { projectId, managerId } = req.body
+
+    // console.log('My Token: ', token)
+
+    if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
+    try {
+        const data = jwt.verify(token, process.env.APP_SECRET)
+
+        const user = await User.findOne({ _id: data.id })
+
+        if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
+        const manager = await User.findOne({ _id: managerId, account_verified: true })
+        const project = await Project.findOne({ _id: projectId, developer: user._id })
+
+        // console.log('New Manager: ', manager)
+        // console.log('Project ID: ', projectId)
+        // console.log('Project: ', project)
+
+        if (manager && project) {
+            project.manager = manager._id
+            await project.save()
+
+            const properties = await Property.find({ project: project._id })
+
+            if (properties) {
+                properties.forEach(async pty => {
+                    pty.manager = manager
+                    await pty.save()
+                })
+            }
+        }
+
+        // console.log('Managers: ', managers)
+        return res.json({ status: 'success', manager: manager })
+
+
+    } catch (error) {
+        // console.log('Error: ', error)
+        return res.json({ status: 'error', msg: 'Your are not authorised' })
+    }
+
+}
+
+
+exports.save_contract_details = async (req, res) => {
+    const token = req.headers.authorization
+
+    const {
+        project_id,
+
+        expert,
+        lawyer,
+        projectLegalCopies,
+
+
+    } = req.body
+    // return res.json({ status: 'success' })
+
+    if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
+    try {
+        const data = jwt.verify(token, process.env.APP_SECRET)
+
+        const user = await User.findOne({ _id: data.id })
+
+        if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
         const project = await Project.findOne({ _id: project_id, developer: user._id })
-
-        // console.log('My Project: ', project)
-        // return res.json({ status: 'success', project: project })
-
 
         if (!project) return res.json({ status: 'error', msg: 'Something went wrong' })
 
-        project.cid = getCid()
+        
         project.expert = expert
         project.lawyer = lawyer
         project.legal = { copies: projectLegalCopies }
-
-        project.manager = manager._id
-
-        // project.projectCode = projectCode
-        // project.projectTitle = title
-
-        project.features = features
-
-        project.country = country
-        project.district = district
-        project.city = city
-        project.zip = zip
-        project.address = address
-        project.latitude = latitude
-        project.longitude = longitude
-        project.nearby = nearby
-        project.company = user.company
-        project.developer = user._id
 
         await project.save()
 
@@ -275,11 +281,113 @@ exports.save_drafted_project = async (req, res) => {
         //     await company.save()
         // }
 
-        manager.projects = [...manager.projects, project._id]
-        await manager.save()
-
-
         return res.json({ status: 'success', project: project })
+
+    } catch (error) {
+        console.log('Error: ', error)
+        return res.json({ status: 'error', msg: 'Your are not authorised' })
+    }
+
+}
+
+exports.save_project_details = async (req, res) => {
+    const token = req.headers.authorization
+
+    const { project_id,
+        // numberOfBuilding,
+        // numberOfFloor,
+        // heightOfBuilding,
+        // surfaceOfBuilding,
+        // parkingOfBuilding,
+        // features,
+        // projectStartedDate,
+        // projectCompleteDate,
+        // deliveryIn,
+        // projectImage,
+        // projectImages,
+        // virtualTour,
+        // videoLink,
+        features,
+        country,
+        district,
+        city,
+        zip,
+        address,
+        latitude,
+        longitude,
+        nearby,
+        description
+    } = req.body
+
+    // console.log('properties : ', properties)
+    // return res.json({ status: 'success' })
+
+    if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
+    try {
+        const data = jwt.verify(token, process.env.APP_SECRET)
+
+        const user = await User.findOne({ _id: data.id })
+
+        if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
+
+        const project = await Project.findOne({ _id: project_id, developer: user._id })
+
+
+        if (project) {
+
+            // project.numberOfBuildings = numberOfBuilding
+            // project.numberOfFloors = numberOfFloor
+            // project.heightOfBuilding = heightOfBuilding
+            // project.surfaceOfBuilding = surfaceOfBuilding
+            // project.parkingOfBuilding = parkingOfBuilding
+            project.features = features
+            // project.projectStartedDate = projectStartedDate
+            // project.projectCompleteDate = projectCompleteDate
+            // project.deliveryIn = deliveryIn
+            // project.projectImage = projectImage[0]
+            // project.projectImages = projectImages
+            // project.virtualTour = virtualTour
+            // project.videoLink = videoLink
+            project.country = country
+            project.district = district
+            project.city = city
+            project.zip = zip
+            project.address = address
+            project.latitude = latitude
+            project.longitude = longitude
+            project.nearby = nearby
+            project.description = description
+            project.status = 'pending'
+
+            await project.save()
+
+
+
+            for (let i = 0; i < project.numberOfFloors; i++) {
+
+                const floor = new Floor()
+                floor.floorNo = i
+                floor.project = project._id
+                floor.developer = project.developer
+                await floor.save()
+
+                project.floors = [...project.floors, floor._id]
+                await project.save()
+
+            }
+
+            const company = await Company.findById(project.company)
+
+            if (company) {
+                company.projects = [...company.projects, project._id]
+                await company.save()
+            }
+
+            return res.json({ status: 'success', project })
+        }
+
+
 
     } catch (error) {
         // console.log('Error: ', error)
@@ -287,6 +395,7 @@ exports.save_drafted_project = async (req, res) => {
     }
 
 }
+
 
 exports.get_projects = async (req, res) => {
     const token = req.headers.authorization
@@ -373,7 +482,7 @@ exports.get_project_by_id = async (req, res) => {
                 },
             ])
 
-            // console.log("project: ", project)
+        // console.log("project: ", project)
 
         return res.json({ status: 'success', project })
 
@@ -390,15 +499,15 @@ exports.get_properties_by_project = async (req, res) => {
         const project = await Project.findById(id)
             .populate([])
 
-            // console.log("project: ", project)
-        if(project){
-            const properties = await Property.find({project:project._id}).populate([
+        // console.log("project: ", project)
+        if (project) {
+            const properties = await Property.find({ project: project._id }).populate([
                 {
                     path: 'image',
                     model: 'File'
                 }
             ])
-                                             
+
             return res.json({ status: 'success', properties })
         }
 
@@ -406,14 +515,14 @@ exports.get_properties_by_project = async (req, res) => {
     } catch (error) {
         // console.log('Error: ', error.message)
         return res.json({ status: 'error', msg: 'Something went wrong' })
-    }   
+    }
 }
 // exports.get_properties_by_projectid = async (req, res) => {
 //     const id = req.params.projectId
 
 //     try {
 //            const project = await Project.findById(id)
-  
+
 //             if(project){
 //                 const properties = await Property.find({project: project._id})
 //                                          .populate([
@@ -423,7 +532,7 @@ exports.get_properties_by_project = async (req, res) => {
 //                                              }
 //                                          ])
 
-                // console.log("project: ", properties)
+// console.log("project: ", properties)
 
 //                 return res.json({ status: 'success', properties })
 //             }
@@ -431,7 +540,7 @@ exports.get_properties_by_project = async (req, res) => {
 
 
 //     } catch (error) {
-        // console.log('Error: ', error.message)
+// console.log('Error: ', error.message)
 //         return res.json({ status: 'error', msg: 'Something went wrong' })
 //     }
 // }
@@ -460,7 +569,7 @@ exports.update_property = async (req, res) => {
         property.serialNo = serialNo
         property.floor = floor
         property.price = price
-        property.propertyType =propertyType
+        property.propertyType = propertyType
         property.isUpdated = true
         property.balcony = balcony
         property.terrace = terrace
@@ -534,6 +643,7 @@ exports.save_project_properties = async (req, res) => {
         if (project) {
 
             if (properties.length) {
+                
                 properties.forEach(async (pty) => {
 
                     const qpty = new QueueProperty()
@@ -554,6 +664,7 @@ exports.save_project_properties = async (req, res) => {
                     qpty.manager = project.manager
 
                     await qpty.save()
+                    
                 })
             }
 
@@ -569,90 +680,3 @@ exports.save_project_properties = async (req, res) => {
 
 }
 
-exports.save_project_details = async (req, res) => {
-    const token = req.headers.authorization
-
-    const { project_id,
-        numberOfBuilding,
-        numberOfFloor,
-        heightOfBuilding,
-        surfaceOfBuilding,
-        parkingOfBuilding,
-        features,
-        projectStartedDate,
-        projectCompleteDate,
-        deliveryIn,
-        projectImage,
-        projectImages,
-        virtualTour,
-        videoLink,
-        description } = req.body
-
-    // console.log('properties : ', properties)
-    // return res.json({ status: 'success' })
-
-    if (!token) return res.json({ status: 'error', msg: 'Your are not authorised' })
-
-    try {
-        const data = jwt.verify(token, process.env.APP_SECRET)
-
-        const user = await User.findOne({ _id: data.id })
-
-        if (!user) return res.json({ status: 'error', msg: 'Your are not authorised' })
-
-        const project = await Project.findOne({ _id: project_id, developer: user._id })
-
-
-        if (project) {
-
-            project.numberOfBuildings = numberOfBuilding
-            project.numberOfFloors = numberOfFloor
-            project.heightOfBuilding = heightOfBuilding
-            project.surfaceOfBuilding = surfaceOfBuilding
-            project.parkingOfBuilding = parkingOfBuilding
-            project.features = features
-            project.projectStartedDate = projectStartedDate
-            project.projectCompleteDate = projectCompleteDate
-            project.deliveryIn = deliveryIn
-            project.projectImage = projectImage[0]
-            project.projectImages = projectImages
-            project.virtualTour = virtualTour
-            project.videoLink = videoLink
-            project.description = description
-            project.status = 'pending'
-
-            await project.save()
-
-
-
-            for(let i = 0; i < project.numberOfFloors; i++){
-
-                const floor = new Floor()
-                floor.floorNo = i
-                floor.project = project._id 
-                floor.developer = project.developer 
-                await floor.save()
-
-                project.floors = [...project.floors, floor._id]
-                await project.save()
-
-            }
-
-            const company = await Company.findById(project.company)
-
-            if(company){
-                company.projects = [...company.projects, project._id]
-                await company.save()
-            }
-
-            return res.json({ status: 'success', project })
-        }
-
-
-
-    } catch (error) {
-        // console.log('Error: ', error)
-        return res.json({ status: 'error', msg: 'Your are not authorised' })
-    }
-
-}

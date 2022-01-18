@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const aggregatePaginate = require("mongoose-aggregate-paginate-v2");
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const ProjectSchema = mongoose.Schema({
 
@@ -210,7 +211,9 @@ const ProjectSchema = mongoose.Schema({
 })
 
 ProjectSchema.set('timestamps', true)
+ProjectSchema.plugin(mongoosePaginate);
 ProjectSchema.plugin(aggregatePaginate);
+
 // ProjectSchema.plugin(random)
 
 module.exports = mongoose.model('Project', ProjectSchema)

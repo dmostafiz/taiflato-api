@@ -44,6 +44,9 @@ const ZoomController = require('../app/http/controllers/ZoomController')
 
 const SelectedPropertiesController = require('../app/http/controllers/SelectedPropertiesController')
 
+const SearchController = require('../app/http/controllers/SearchController')
+
+
 
 // const upload = require('../helpers/cloudinary')
 
@@ -91,7 +94,7 @@ router.post('/upload_project_image', UploadController.upload_project_image)
 router.post('/create_drafted_project', ProjectController.create_drafted_project)
 router.post('/get_my_managers', ProjectController.get_my_managers)
 router.post('/change_project_manager', ProjectController.change_project_manager)
-router.post('/save_drafted_project', ProjectController.save_drafted_project)
+router.post('/save_contract_details', ProjectController.save_contract_details)
 // router.post('/generate_properties', ProjectController.generate_properties)
 router.get('/get_projects/', ProjectController.get_projects)
 router.get('/get_project_by_id/:id', ProjectController.get_project_by_id)
@@ -128,7 +131,11 @@ router.get('/my_properties', PropertyController.getMyProperty)
 router.get('/get_single_property/:id', PropertyController.getSingleProperty)
 router.get('/pending_properties', PropertyController.getPendingProperty)
 router.get('/all_properties', PropertyController.getAllProperty)
-router.get('/filter_search', PropertyController.filterSearch)
+
+router.get('/filter_search_example', PropertyController.filterSearch)
+
+router.get('/filter_search', SearchController.filterSearch)
+
 
 //Building
 router.post('/save_building', BuildingController.saveBuildingPlan)
