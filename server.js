@@ -11,7 +11,8 @@ var exphbs = require('express-handlebars');
 const cron = require('node-cron');
 // const socketBidding = require('./app/socket/socketBidding');
 const appSocket = require('./app/socket/appSocket');
-const getAuctionsAndUpdate = require('./app/cron/getAuctionsAndUpdate');
+const getAuctionsAndStart = require('./app/cron/getAuctionsAndStart');
+const getAuctionsAndStop = require('./app/cron/getAuctionsAndStop');
 const getProjectsAndUpdate = require('./app/cron/getProjectsAndUpdate');
 const getAgreementsAndSignStatus = require('./app/cron/getAgreementsAndSignStatus');
 
@@ -35,7 +36,8 @@ const io = require("socket.io")(server, {
 // sequelize() 
 connectDB()
 
-getAuctionsAndUpdate(cron)
+getAuctionsAndStart(cron)
+getAuctionsAndStop(cron)
 getProjectsAndUpdate(cron)
 getAgreementsAndSignStatus(cron)
 

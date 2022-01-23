@@ -155,16 +155,22 @@ router.post('/save_apartment', BuildingController.saveApartment)
 
 
 //Auctions
-router.post('/save_promotion', AuctionController.saveAuction)
+router.post('/save_auctions', AuctionController.saveAuction)
 router.get('/my_auctions', AuctionController.myAuctions)
-router.get('/all_promotions', AuctionController.allAuctions)
+router.get('/all_auctions', AuctionController.allAuctions)
 
 
-router.get('/get_single_promotion/:id', AuctionController.getSingleAuction)
+router.get('/get_single_auction/:id', AuctionController.getSingleAuction)
 
 router.get('/auctioned_properties', AuctionController.auctionedProperties)
 
 router.post('/save_bid', AuctionController.saveBid)
+
+router.post('/cance_auction', AuctionController.cance_auction)
+
+router.post('/confirm_auction_winner', AuctionController.confirm_auction_winner)
+
+
 
 
 //Activities

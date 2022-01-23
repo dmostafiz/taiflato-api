@@ -5,9 +5,16 @@ const mongoose = require('mongoose');
 const Auction = require('../../models/Auction');
 const Property = require('../../models/Property');
 const Bid = require('../../models/Bid');
+const Thread = require('../../models/Thread');
+const getCid = require('../../../helpers/getCid');
+const Request = require('../../models/Request');
+const Negotiation = require('../../models/Negotiation');
+const Notification = require('../../models/Notification');
+const Process = require('../../models/Process');
+const Message = require('../../models/Message');
 
 exports.saveAuction = async (req, res) => {
-  const { propetyId, propertyImage, promotionPrice, expirationDate } = req.body
+  const { properties, reducedPrice, startDate, expirationDate } = req.body
   // return res.json({fid, floorNo, coordinates})
 
   // console.log('Promotion Data: ', req.body)
@@ -27,31 +34,41 @@ exports.saveAuction = async (req, res) => {
       const date = Date.now().toString()
       const aid = date.substr(-6)
 
-      const auction = new Auction()
-      auction.aid = aid
-      auction.developer = user._id
-      auction.property = propetyId,
-      auction.propertyImage = propertyImage,
-      auction.auctionPrice = promotionPrice,
-      auction.expireAt = expirationDate,
+      properties.map(async pty => {
 
-      await auction.save()
+        const property = await Property.findById(pty).populate([
+          {
+            path: 'image',
+            model: 'File'
+          }
+        ])
 
-      const property = await Property.findById(propetyId)
+        if (property) {
 
-      if (property) {
+          const auction = new Auction()
+          auction.aid = aid
+          auction.developer = property.developer
+          auction.property = property._id,
+            auction.propertyImage = property.image.location,
+            auction.auctionPrice = parseInt(property.price) - parseInt(reducedPrice),
+            auction.startAt = startDate,
+            auction.expireAt = expirationDate,
+            auction.status = startDate ? 'pending' : 'running'
+          await auction.save()
 
-        property.isPromoted = true
-        property.auction = auction._id
+          // property.isPromoted = true
+          // property.auction = auction._id
 
-        await property.save()
-      }
+          // await property.save()
 
-      // console.log('property: ', property)
+          return property
+        }
 
-      // return
 
-      res.json({ status: 'success', msg: 'Promotion created successfully.', promotion: auction })
+      })
+
+
+      res.json({ status: 'success', msg: 'Promotion created successfully.' })
 
     }
     else {
@@ -61,6 +78,80 @@ exports.saveAuction = async (req, res) => {
 
   } catch (error) {
     // console.log('Error: ', error.message)
+    console.log('Error Occured! ', error.message);
+
+    return res.json({ status: 'error', msg: error.message })
+  }
+
+}
+
+exports.cance_auction = async (req, res) => {
+  const { auctionId } = req.body
+  // return res.json({fid, floorNo, coordinates})
+
+  // console.log('Promotion Data: ', req.body)
+  const token = req.headers.authorization
+
+  try {
+
+    const data = jwt.verify(token, process.env.APP_SECRET)
+    const user = await User.findOne({ _id: data.id })
+
+    // console.log('User: ', user)
+
+    // return
+
+    if (user) {
+
+
+      const auction = await Auction.findById(auctionId)
+        .populate(
+          [
+            {
+              path: 'property',
+              model: 'Property',
+            },
+            {
+              path: 'developer',
+              model: 'User',
+              select: { 'password': 0 },
+            },
+            {
+              path: 'bids',
+              model: 'Bid',
+              options: { sort: { 'price': -1 } },
+              populate: {
+                path: 'buyer',
+                model: 'User',
+                select: { 'password': 0 },
+              }
+
+            },
+
+          ]
+        )
+
+      auction.status = 'cancelled'
+
+      await auction.save()
+
+      const propery = await Property.findById(auction.property._id)
+      propery.isAuctioned = false
+      propery.auction = null
+      await propery.save()
+
+      res.json({ status: 'success', auction })
+
+    }
+    else {
+      res.json({ status: 'error', msg: 'You are not authorised to do this action' })
+    }
+
+
+  } catch (error) {
+    // console.log('Error: ', error.message)
+    console.log('Error Occured! ', error.message);
+
     return res.json({ status: 'error', msg: error.message })
   }
 
@@ -216,38 +307,51 @@ exports.getSingleAuction = async (req, res) => {
 exports.auctionedProperties = async (req, res) => {
   try {
 
+    const auctions = await Auction.find({ status: 'running' })
+      .populate([
+        {
+          path: 'property',
+          model: 'Property'
+        },
+        {
+          path: 'bids',
+          model: 'Bid'
+        }
+      ])
 
-    const promotions = Auction.aggregate()
+    return res.json({ status: 'success', auctions: auctions })
 
-      .match({ status: 'running' })
+    // const promotions = Auction.aggregate()
 
-      .sort({ "createdAt": -1 })
+    //   .match({ status: 'running' })
 
-      // .sample({ size: 3 })
+    //   .sort({ "createdAt": -1 })
 
-      // .limit(20)
+    //   // .sample({ size: 3 })
 
-      .lookup({
-        from: 'properties',
-        localField: 'property',
-        foreignField: '_id',
-        as: 'property'
-      })
+    //   // .limit(20)
 
-      .lookup({
-        from: 'bids',
-        localField: 'bids',
-        foreignField: '_id',
-        as: 'bids'
-      })
+    //   .lookup({
+    //     from: 'properties',
+    //     localField: 'property',
+    //     foreignField: '_id',
+    //     as: 'property'
+    //   })
+
+    //   .lookup({
+    //     from: 'bids',
+    //     localField: 'bids',
+    //     foreignField: '_id',
+    //     as: 'bids'
+    //   })
 
 
-    promotions.exec().then(result => {
-      // result has your... results
-      // console.log("Auctioned properties: ", result)
+    // promotions.exec().then(result => {
+    //   // result has your... results
+    //   // console.log("Auctioned properties: ", result)
 
-      res.json(result)
-    });
+    //   res.json(result)
+    // });
 
 
 
@@ -312,3 +416,134 @@ exports.saveBid = async (req, res) => {
   }
 
 }
+
+exports.confirm_auction_winner = async (req, res) => {
+  const { auctionId, buyerId, bidPrice } = req.body
+  // return res.json({fid, floorNo, coordinates})
+
+  // console.log('Promotion Data: ', req.body)
+  const token = req.headers.authorization
+
+  try {
+
+    const data = jwt.verify(token, process.env.APP_SECRET)
+    const user = await User.findOne({ _id: data.id })
+
+    // console.log('User: ', user)
+
+    // return
+
+    if (user) {
+
+
+      const auction = await Auction.findById(auctionId)
+      const property = await Property.findById(auction.property)
+
+      const existedThread = await Thread.findOne({
+        members: { $in: [mongoose.Types.ObjectId(user._id)] },
+        $and: [
+          {
+            // members:{ $in: [mongoose.Types.ObjectId(user._id)]},  
+            members: { $in: [mongoose.Types.ObjectId(buyerId)] }
+          }
+        ]
+      })
+
+      // return console.log('Existed Thread: ', existedThread)
+
+      const thread = existedThread ? existedThread : new Thread()
+
+      if (!existedThread) {
+        thread.cid = getCid()
+        thread.members = [
+          mongoose.Types.ObjectId(user._id),
+          mongoose.Types.ObjectId(buyerId)
+        ]
+        await thread.save()
+      }
+
+      const text = `Congratulations! you have won a property auction by $${bidPrice} bid.`
+
+      const req = new Request()
+      req.cid = getCid()
+      req.members = thread.members
+      req.admin = buyerId
+      req.buyer = user._id
+      req.developer = user._id
+      req.property = property._id
+      req.coverLetter = text
+      req.request_type = 'buy'
+      req.status = 'accepted'
+      await req.save()
+
+      const neg = new Negotiation()
+      req.members = thread.members
+      neg.admin = buyerId
+      neg.developer = property.developer
+      neg.manager = property.manager
+      neg.buyer = user._id
+      neg.property = property._id
+      neg.request = req._id
+      neg.message = 'Top bid'
+      neg.price = bidPrice
+      neg.status = 'accepted'
+      await neg.save()
+
+      req.negotiation = neg._id
+      await req.save()
+
+      property.requests = [...property.requests, req._id]
+      await property.save()
+
+      const msg = new Message()
+      msg.cid = getCid()
+      msg.thread = thread._id
+      msg.sender = user._id
+      msg.receiver = buyerId
+      msg.text = text
+      msg.property = property._id
+      msg.request = req._id
+      // msg.negotiation = neg._id
+      msg.type = 'text'
+      await msg.save()
+
+      const process = new Process()
+      process.cid = getCid()
+      process.members = req.members
+      process.buyer = buyerId
+      process.manager = property.manager
+      process.developer = property.developer
+      process.thread = thread._id
+      process.property = property._id
+      process.price = bidPrice
+      process.request = req._id
+      await process.save()
+
+      const notify = new Notification()
+      notify.cid = getCid()
+      notify.user = buyerId
+      notify.text = text
+      notify.link = `/buyer/process/${process._id}?thread=${thread._id}`
+      notify.icon = 'check'
+      await notify.save()
+
+      auction.isCompleted = true
+      await auction.save()
+
+      res.json({ status: 'success', process })
+
+    }
+    else {
+      res.json({ status: 'error', msg: 'You are not authorised to do this action' })
+    }
+
+
+  } catch (error) {
+    // console.log('Error: ', error.message)
+    console.log('Error Occured! ', error.message);
+
+    return res.json({ status: 'error', msg: error.message })
+  }
+
+}
+

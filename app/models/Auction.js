@@ -37,7 +37,7 @@ const auctionSchema = mongoose.Schema({
         ref: 'Bid'
     }],
 
-    isStarted:{
+    isCompleted:{
         type: Boolean,
         default: false
     },
@@ -45,7 +45,7 @@ const auctionSchema = mongoose.Schema({
     status: {
         type: String,
         enum:['pending','running', 'cancelled','completed'],
-        default:'running'
+        default:'pending'
     },
 
     buyer:{

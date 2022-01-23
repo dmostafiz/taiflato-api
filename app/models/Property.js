@@ -170,6 +170,10 @@ const propertySchema = mongoose.Schema({
         default: false
     },
 
+    isAuctioned: {
+        type: Boolean,
+        default: false
+    },
 
     auction: {
         type: mongoose.Schema.Types.ObjectId,
