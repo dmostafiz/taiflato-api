@@ -1,48 +1,61 @@
 const mongoose = require('mongoose')
 
 const promotionSchema = mongoose.Schema({
-    
-    pid:{
-      type:String
+
+    aid: {
+        type: String
     },
 
-    developer:{
-       type: mongoose.Schema.Types.ObjectId,
-       ref: 'User'
+    developer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
 
-    property:{
+    property: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Property'
     },
 
-    propertyImage:{
+    propertyImage: {
         type: String
     },
 
-    promotionPrice:{
+    reducedPercent: {
         type: Number
     },
 
-    startAt:{
+    promotionPrice: {
+        type: Number
+    },
+
+    startAt: {
         type: Date
     },
-  
-    expireAt:{
+
+    expireAt: {
         type: Date
+    },
+
+    // bids: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Bid'
+    // }],
+
+    isCompleted: {
+        type: Boolean,
+        default: false
     },
 
     status: {
         type: String,
-        enum:['pending','running', 'cancelled','completed'],
-        default:'running'
+        enum: ['pending', 'running', 'cancelled', 'completed'],
+        default: 'pending'
     },
 
-    buyer:{
+    buyer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }
-
 })
 
 promotionSchema.set('timestamps', true)

@@ -21,6 +21,7 @@ const UserController = require('../app/http/controllers/UserController')
 const BuyingProcessController = require('../app/http/controllers/BuyingProcessController')
 const BuyerController = require('../app/http/controllers/BuyerController')
 const AuctionController = require('../app/http/controllers/AuctionController')
+const PromotionController = require('../app/http/controllers/PromotionController')
 const RequestController = require('../app/http/controllers/RequestController')
 const DashboardController = require('../app/http/controllers/DashboardController')
 const TestController = require('../app/http/controllers/TestController')
@@ -158,19 +159,17 @@ router.post('/save_apartment', BuildingController.saveApartment)
 router.post('/save_auctions', AuctionController.saveAuction)
 router.get('/my_auctions', AuctionController.myAuctions)
 router.get('/all_auctions', AuctionController.allAuctions)
-
-
 router.get('/get_single_auction/:id', AuctionController.getSingleAuction)
-
 router.get('/auctioned_properties', AuctionController.auctionedProperties)
-
 router.post('/save_bid', AuctionController.saveBid)
-
 router.post('/cance_auction', AuctionController.cance_auction)
-
 router.post('/confirm_auction_winner', AuctionController.confirm_auction_winner)
 
 
+//Promotions
+router.post('/save_promotion', PromotionController.savePromotion)
+router.get('/my_promotions', PromotionController.myPromotions)
+router.post('/cancel_promotion', PromotionController.cancel_promotion)
 
 
 //Activities

@@ -87,6 +87,7 @@ function getProjectsAndUpdate(cron) {
 
                         // console.log('Property: ', property)
                         
+                        
                     } catch (error) {
 
                         console.log('Property Error: ', error.message)

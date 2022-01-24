@@ -12,8 +12,9 @@ const Negotiation = require('../../models/Negotiation');
 const Notification = require('../../models/Notification');
 const Process = require('../../models/Process');
 const Message = require('../../models/Message');
+const Promotion = require('../../models/Promotion');
 
-exports.saveAuction = async (req, res) => {
+exports.savePromotion = async (req, res) => {
   const { properties, reducedPrice, startDate, expirationDate } = req.body
   // return res.json({fid, floorNo, coordinates})
 
@@ -44,25 +45,26 @@ exports.saveAuction = async (req, res) => {
 
         if (property) {
 
-          const aid = date.substr(-6)
+          let aid = date.substr(-6)
 
-          const auction = new Auction()
-          auction.aid = aid
-          auction.developer = property.developer
-          auction.property = property._id
-          auction.propertyImage = property.image.location
-          auction.auctionPrice = parseInt(property.price) - parseInt(reducedPrice)
-          auction.startAt = startDate
-          auction.expireAt = expirationDate
-          auction.status = startDate ? 'pending' : 'running'
-          await auction.save()
+          const promotion = new Promotion()
+          promotion.aid = aid
+          promotion.developer = property.developer
+          promotion.property = property._id
+          promotion.propertyImage = property.image.location
+          promotion.reducedPercent = parseInt(reducedPrice)
+          promotion.promotionPrice = parseInt(parseInt(property.price) - 100 * parseInt(reducedPrice) / parseInt(property.price))
+          promotion.startAt = startDate
+          promotion.expireAt = expirationDate
+          promotion.status = startDate ? 'pending' : 'running'
+          await promotion.save()
 
           if (!startDate) {
-            property.isAuctioned = true
-            property.auction = auction._id
-  
+            property.isPromoted = true
+            property.promotion = promotion._id
             await property.save()
           }
+
 
           return property
         }
@@ -88,8 +90,8 @@ exports.saveAuction = async (req, res) => {
 
 }
 
-exports.cance_auction = async (req, res) => {
-  const { auctionId } = req.body
+exports.cancel_promotion = async (req, res) => {
+  const { promotionId } = req.body
   // return res.json({fid, floorNo, coordinates})
 
   // console.log('Promotion Data: ', req.body)
@@ -106,47 +108,35 @@ exports.cance_auction = async (req, res) => {
 
     if (user) {
 
+      const promotion = await Promotion.findById(promotionId)
 
-      const auction = await Auction.findById(auctionId)
-        .populate(
-          [
-            {
-              path: 'property',
-              model: 'Property',
-            },
-            {
-              path: 'developer',
-              model: 'User',
-              select: { 'password': 0 },
-            },
-            {
-              path: 'bids',
-              model: 'Bid',
-              options: { sort: { 'price': -1 } },
-              populate: {
-                path: 'buyer',
-                model: 'User',
-                select: { 'password': 0 },
-              }
+      promotion.status = 'cancelled'
 
-            },
+      await promotion.save()
 
-          ]
-        )
-
-      auction.status = 'cancelled'
-
-      await auction.save()
-
-      const propery = await Property.findById(auction.property._id)
-      propery.isAuctioned = false
-      propery.auction = null
+      const propery = await Property.findById(promotion.property._id)
+      propery.isPromoted = false
+      propery.promotion = null
       await propery.save()
 
-      res.json({ status: 'success', auction })
+
+      const promotions = await Promotion.find({ developer: user._id })
+
+        .sort({ "createdAt": -1 })
+
+        .populate([
+          {
+            path: 'property',
+            model: 'Property',
+          }
+        ])
+
+
+      return res.json({ status: 'success', promotions })
 
     }
     else {
+      console.log('Error occured: ', error.message);
       res.json({ status: 'error', msg: 'You are not authorised to do this action' })
     }
 
@@ -160,7 +150,7 @@ exports.cance_auction = async (req, res) => {
 
 }
 
-exports.myAuctions = async (req, res) => {
+exports.myPromotions = async (req, res) => {
 
   // console.log("My Query String: ", req.query)
 
@@ -178,41 +168,24 @@ exports.myAuctions = async (req, res) => {
 
     if (user) {
 
-      const promotions = Auction.aggregate()
-
-        .match({ developer: user._id })
+      const promotions = await Promotion.find({ developer: user._id })
 
         .sort({ "updatedAt": -1 })
 
-        // .sample({ size: 3 })
-
-        // .limit(20)
-
-        .lookup({
-          from: 'properties',
-          localField: 'property',
-          foreignField: '_id',
-          as: 'property'
-        })
-
-        .lookup({
-          from: 'bids',
-          localField: 'bids',
-          foreignField: '_id',
-          as: 'bids'
-        })
+        .populate([
+          {
+            path: 'property',
+            model: 'Property',
+          }
+        ])
 
 
-      promotions.exec().then(result => {
-        // result has your... results
-        // console.log("My promotions: ", result)
-
-        res.json(result)
-      });
+      return res.json({ status: 'success', promotions })
 
     }
 
   } catch (error) {
+    console.log('Error occured: ', error.message);
     return res.json(error)
   }
 }

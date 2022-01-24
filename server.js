@@ -15,6 +15,8 @@ const getAuctionsAndStart = require('./app/cron/getAuctionsAndStart');
 const getAuctionsAndStop = require('./app/cron/getAuctionsAndStop');
 const getProjectsAndUpdate = require('./app/cron/getProjectsAndUpdate');
 const getAgreementsAndSignStatus = require('./app/cron/getAgreementsAndSignStatus');
+const getPromotionsAndStart = require('./app/cron/getPromotionsAndStart');
+const getPromotionsAndStop = require('./app/cron/getPromotionsAndStop');
 
 const app = express()
 const server = require('http').createServer(app)
@@ -38,6 +40,10 @@ connectDB()
 
 getAuctionsAndStart(cron)
 getAuctionsAndStop(cron)
+
+getPromotionsAndStart(cron)
+getPromotionsAndStop(cron)
+
 getProjectsAndUpdate(cron)
 getAgreementsAndSignStatus(cron)
 

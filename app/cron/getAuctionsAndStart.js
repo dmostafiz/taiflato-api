@@ -3,9 +3,9 @@ const Property = require('../models/Property');
 
 function getAuctionsAndStart(cron) {
 
-    cron.schedule('* 0 0,2,4,6,8,10,12,14,16,18,20,22 * * *', async () => {
+    cron.schedule('* * * * *', async () => {
 
-        console.log("Start Auction from cron: ", auctions.length)
+        console.log("Searching auctions to start")
 
         const auctions = await Auction.find({ status: 'pending' })
 
