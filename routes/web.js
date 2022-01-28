@@ -334,6 +334,8 @@ router.post('/download_signed_contract', ProcessController.download_signed_agree
 
 router.post('/get_reservation_agreement', ProcessController.get_reservation_agreement)
 
+router.get('/get_developer_details/:id', AdminController.get_developer_details)
+
 //Agreement OTP
 // router.post('/send_secret_code_again', ProcessController.send_secret_code_again)
 

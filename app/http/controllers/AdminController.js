@@ -125,3 +125,44 @@ exports.getRealestateDevelopers = async (req, res) => {
         return res.json({status: 'error', msg: error.message})
     }
 }
+
+exports.get_developer_details = async (req, res) => {
+    const developerId = req.params.id
+
+    try {
+
+        const user  = await User.findById(developerId)
+                       .populate([
+                           {
+                               path: 'profile',
+                               model: 'Profile'
+                           },
+                           {
+                               path: 'projects',
+                               model: 'Project',
+                               populate: [
+                                   {
+                                       path: 'projectImage',
+                                       model: 'File'
+                                   }
+                               ]
+                           },
+                           {
+                            path: 'properties',
+                            model: 'Property',
+                            populate: [
+                                {
+                                    path: 'image',
+                                    model: 'File'
+                                }
+                            ]
+                        }
+                       ])
+
+        return res.json({status: 'success', user})
+        
+    } catch (error) {
+        console.log('Error Ocurred: ', error.message);
+        res.json({status: 'error', msg: error.message})
+    }
+}
