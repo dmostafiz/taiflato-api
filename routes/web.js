@@ -90,6 +90,7 @@ router.post('/upload_profile_image', UploadController.uploadProfileImage)
 
 
 //Project
+router.post('/upload_plan_image', UploadController.upload_plan_image)
 
 router.post('/upload_project_image', UploadController.upload_project_image)
 router.post('/create_drafted_project', ProjectController.create_drafted_project)
@@ -335,6 +336,11 @@ router.post('/download_signed_contract', ProcessController.download_signed_agree
 router.post('/get_reservation_agreement', ProcessController.get_reservation_agreement)
 
 router.get('/get_developer_details/:id', AdminController.get_developer_details)
+
+router.get('/get_floors_by_project_id/:projectId', AdminController.getFloorsByProject)
+
+
+
 
 //Agreement OTP
 // router.post('/send_secret_code_again', ProcessController.send_secret_code_again)

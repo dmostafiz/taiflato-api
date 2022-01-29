@@ -1,7 +1,8 @@
 const Project = require("../../models/Project")
 const jwt = require('jsonwebtoken');
 const User = require('../../models/User')
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const Floor = require("../../models/Floor");
 
 exports.getAllProjects = async (req, res) => {
     try {
@@ -160,6 +161,21 @@ exports.get_developer_details = async (req, res) => {
                        ])
 
         return res.json({status: 'success', user})
+        
+    } catch (error) {
+        console.log('Error Ocurred: ', error.message);
+        res.json({status: 'error', msg: error.message})
+    }
+}
+
+exports.getFloorsByProject = async (req, res) => {
+    const projectId = req.params.projectId
+
+    try {
+
+        const floors  = await Floor.find({project: projectId})
+             
+        return res.json({status: 'success', floors})
         
     } catch (error) {
         console.log('Error Ocurred: ', error.message);
