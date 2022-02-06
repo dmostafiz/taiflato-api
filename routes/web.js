@@ -103,6 +103,13 @@ router.get('/get_project_by_id/:id', ProjectController.get_project_by_id)
 router.get('/get_properties_by_project/:id', ProjectController.get_properties_by_project)
 
 
+router.get('/get_plan_floors_by_project_id/:projectId', ProjectController.getPlanFloorsByProject)
+
+router.get('/get_building_plan_by_project_id/:projectId', BuildingController.getBuildingPlan)
+
+
+
+
 // router.get('/get_properties_by_projectid/:projectId', ProjectController.get_properties_by_projectid)
 
 
@@ -141,7 +148,7 @@ router.get('/filter_search', SearchController.filterSearch)
 
 //Building
 router.post('/save_building', BuildingController.saveBuildingPlan)
-router.post('/upload_building_image', UploadController.uploadBuildingImage)
+// router.post('/upload_building_image', UploadController.uploadBuildingImage)
 router.get('/my_building_plans', BuildingController.getMyBuildingsPlans)
 router.get('/all_building_plans', BuildingController.getAllBuildingPlans)
 router.get('/get_building_by_id/:id', BuildingController.getBuildingPlansById)
@@ -336,8 +343,6 @@ router.post('/download_signed_contract', ProcessController.download_signed_agree
 router.post('/get_reservation_agreement', ProcessController.get_reservation_agreement)
 
 router.get('/get_developer_details/:id', AdminController.get_developer_details)
-
-router.get('/get_floors_by_project_id/:projectId', AdminController.getFloorsByProject)
 
 
 

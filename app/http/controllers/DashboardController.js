@@ -283,7 +283,7 @@ exports.get_buyer_compare_list = async (req, res) => {
                     ]
                }
                
-          ])
+          ]).limit(4)
 
           // console.log('Compares: ', bookmarks)
 

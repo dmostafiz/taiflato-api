@@ -642,3 +642,21 @@ exports.save_project_properties = async (req, res) => {
 
 }
 
+exports.getPlanFloorsByProject = async (req, res) => {
+    const projectId = req.params.projectId
+
+    try {
+
+        const floors  = await Floor.find({
+            project: projectId, 
+            // isSelected: false
+        })
+             
+        return res.json({status: 'success', floors})
+        
+    } catch (error) {
+        console.log('Error Ocurred: ', error.message);
+        res.json({status: 'error', msg: error.message})
+    }
+}
+

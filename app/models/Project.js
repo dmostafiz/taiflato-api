@@ -203,6 +203,11 @@ const ProjectSchema = mongoose.Schema({
         type: String
     }],  
 
+    plan: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'BuildingPlan'  
+    },
+
     status: {
         type: String,
         enum:['pending','published', 'drafted', 'declined'],

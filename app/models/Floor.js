@@ -11,7 +11,9 @@ const FloorSchema = mongoose.Schema({
         ref:'File'
     },
 
-    coordinates: [],
+    coordinates:{
+        type: String
+    },
 
     properties: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -31,6 +33,11 @@ const FloorSchema = mongoose.Schema({
     developer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
+    },
+
+    isSelected: {
+        type: Boolean,
+        default: false
     }
 
 })

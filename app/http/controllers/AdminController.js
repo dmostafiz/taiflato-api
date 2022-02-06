@@ -167,18 +167,3 @@ exports.get_developer_details = async (req, res) => {
         res.json({status: 'error', msg: error.message})
     }
 }
-
-exports.getFloorsByProject = async (req, res) => {
-    const projectId = req.params.projectId
-
-    try {
-
-        const floors  = await Floor.find({project: projectId})
-             
-        return res.json({status: 'success', floors})
-        
-    } catch (error) {
-        console.log('Error Ocurred: ', error.message);
-        res.json({status: 'error', msg: error.message})
-    }
-}
