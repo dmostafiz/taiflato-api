@@ -345,6 +345,13 @@ router.post('/get_reservation_agreement', ProcessController.get_reservation_agre
 router.get('/get_developer_details/:id', AdminController.get_developer_details)
 
 
+router.post('/password_reset_email', ProfileController.password_reset_email)
+
+router.post('/verify_password_reset_token', ProfileController.verify_password_reset_token)
+
+router.post('/reset_new_password', ProfileController.reset_new_password)
+
+
 
 
 //Agreement OTP

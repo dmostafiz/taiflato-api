@@ -123,6 +123,10 @@ const userSchema = mongoose.Schema({
         type: String
     },
 
+    password_reset_token: {
+        type: String
+    }
+
 
 })
 

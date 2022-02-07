@@ -2,6 +2,9 @@ const Profile = require("../../models/Profile")
 const User = require("../../models/User")
 const jwt = require('jsonwebtoken');
 const BuyerProfile = require("../../models/BuyerProfile");
+const { customAlphabet } = require("nanoid");
+const mailTransporter = require("../../../helpers/mailTransporter");
+const bcrypt = require('bcryptjs')
 
 exports.update_user_profile_data = async (req, res) => {
 
@@ -169,7 +172,7 @@ exports.save_buyer_profile = async (req, res) => {
       }
 
       if (profile) {
-        
+
         profile.firstName = firstName
         profile.lastName = lastName
         profile.dateOfBirth = dateOfBirth
@@ -230,5 +233,120 @@ exports.save_buyer_profile = async (req, res) => {
     res.json({ status: 'error', msg: error.message })
   }
 }
+
+
+exports.password_reset_email = async (req, res) => {
+
+
+  const { email } = req.body
+
+
+
+  try {
+
+    const user = await User.findOne({ email: email })
+
+    if (user) {
+
+      const token = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 50)()
+
+      user.password_reset_token = token
+      await user.save()
+
+      try {
+        const mail = await mailTransporter.sendMail({
+          from: 'No Reply <no-reply@israpoly.com>',
+          to: user.email,
+          subject: 'Your password reset link',
+          // text: 'That was easy! we sending you mail for testing our application',
+          template: 'password_reset_link',
+          context: {
+            name: user.name,
+            uid: user._id,
+            email: user.email,
+            token: token,
+            web_url: 'http://localhost:3000'
+          }
+        })
+
+
+        return res.json({ status: 'success' })
+
+
+      } catch (error) {
+
+        console.log('Mail Error: ', error.message)
+        return res.json({ status: 'error', msg: error.message })
+
+      }
+
+
+    } else {
+      return res.json({ status: 'error', msg: 'No account found associated with this email.' })
+    }
+
+  } catch (error) {
+    return res.json({ status: 'error', msg: error.message })
+  }
+}
+
+
+exports.verify_password_reset_token = async (req, res) => {
+  const { uid, email, token } = req.body
+
+  try {
+
+    const user = await User.findOne({
+      'password_reset_token': token,
+      '_id': uid,
+      'email': email
+    })
+
+    if (!user) return res.json({ status: 'error', msg: 'Invalid token not accepted' })
+
+    res.json({ status: 'success', user })
+
+  } catch (error) {
+    console.log('Error: ', error.message);
+    res.json({ status: 'error', msg: "Something went wrong. Please try again later." })
+  }
+}
+
+
+exports.reset_new_password = async (req, res) => {
+  const { uid, email, token, password } = req.body
+
+  try {
+
+    const user = await User.findOne({
+      'password_reset_token': token,
+      '_id': uid,
+      'email': email
+    })
+
+    if (!user) return res.json({ status: 'error', msg: 'Invalid token not accepted' })
+
+    const salt = await bcrypt.genSalt(12)
+
+    const encryptedPassword = await bcrypt.hash(password, salt)
+
+    user.password = encryptedPassword
+    user.password_reset_token = null
+
+    await user.save()
+
+    res.json({ status: 'success', user })
+
+  } catch (error) {
+    console.log('Error: ', error.message);
+    res.json({ status: 'error', msg: "Something went wrong. Please try again later." })
+  }
+}
+
+
+
+
+
+
 
 
