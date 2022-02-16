@@ -44,6 +44,15 @@ const ProjectSchema = mongoose.Schema({
     },
 
     projectTitle: {
+        //default in hebrew
+        type: String,
+    },
+
+    projectTitleEn: {
+        type: String,
+    },
+
+    projectTitleFr: {
         type: String,
     },
 

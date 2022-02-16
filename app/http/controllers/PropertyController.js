@@ -357,6 +357,20 @@ exports.getSingleProperty = async (req, res) => {
           model: 'File',
         },
         {
+          path:'project',
+          model: 'Project',
+          populate:[
+            {
+              path:'projectImage',
+              model:'File'
+            },
+            {
+              path:'projectImages',
+              model:'File'
+            }
+          ]
+        },
+        {
           path: 'developer',
           model: 'User',
           select: { 'password': 0 },

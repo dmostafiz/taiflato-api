@@ -506,7 +506,7 @@ exports.get_properties_by_project = async (req, res) => {
 exports.update_property = async (req, res) => {
     const token = req.headers.authorization
 
-    const { propertyId, title, rooms, bathroom, propertyType, serialNo, floor, price, balcony, terrace, garden, loggia } = req.body
+    const { propertyId, title, rooms, bathroom, propertyType, serialNo, floor, price, balcony, terrace, garden, loggia, virtualTourLink } = req.body
 
     // console.log('My Token: ', token)
 
@@ -533,6 +533,7 @@ exports.update_property = async (req, res) => {
         property.terrace = terrace
         property.garden = garden
         property.loggia = loggia
+        property.virtualTourLink = virtualTourLink
 
         await property.save()
 
