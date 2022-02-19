@@ -350,6 +350,105 @@ exports.sendMeetingRequest = async (req, res) => {
   }
 }
 
+
+exports.sendCallBackRequest = async (req, res) => {
+
+  const { phone, text, propertyId, developerId } = req.body
+
+  const token = req.headers.authorization
+  try {
+    const data = jwt.verify(token, process.env.APP_SECRET)
+
+    const user = await User.findOne({ _id: data.id })
+
+    if (user) {
+
+      const req = new Request()
+      req.cid = getCid()
+      req.admin = developerId
+      req.buyer = user._id
+      req.developer = developerId
+      req.property = propertyId
+      req.coverLetter = text
+      req.request_type = 'call'
+      req.phoneNumber = phone
+      await req.save()
+
+      const property = await Property.findById(propertyId)
+      if (property) {
+        property.requests = [...property.requests, req._id]
+        await property.save()
+      }
+
+
+
+      const existedThread = await Thread.findOne({
+        members: { $in: [mongoose.Types.ObjectId(user._id)] },
+        $and: [
+          {
+            // members:{ $in: [mongoose.Types.ObjectId(user._id)]},  
+            members: { $in: [mongoose.Types.ObjectId(developerId)] }
+          }
+        ]
+
+      })
+
+      const thread = existedThread ? existedThread : new Thread()
+
+      if (!existedThread) {
+        thread.cid = getCid()
+        thread.members = [
+          mongoose.Types.ObjectId(user._id),
+          mongoose.Types.ObjectId(developerId)
+        ]
+        await thread.save()
+      }
+
+      const msg = new Message()
+      msg.cid = getCid()
+      msg.thread = thread._id
+      msg.sender = user._id
+      msg.receiver = developerId
+      msg.text = text
+      msg.phoneNumber = phone
+      msg.property = propertyId
+      msg.request = req._id
+      msg.type = 'call'
+      await msg.save()
+
+      thread.messages = [...thread.messages, msg._id]
+      thread.newMessages = [...thread.newMessages, msg._id]
+      await thread.save()
+
+      // console.log('Updated Thread: ', thread)
+
+
+      const act = new Activity()
+      act.cid = getCid()
+      act.user = user._id
+      act.text = 'You have sent a call back request'
+      act.link = `/property/${propertyId}`
+      await act.save()
+
+      const notify = new Notification()
+      notify.cid = getCid()
+      notify.user = developerId
+      notify.text = `<strong>${user.first_name} ${user.last_name}</strong> have sent you an appointment request.`
+      notify.link = `/developer/messages?thread=${thread._id}`
+      notify.icon = 'calendar'
+      await notify.save()
+
+      // console.log(property)
+
+      res.json({ status: 'success', data: req, thread: thread })
+    }
+
+  } catch (error) {
+    // console.log('Request Error: ', error.message)
+    res.json({ status: 'error', msg: error.message })
+  }
+}
+
 exports.response_request = async (req, res) => {
 
   const { type, requestId } = req.body

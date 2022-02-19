@@ -86,7 +86,7 @@ const MessageSchema = mongoose.Schema({
 
     type:{
         type:String,
-        enum:['text', 'file', 'image', 'buy', 'offer', 'meet', 'zoomMeeting'],
+        enum:['text', 'file', 'image', 'buy', 'offer', 'meet', 'zoomMeeting', 'call'],
         default: 'text'
     },
 

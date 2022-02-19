@@ -115,7 +115,6 @@ const ProjectSchema = mongoose.Schema({
         type: String
     },
 
-
     latitude: {
         type: String
     },

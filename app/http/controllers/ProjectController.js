@@ -17,7 +17,9 @@ exports.create_drafted_project = async (req, res) => {
 
     const {
         projectCode,
-        title,
+        title, //hebrew
+        //titleEng,
+        //titleFr,
         numberOfBuilding,
         numberOfFloor,
         heightOfBuilding,
@@ -121,7 +123,9 @@ exports.create_drafted_project = async (req, res) => {
         const project = new Project()
 
         project.cid = getCid()
-        project.projectTitle = title
+        project.projectTitle = title  //hebrew
+        //project.projectTitleEn = titleEng
+        //project.projectTitleFr = titleFr
         project.projectCode = projectCode
         project.manager = manager._id
         project.company = user.company

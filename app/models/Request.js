@@ -51,7 +51,7 @@ const RequestSchema = mongoose.Schema({
 
     request_type: {
         type: String,
-        enum: ['buy', 'offer', 'meet'],
+        enum: ['buy', 'offer', 'meet', 'call'],
         default: 'buy'
     },
 
@@ -61,6 +61,10 @@ const RequestSchema = mongoose.Schema({
 
     meetingDate: {
         type: Date
+    },
+
+    phoneNumber: {
+        type: String
     },
 
     status: {
