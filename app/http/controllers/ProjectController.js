@@ -274,7 +274,7 @@ exports.save_contract_details = async (req, res) => {
 
         if (!project) return res.json({ status: 'error', msg: 'Something went wrong' })
 
-        
+
         project.expert = expert
         project.lawyer = lawyer
         project.legal = { copies: projectLegalCopies }
@@ -569,6 +569,12 @@ exports.update_property = async (req, res) => {
                 },
             ])
 
+        if(!project.types.includes(propertyType)){
+            project.types = [...project.types, propertyType]
+        }
+
+        await project.save()
+
         const gfloor = await Floor.findOne({ project: project._id, floorNo: floor })
         gfloor.properties = [...gfloor.properties, property._id]
         await gfloor.save()
@@ -608,7 +614,7 @@ exports.save_project_properties = async (req, res) => {
         if (project) {
 
             if (properties.length) {
-                
+
                 properties.forEach(async (pty) => {
 
                     const qpty = new QueueProperty()
@@ -629,7 +635,7 @@ exports.save_project_properties = async (req, res) => {
                     qpty.manager = project.manager
 
                     await qpty.save()
-                    
+
                 })
             }
 
@@ -652,16 +658,16 @@ exports.getPlanFloorsByProject = async (req, res) => {
 
     try {
 
-        const floors  = await Floor.find({
-            project: projectId, 
+        const floors = await Floor.find({
+            project: projectId,
             // isSelected: false
         })
-             
-        return res.json({status: 'success', floors})
-        
+
+        return res.json({ status: 'success', floors })
+
     } catch (error) {
         console.log('Error Ocurred: ', error.message);
-        res.json({status: 'error', msg: error.message})
+        res.json({ status: 'error', msg: error.message })
     }
 }
 

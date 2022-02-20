@@ -15,18 +15,76 @@ exports.filterSearch = async (req, res) => {
 
         var query = {}
 
-        // if (req.query.surface_from && req.query.surface_to) {
+        if (req.query.city) {
 
-        //     query = {
-        //         sizes: { $in: [parseInt(req.query.surface_from)] },
-        //         // $and: [
-        //         //     {
-        //         //         // members:{ $in: [mongoose.Types.ObjectId(user._id)]},  
-        //         //         sizes: { $in: [parseInt(req.query.surface_to)] }
-        //         //     }
-        //         // ]
-        //     }
-        // }
+            query = {
+                city: req.query.city,
+            }
+        }
+
+        // console.log('parseInt(req.query.keywords): ', parseInt(req.query.keywords) )
+
+
+        if (req.query.keywords) {
+
+            query = {
+                $or: [ 
+                    { city: req.query.keywords },
+                    { projectTitle: {$regex: req.query.keywords, $options: 'i'}  },
+                    { description: {$regex: req.query.keywords, $options: 'i'}  },
+                    { projectCode: {$regex: req.query.keywords, $options: 'i'}  },
+                    { address: {$regex: req.query.keywords, $options: 'i'}  },
+                    { country: req.query.keywords },
+                    { district: req.query.keywords },
+                    { zip: {$regex: req.query.keywords, $options: 'i'}  },
+                    { prices:  req.query.keywords },
+                    { deliveryIn: !isNaN(req.query.keywords) && parseInt(req.query.keywords) }
+                ]
+            }
+        }
+
+
+        if (req.query.delivery_from && req.query.delivery_to) {
+            query = {
+                ...query,
+                deliveryIn: { $gte: parseInt(req.query.delivery_from), $lte: parseInt(req.query.delivery_to) }
+            }
+        }
+
+        if (req.query.surface_from && req.query.surface_to) {
+            query = {
+                ...query,
+                sizes: { $gte: parseInt(req.query.surface_from), $lte: parseInt(req.query.surface_to) }
+            }
+        }
+
+
+        if (req.query.price_from && req.query.price_to) {
+            query = {
+                ...query,
+                prices: { $gte: parseInt(req.query.price_from), $lte: parseInt(req.query.price_to) }
+            }
+        }
+
+        if (req.query.district) {
+
+            var district = req.query.district.split(",");
+
+            query = {
+                ...query,
+                district: { $in: district}
+            }
+        }
+
+        if (req.query.category ) {
+            query = {
+                ...query,
+                types: { $in: req.query.category }
+            }
+        }
+
+        
+        console.log('Search query: ', query)
 
         const optionsss = {
             // select: 'title date author',
@@ -40,6 +98,11 @@ exports.filterSearch = async (req, res) => {
                 {
                     path: 'projectImage',
                     model: 'File'
+                },
+
+                {
+                    path: 'properties',
+                    model: 'Property'
                 }
             ],
             // lean: true,
@@ -52,7 +115,7 @@ exports.filterSearch = async (req, res) => {
 
         const projectResult = await Project.paginate(query, optionsss)
 
-        console.log('Paginated projectResult: ', projectResult)
+        // console.log('Paginated projectResult: ', projectResult)
         // const projectResult = Project.find()
         return res.send({ status: 'success', projectResult })
 
