@@ -37,7 +37,7 @@ exports.filterSearch = async (req, res) => {
                     { country: req.query.keywords },
                     { district: req.query.keywords },
                     { zip: {$regex: req.query.keywords, $options: 'i'}  },
-                    { prices:  req.query.keywords },
+                    { prices: !isNaN(req.query.keywords) && parseInt(req.query.keywords) },
                     { deliveryIn: !isNaN(req.query.keywords) && parseInt(req.query.keywords) }
                 ]
             }
