@@ -352,7 +352,7 @@ router.post('/verify_password_reset_token', ProfileController.verify_password_re
 
 router.post('/reset_new_password', ProfileController.reset_new_password)
 
-
+router.get('/get_all_pending_sales', AdminController.getAllPendingSales)
 
 
 //Agreement OTP

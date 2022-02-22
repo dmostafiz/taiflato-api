@@ -110,10 +110,16 @@ exports.get_secured_process = async (req, res) => {
 
         if (user) {
 
-            const propertyProcess = await Process.findOne({
-                _id: processId,
-                members: { $in: [user._id] }
-            }).populate([
+            var query = {_id: processId}
+
+            if(user.dashboard != 'admin'){
+                query = {
+                   ...query,
+                   members: { $in: [user._id] }
+                }
+            }
+
+            const propertyProcess = await Process.findOne(query).populate([
                 {
                     path: 'property',
                     model: 'Property',
