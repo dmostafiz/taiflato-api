@@ -60,7 +60,7 @@ exports.saveAuction = async (req, res) => {
           if (!startDate) {
             property.isAuctioned = true
             property.auction = auction._id
-  
+
             await property.save()
           }
 
@@ -314,7 +314,17 @@ exports.auctionedProperties = async (req, res) => {
       .populate([
         {
           path: 'property',
-          model: 'Property'
+          model: 'Property',
+          populate: [
+            {
+              path: 'image',
+              model: 'File'
+            },
+            {
+              path: 'developer',
+              model: 'User'
+            }
+          ]
         },
         {
           path: 'bids',
